@@ -1,0 +1,50 @@
+{
+  "nested.test": {
+    "TXT": [
+      "v=spf1 include:n1.test a mx -all"
+    ],
+    "MX": [
+      "aspmx.l.google.com"
+    ]
+  },
+  "_spf.google.com": {
+    "TXT": [
+      "v=spf1 ip4:35.190.247.0/24 ip4:64.233.160.0/19 ~all"
+    ]
+  },
+  "_dmarc.nested.test": {
+    "TXT": [
+      "v=DMARC1; p=quarantine; rua=mailto:dmarc@nested.test"
+    ]
+  },
+  "google._domainkey.nested.test": {
+    "TXT": [
+      "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN"
+    ]
+  },
+  "n1.test": {
+    "TXT": [
+      "v=spf1 include:n2.test include:n3.test a mx -all"
+    ]
+  },
+  "n2.test": {
+    "TXT": [
+      "v=spf1 include:n4.test include:n5.test a -all"
+    ]
+  },
+  "n3.test": {
+    "TXT": [
+      "v=spf1 a mx -all"
+    ]
+  },
+  "n4.test": {
+    "TXT": [
+      "v=spf1 a mx -all"
+    ]
+  },
+  "n5.test": {
+    "TXT": [
+      "v=spf1 a -all"
+    ]
+  }
+}

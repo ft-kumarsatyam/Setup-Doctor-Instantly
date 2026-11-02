@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "setup-doctor"
+version = "0.1.0"
+description = "Grounded diagnosis of cold-email DNS setup: deterministic checks, LangGraph workflow, LLM explanation with a hallucination guardrail."
+requires-python = ">=3.10"
+dependencies = ["langgraph", "dnspython"]
+
+[project.optional-dependencies]
+llm = ["anthropic"]
+dev = ["pytest"]
+
+[project.scripts]
+setup-doctor = "setup_doctor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]

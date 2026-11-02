@@ -1,0 +1,18 @@
+{
+  "mess.test": {
+    "TXT": [
+      "v=spf1 ptr include:_spf.google.com +all"
+    ],
+    "MX": []
+  },
+  "_spf.google.com": {
+    "TXT": [
+      "v=spf1 ip4:35.190.247.0/24 ip4:64.233.160.0/19 ~all"
+    ]
+  },
+  "_dmarc.mess.test": {
+    "TXT": [
+      "v=DMARC1; p=none"
+    ]
+  }
+}
