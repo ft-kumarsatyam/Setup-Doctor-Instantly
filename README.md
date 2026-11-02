@@ -1,55 +1,86 @@
 # Setup Doctor
 
-Diagnoses the DNS side of a cold-email setup (SPF, DKIM, DMARC, MX) and explains the fix order in plain English.
-The interesting part is not the DNS checks. It is how an LLM is allowed to touch the result.
+Diagnoses the DNS side of a cold-email setup (SPF, DKIM, DMARC, MX) and explains **what to fix first** in plain English.
 
-> **The LLM never decides what is wrong.** Deterministic code produces the findings. The model returns a JSON plan
-> of `{id, explanation}` objects only; a verifier rejects any draft whose ids do not match the findings or whose
-> explanations invent DNS records or allow-listed numbers. Validated plans are rendered with each finding's own
-> title and fix. Rejected drafts fall back to a deterministic template, so a hallucination cannot reach the user.
+The interesting part is not the DNS checks. It is how an LLM is allowed to touch the result:
+
+> **The LLM never decides what is wrong.** Deterministic code produces Findings. The model only rewrites them into a plan. A verifier rejects any draft that invents findings, DNS records, or allow-listed numbers. Rejected drafts fall back to a template — so a hallucination cannot reach the user.
+
+## Quickstart
+
+```bash
+pip install -e ".[dev]"
+
+python -m setup_doctor mess.test --records examples/mess.json   # offline demo (no DNS)
+python -m setup_doctor yourdomain.com                           # live DNS
+python -m setup_doctor yourdomain.com --llm                     # live DNS + model explanation
+
+python -m pytest -q                 # unit tests
+python evals/run_evals.py           # detection + guardrail evals
+python evals/mutation_check.py      # prove the evals can fail
+```
+
+`--llm` needs `ANTHROPIC_API_KEY` and `SETUP_DOCTOR_MODEL`. Without `--llm`, you still get a full prioritized report from the template explainer.
+
+## End to end: what happens when you run a domain
+
+One command. Five steps. The model only touches step 2, and only under a verifier.
+
+```
+ you pass a domain
+        |
+        v
+ 1. CHECK     Look up SPF / DKIM / DMARC / MX (live DNS or a frozen fixture).
+              Pure Python produces a sorted list of Findings.
+              No LLM. This list is ground truth.
+        |
+        v
+ 2. EXPLAIN   Turn Findings into a short plan.
+              • default: deterministic template (always safe)
+              • --llm:    model returns JSON [{id, explanation}, ...]
+        |
+        v
+ 3. VERIFY    Does the draft match the Findings?
+              • every id must exist; none may be invented
+              • critical/high findings cannot be dropped
+              • DNS records and allow-listed numbers in explanations
+                must appear in a finding's fix or evidence
+              Fail / empty / malformed / API error → go to step 4.
+        |
+        +-- ok ------------------+
+        |                        |
+        v                        v
+ 4. FALLBACK              5. RENDER
+    Use the template.         Markdown report:
+    Model text is discarded.  title + fix from Findings;
+                              explanation from the verified plan
+                              (or the template).
+```
+
+Built with LangGraph (conditional edge after verify). DNS sits behind a small `Resolver` interface, so the same checks run against live DNS or frozen records in tests and evals.
+
+### Concrete example
+
+```bash
+python -m setup_doctor mess.test --records examples/mess.json
+```
+
+1. Fixture DNS is loaded — no network.
+2. Checks emit findings such as `SPF_TOO_MANY_LOOKUPS`, `MX_MISSING`, …
+3. Template (or LLM + verifier) writes one explanation per finding id.
+4. You get a Markdown report ordered by severity: fix MX / SPF before polishing DMARC wording.
+
+If the model invents a finding id or a DNS record that the checks never produced, verify rejects the draft and the report is the template — never the hallucination.
 
 ## Why this exists
 
-Public reviews and setup guides keep describing the same early-stage pain: new senders get SPF, DKIM, DMARC and MX
-wrong before their first campaign (the SPF 10-lookup limit and forgotten MX records come up repeatedly), and an
-inexperienced sender cannot tell which of several warnings matters first. Mailbox providers now reject, not just
-spam-folder, non-compliant bulk mail. This is a hypothesis built from public sources, not from any company's
-internal data, and the first step in a real deployment would be to check it against actual onboarding data.
-
-## How it works
-
-```
- domain
-   |
-   v
- [check]    deterministic SPF/DKIM/DMARC/MX checks  ->  Findings   (ground truth, no LLM)
-   |
-   v
- [explain]  LLM returns JSON [{id, explanation}, ...] (or template writes prose)
-   |
-   v
- [verify]   parse JSON; id set == findings; DNS + numeric claims in explanations grounded?
-   |            |
-   | ok         | violations / empty / malformed / model error
-   v            v
- [render]   [fallback] deterministic template  --->  [render]
-            (model path: title+fix from Findings, explanation from JSON)
-```
-
-Built with LangGraph (conditional edge on the verify step). Real DNS is behind a small `Resolver` interface, so the
-same code runs against live DNS, or against frozen records in tests and evals.
+Public reviews and setup guides keep describing the same early-stage pain: new senders get SPF, DKIM, DMARC and MX wrong before their first campaign (the SPF 10-lookup limit and forgotten MX records come up repeatedly), and an inexperienced sender cannot tell which of several warnings matters first. Mailbox providers now reject, not just spam-folder, non-compliant bulk mail. This is a hypothesis built from public sources, not from any company's internal data, and the first step in a real deployment would be to check it against actual onboarding data.
 
 ## Design decisions worth reviewing
 
-1. **Findings are the only source of truth.** The prompt contains the findings JSON and nothing else, and the test
-   suite asserts that. Model output cannot create, remove, or re-rank findings; render takes title/fix from Findings.
-2. **Structured grounding verifier.** Model drafts must be a JSON list of `{id, explanation}`. Rejects malformed
-   JSON, duplicate ids, id-set mismatches, DNS records in explanations that appear in neither fix nor evidence, and
-   allow-listed numeric claims that do not match a number in a finding's title or evidence.
-3. **An outage is not a missing record.** `LiveResolver` treats NXDOMAIN/no-answer as "absent" but raises
-   `ResolverError` on timeouts, and the CLI refuses to diagnose a domain whose apex does not resolve. I found this
-   while building: in my sandbox the resolver answered NXDOMAIN for every name, including `example.com`, and the
-   first version reported confident `SPF_MISSING`/`DMARC_MISSING` findings. There is now a regression test.
+1. **Findings are the only source of truth.** The prompt contains the findings JSON and nothing else, and the test suite asserts that. Model output cannot create, remove, or re-rank findings; render takes title/fix from Findings.
+2. **Structured grounding verifier.** Model drafts must be a JSON list of `{id, explanation}`. Rejects malformed JSON, duplicate ids, id-set mismatches, DNS records in explanations that appear in neither fix nor evidence, and allow-listed numeric claims that do not match a number in a finding's title or evidence.
+3. **An outage is not a missing record.** `LiveResolver` treats NXDOMAIN/no-answer as "absent" but raises `ResolverError` on timeouts, and the CLI refuses to diagnose a domain whose apex does not resolve. I found this while building: in my sandbox the resolver answered NXDOMAIN for every name, including `example.com`, and the first version reported confident `SPF_MISSING`/`DMARC_MISSING` findings. There is now a regression test.
 4. **Evals that can fail.** See below.
 
 ## Results
@@ -142,20 +173,6 @@ request.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on push/PR for **Python 3.11 and 3.13**:
 `ruff check`, `pytest`, `evals/run_evals.py`, and `evals/mutation_check.py`.
-
-## Quickstart
-
-```bash
-pip install -e ".[dev]"            # pytest, fastapi, httpx, ruff, …
-python -m pytest -q                # 104 tests
-python evals/run_evals.py          # detection + guardrail evals
-python evals/mutation_check.py     # prove the evals can fail
-ruff check src tests evals         # same lint CI runs
-
-python -m setup_doctor mess.test --records examples/mess.json     # offline demo
-python -m setup_doctor yourdomain.com                              # live DNS
-python -m setup_doctor yourdomain.com --llm                        # live DNS + model explanation
-```
 
 ## What I would build next
 
