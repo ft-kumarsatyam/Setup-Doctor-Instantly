@@ -112,7 +112,7 @@ strings, not by re-running the verifier (that would be circular).
 (SPF limit / void limit off by one, DKIM/DMARC regressions, verifier checks disabled, fallback removed, and so on).
 All 13 make the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
 
-**Unit tests**: `python -m pytest -q` runs 104 tests.
+**Unit tests**: `python -m pytest -q` runs 111 tests.
 
 ### Checks added in this revision (with sources)
 
@@ -141,12 +141,16 @@ All 13 make the eval suite fail. That is the evidence the evals are not just rub
 - **DKIM key size only when parseable.** If `p=` is not valid base64 DER SubjectPublicKeyInfo, key strength is not
   guessed — no fabricated bit length.
 - **SPF ptr voids not counted.** See rejected checks above.
-- **DNS only.** It does not measure inbox placement, warmup quality, list quality, or sender reputation.
+- **DNS diagnose path is DNS only.** It does not measure inbox placement or warmup by itself. Optional
+  `--instantly-compare` pulls those signals from Instantly API v2 when configured.
 - **Live mode is verified with stubs, not end to end.** The sandbox this was built in returns NXDOMAIN for every
   name, so I could not run a real lookup against a real domain. Run it on your machine and check a domain you know.
   The HTTP API's live path was likewise not exercised end to end here; tests inject `FixtureResolver` only.
 - **The Anthropic adapter is untested against the real API.** The suite uses scripted fakes. `--llm` needs
   `ANTHROPIC_API_KEY` and `SETUP_DOCTOR_MODEL`.
+- **Instantly compare mode is wired against documented API v2 shapes and recorded fixtures only.** It has
+  **not** been validated against a real Instantly workspace. Live predictive claims need a real account and
+  real placement tests. Missing warmup scores or placement results are reported as **unknown**, never healthy.
 
 ## HTTP API (optional)
 
@@ -169,25 +173,63 @@ Every `diagnose()` call emits one JSON log line (`setup_doctor.diagnosis`) with
 HTTP path uses live DNS + the deterministic template explainer only — do not send API keys in the
 request.
 
+## Instantly warmup vs inbox placement (optional, read-only)
+
+Compares each connected sending account’s `stat_warmup_score` with inbox-placement test
+`inbox_percent` via Instantly API v2 only (no guessed endpoints):
+
+| Call | Doc |
+|---|---|
+| `GET /accounts` | [list account](https://developer.instantly.ai/api-reference/account/list-account) |
+| `POST /accounts/warmup-analytics` | [warmup analytics](https://developer.instantly.ai/api-reference/account/get-warmup-analytics) |
+| `GET /inbox-placement-tests` | [list tests](https://developer.instantly.ai/api-reference/inboxplacementtest/list-inbox-placement-test) |
+| `POST /inbox-placement-analytics/stats-by-test-id` | [stats by test id](https://developer.instantly.ai/api-reference/inboxplacementanalytics/retrieve-inbox-placement-analytics-stats-by-test-id) |
+
+Scopes: `accounts:read`, `inbox_placement_tests:read`, `inbox_placement_analytics:read` (or `all:read`).
+Auth: `INSTANTLY_API_KEY` as Bearer ([authorization](https://developer.instantly.ai/getting-started/authorization)).
+Optional mock base: `INSTANTLY_USE_MOCK=true` → `https://developer.instantly.ai/_mock/api/v2`.
+429 responses retry with backoff ([rate limit](https://developer.instantly.ai/getting-started/rate-limit)).
+
+```bash
+export INSTANTLY_API_KEY=…          # never commit; never logged
+python -m setup_doctor --instantly-compare
+python -m setup_doctor --instantly-compare --json
+```
+
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on push/PR for **Python 3.11 and 3.13**:
 `ruff check`, `pytest`, `evals/run_evals.py`, and `evals/mutation_check.py`.
 
+## Quickstart
+
+```bash
+pip install -e ".[dev]"            # pytest, fastapi, httpx, ruff, …
+python -m pytest -q                # 111 tests
+python evals/run_evals.py          # detection + guardrail evals
+python evals/mutation_check.py     # prove the evals can fail
+ruff check src tests evals         # same lint CI runs
+
+python -m setup_doctor mess.test --records examples/mess.json     # offline demo
+python -m setup_doctor yourdomain.com                              # live DNS
+python -m setup_doctor yourdomain.com --llm                        # live DNS + model explanation
+python -m setup_doctor --instantly-compare                         # Instantly API v2 (needs key)
+```
+
 ## What I would build next
 
 1. A labeled set of real domains with human-verified diagnoses, so detection accuracy means something.
-2. Instantly API mode: read each connected account's warmup score and inbox-placement test results through the
-   public API v2 and report how well the score predicts placement. This addresses the widely reported
-   "dashboard looks healthy but mail lands in spam" complaint, and it needs real account data to validate.
+2. Validate Instantly compare mode against a real workspace (placement tests + warmup history), then tighten
+   the mismatch thresholds with measured data rather than the current illustrative cutoffs.
 3. A webhook-driven reply classifier with the same grounding discipline.
 
 ## Layout
 
 ```
-src/setup_doctor/   models, resolver, spf, checks, explain, graph, report, cli, api, observability
+src/setup_doctor/   models, resolver, spf, checks, explain, graph, report, cli, api,
+                    observability, instantly_client, instantly_compare
 evals/              fixtures, fakes, run_evals, mutation_check, RESULTS.md
-tests/              104 pytest tests
+tests/              111 pytest tests
 .github/workflows/  ci.yml (3.11 + 3.13)
 examples/           frozen DNS records for offline demos
 ```
