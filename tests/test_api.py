@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import pytest
+from evals.fixtures import CASES
 from fastapi.testclient import TestClient
 
-from evals.fixtures import CASES
 from setup_doctor.api import (
     _RateLimiter,
     _ResponseCache,

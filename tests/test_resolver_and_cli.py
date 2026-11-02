@@ -2,8 +2,8 @@ import json
 
 import dns.resolver
 import pytest
-
 from evals.fixtures import CASES
+
 from setup_doctor import LiveResolver, ResolverError
 from setup_doctor.cli import main
 

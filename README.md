@@ -81,7 +81,7 @@ strings, not by re-running the verifier (that would be circular).
 (SPF limit / void limit off by one, DKIM/DMARC regressions, verifier checks disabled, fallback removed, and so on).
 All 13 make the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
 
-**Unit tests**: `python -m pytest -q` runs 100 tests.
+**Unit tests**: `python -m pytest -q` runs 104 tests.
 
 ### Checks added in this revision (with sources)
 
@@ -129,19 +129,28 @@ Hostname input is validated to reject IPs, localhost/internal suffixes, schemes,
 strings (SSRF / internal probing). Per-IP rate limiting and a short in-memory response cache are on by default.
 DNS work has a hard timeout; `ResolverError` returns **502** with a clear message and **no** fabricated findings.
 
-### Privacy
+### Privacy and observability
 
-The API does not log request bodies or domain names by default — only aggregate fields (HTTP status, findings
-count, duration, cache hit). Do not put API keys in the request; the free-tool path uses live DNS + the
-deterministic template explainer only.
+Every `diagnose()` call emits one JSON log line (`setup_doctor.diagnosis`) with
+`explanation_source` (`template` / `model_verified` / `template_fallback`), `rejection_reasons`,
+`findings_count`, `duration_ms`, and `domain_hash` (SHA-256 prefix). Plaintext domain names are
+**not** logged unless `SETUP_DOCTOR_LOG_DOMAIN=1`. Request bodies are never logged. The free-tool
+HTTP path uses live DNS + the deterministic template explainer only — do not send API keys in the
+request.
+
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on push/PR for **Python 3.11 and 3.13**:
+`ruff check`, `pytest`, `evals/run_evals.py`, and `evals/mutation_check.py`.
 
 ## Quickstart
 
 ```bash
-pip install -e ".[dev]"            # langgraph, dnspython, pytest, fastapi, httpx
-python -m pytest -q                # 100 tests
+pip install -e ".[dev]"            # pytest, fastapi, httpx, ruff, …
+python -m pytest -q                # 104 tests
 python evals/run_evals.py          # detection + guardrail evals
 python evals/mutation_check.py     # prove the evals can fail
+ruff check src tests evals         # same lint CI runs
 
 python -m setup_doctor mess.test --records examples/mess.json     # offline demo
 python -m setup_doctor yourdomain.com                              # live DNS
@@ -159,8 +168,9 @@ python -m setup_doctor yourdomain.com --llm                        # live DNS + 
 ## Layout
 
 ```
-src/setup_doctor/   models, resolver, spf, checks, explain (+verifier), graph, report, cli, api
-evals/              fixtures (labeled), fakes (scripted model failures), run_evals, mutation_check, RESULTS.md
-tests/              100 pytest tests
+src/setup_doctor/   models, resolver, spf, checks, explain, graph, report, cli, api, observability
+evals/              fixtures, fakes, run_evals, mutation_check, RESULTS.md
+tests/              104 pytest tests
+.github/workflows/  ci.yml (3.11 + 3.13)
 examples/           frozen DNS records for offline demos
 ```

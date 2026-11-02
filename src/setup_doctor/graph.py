@@ -11,6 +11,7 @@ render:   assemble the final report (deterministic render_plan for verified JSON
 """
 from __future__ import annotations
 
+import time
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -24,6 +25,7 @@ from .explain import (
     verify_plan,
 )
 from .models import Finding
+from .observability import log_diagnosis
 from .report import render_markdown
 from .resolver import Resolver
 
@@ -34,6 +36,7 @@ class State(TypedDict, total=False):
     draft: str
     plan_items: list[dict[str, str]]
     explanation: str
+    explanation_source: str
     violations: list[str]
     used_fallback: bool
     report: str
@@ -95,6 +98,7 @@ def build_graph(resolver: Resolver, explainer: Explainer,
         source = "template_fallback" if used_fallback else "model_verified" if model_wrote_it else "template"
         return {
             "explanation": explanation,
+            "explanation_source": source,
             "used_fallback": used_fallback,
             "report": render_markdown(
                 state["domain"], state["findings"], explanation,
@@ -119,5 +123,17 @@ def build_graph(resolver: Resolver, explainer: Explainer,
 
 def diagnose(domain: str, resolver: Resolver, explainer: Explainer | None = None,
              dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS) -> State:
+    domain = domain.strip().lower().rstrip(".")
+    started = time.monotonic()
     app = build_graph(resolver, explainer or TemplateExplainer(), dkim_selectors)
-    return app.invoke({"domain": domain.strip().lower().rstrip(".")})
+    state = app.invoke({"domain": domain})
+    duration_ms = int((time.monotonic() - started) * 1000)
+    log_diagnosis(
+        explanation_source=state.get("explanation_source", "unavailable"),
+        findings_count=len(state.get("findings") or []),
+        duration_ms=duration_ms,
+        rejection_reasons=state.get("violations") or [],
+        domain=domain,
+        cached=False,
+    )
+    return state

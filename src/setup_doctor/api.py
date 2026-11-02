@@ -15,12 +15,12 @@ aggregate counts (status, findings count, duration, cache hit).
 from __future__ import annotations
 
 import ipaddress
-import logging
 import re
 import threading
 import time
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FuturesTimeout
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from typing import Any, Callable
@@ -30,9 +30,8 @@ from pydantic import BaseModel, Field
 
 from .explain import TemplateExplainer
 from .graph import diagnose
+from .observability import log_diagnosis
 from .resolver import LiveResolver, Resolver, ResolverError
-
-log = logging.getLogger("setup_doctor.api")
 
 MAX_DOMAIN_LEN = 253
 DNS_TIMEOUT_SEC = 8.0
@@ -199,12 +198,12 @@ def create_app(
         try:
             domain = validate_hostname(body.domain)
         except ValueError as exc:
-            _log_diag(400, 0, started, cached=False)
+            _log_http(400, started, domain=None)
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
         limiter: _RateLimiter = app.state.rate_limiter
         if not limiter.allow(client_ip):
-            _log_diag(429, 0, started, cached=False)
+            _log_http(429, started, domain=domain)
             raise HTTPException(
                 status_code=429,
                 detail="Rate limit exceeded. Try again in a minute.",
@@ -212,7 +211,15 @@ def create_app(
 
         cached_hit = app.state.cache.get(domain)
         if cached_hit is not None:
-            _log_diag(200, len(cached_hit.findings), started, cached=True)
+            log_diagnosis(
+                explanation_source="unavailable",
+                findings_count=len(cached_hit.findings),
+                duration_ms=int((time.monotonic() - started) * 1000),
+                rejection_reasons=[],
+                domain=domain,
+                cached=True,
+                extra={"http_status": 200},
+            )
             response.headers["X-Cache"] = "HIT"
             return cached_hit
 
@@ -224,13 +231,13 @@ def create_app(
             state = future.result(timeout=app.state.dns_timeout)
         except FuturesTimeout as exc:
             future.cancel()
-            _log_diag(504, 0, started, cached=False)
+            _log_http(504, started, domain=domain)
             raise HTTPException(
                 status_code=504,
                 detail="DNS checks timed out. No diagnosis was produced.",
             ) from exc
         except ResolverError as exc:
-            _log_diag(502, 0, started, cached=False)
+            _log_http(502, started, domain=domain)
             raise HTTPException(
                 status_code=502,
                 detail=(
@@ -240,7 +247,7 @@ def create_app(
             ) from exc
         except ValueError as exc:
             # e.g. NXDOMAIN refused by helper
-            _log_diag(404, 0, started, cached=False)
+            _log_http(404, started, domain=domain)
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 
         payload = DiagnoseResponse(
@@ -250,7 +257,7 @@ def create_app(
             cached=False,
         )
         app.state.cache.set(domain, payload)
-        _log_diag(200, len(payload.findings), started, cached=False)
+        # diagnose() already emitted the structured diagnosis line.
         response.headers["X-Cache"] = "MISS"
         return payload
 
@@ -266,12 +273,17 @@ def _run_diagnose(domain: str, resolver: Resolver) -> dict:
     return diagnose(domain, resolver, TemplateExplainer())
 
 
-def _log_diag(status: int, findings: int, started: float, *, cached: bool) -> None:
-    # Aggregate only — no domain names or request bodies.
+def _log_http(status: int, started: float, *, domain: str | None) -> None:
+    """HTTP-layer failures only (no diagnosis was produced)."""
     duration_ms = int((time.monotonic() - started) * 1000)
-    log.info(
-        "diagnose status=%s findings=%s duration_ms=%s cached=%s",
-        status, findings, duration_ms, cached,
+    log_diagnosis(
+        explanation_source="unavailable",
+        findings_count=0,
+        duration_ms=duration_ms,
+        rejection_reasons=[],
+        domain=domain,
+        cached=False,
+        extra={"http_status": status},
     )
 
 

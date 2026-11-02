@@ -1,7 +1,13 @@
 from evals.fixtures import CASES
+
 from setup_doctor import FixtureResolver
 from setup_doctor.spf import (
-    all_qualifier, count_lookups, count_void_lookups, find_spf_records, has_redirect, uses_ptr,
+    all_qualifier,
+    count_lookups,
+    count_void_lookups,
+    find_spf_records,
+    has_redirect,
+    uses_ptr,
 )
 
 BY_NAME = {c["name"]: c for c in CASES}

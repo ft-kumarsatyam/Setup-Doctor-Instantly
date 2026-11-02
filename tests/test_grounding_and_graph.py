@@ -1,9 +1,9 @@
 import json
 
 import pytest
-
 from evals.fakes import BEHAVIORS, PLANTED_MARKERS
 from evals.fixtures import CASES
+
 from setup_doctor import FixtureResolver, LLMExplainer, TemplateExplainer, diagnose, run_checks, verify_grounding
 from setup_doctor.explain import PROMPT, parse_model_plan, render_plan, verify_plan
 

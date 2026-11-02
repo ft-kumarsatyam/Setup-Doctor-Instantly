@@ -67,7 +67,7 @@ def main() -> int:
         if run_suite(base) != 0:
             print("Baseline suite already fails; fix that first.")
             return 2
-        print(f"baseline: PASS\n")
+        print("baseline: PASS\n")
         for i, (label, rel, old, new) in enumerate(MUTANTS):
             work = Path(tmp) / f"mutant{i}"
             shutil.copytree(base, work)
