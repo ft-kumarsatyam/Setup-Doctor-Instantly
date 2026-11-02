@@ -1,6 +1,8 @@
 from evals.fixtures import CASES
 from setup_doctor import FixtureResolver
-from setup_doctor.spf import all_qualifier, count_lookups, find_spf_records, has_redirect, uses_ptr
+from setup_doctor.spf import (
+    all_qualifier, count_lookups, count_void_lookups, find_spf_records, has_redirect, uses_ptr,
+)
 
 BY_NAME = {c["name"]: c for c in CASES}
 
@@ -56,3 +58,18 @@ def test_helpers_ignore_case_and_whitespace():
     assert has_redirect("v=spf1 REDIRECT=x.test")
     assert uses_ptr("v=spf1 -ptr -all") and uses_ptr("v=spf1 ptr:foo.test -all")
     assert not uses_ptr("v=spf1 include:ptr.test -all")  # 'ptr' inside a domain name is not the mechanism
+
+
+def test_void_lookup_boundary_two_ok_three_flagged():
+    c2 = BY_NAME["spf_void_exactly_2"]
+    c3 = BY_NAME["spf_void_3_includes"]
+    assert count_void_lookups(c2["domain"], FixtureResolver(c2["records"])) == 2
+    assert count_void_lookups(c3["domain"], FixtureResolver(c3["records"])) == 3
+
+
+def test_void_lookups_count_empty_a_and_mx():
+    r = FixtureResolver({
+        "d.test": {"TXT": ["v=spf1 a mx include:gone.test -all"], "MX": [], "A": []},
+    })
+    # a void + mx void + include void = 3
+    assert count_void_lookups("d.test", r) == 3

@@ -74,3 +74,62 @@ def count_lookups(domain: str, resolver: Resolver, _path: tuple[str, ...] = ()) 
             total += sub
             loop = loop or sub_loop
     return total, loop
+
+
+def _mechanism_name_and_target(term: str, domain: str) -> tuple[str, str] | None:
+    """Map a lookup term to (kind, dns_name). kind is include|redirect|a|mx|exists|ptr."""
+    t = term.lstrip(_QUALIFIERS)
+    low = t.lower()
+    if low.startswith("include:"):
+        return "include", t.split(":", 1)[1].rstrip(".")
+    if low.startswith("redirect="):
+        return "redirect", t.split("=", 1)[1].rstrip(".")
+    if low.startswith("exists:"):
+        return "exists", t.split(":", 1)[1].rstrip(".")
+    if low == "ptr" or low.startswith("ptr:"):
+        # PTR void detection needs reverse-DNS; not available on Resolver. Skip.
+        return None
+    for mech in ("a", "mx"):
+        if low == mech or low.startswith(mech + ":") or low.startswith(mech + "/"):
+            if ":" in t:
+                target = t.split(":", 1)[1].split("/", 1)[0].rstrip(".")
+            else:
+                target = domain
+            return mech, target or domain
+    return None
+
+
+def count_void_lookups(domain: str, resolver: Resolver, _path: tuple[str, ...] = ()) -> int:
+    """Count void DNS lookups under RFC 7208 section 4.6.4.
+
+    A void lookup is a DNS query for include/a/mx/exists/redirect that returns
+    no data (NXDOMAIN or NODATA). Receivers SHOULD treat more than two as a
+    permanent error. ptr voids are not counted (no PTR API on Resolver).
+    """
+    domain = domain.lower().rstrip(".")
+    if domain in _path or len(_path) > MAX_DEPTH:
+        return 0
+    records = find_spf_records(resolver.txt(domain))
+    if not records:
+        return 0
+    voids = 0
+    for term in terms(records[0]):
+        if not _is_lookup_term(term):
+            continue
+        parsed = _mechanism_name_and_target(term, domain)
+        if parsed is None:
+            continue
+        kind, target = parsed
+        if kind in ("include", "redirect"):
+            txts = resolver.txt(target)
+            if not txts:
+                voids += 1
+            else:
+                voids += count_void_lookups(target, resolver, _path + (domain,))
+        elif kind == "mx":
+            if not resolver.mx(target):
+                voids += 1
+        elif kind in ("a", "exists"):
+            if not resolver.a(target):
+                voids += 1
+    return voids

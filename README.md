@@ -56,31 +56,47 @@ same code runs against live DNS, or against frozen records in tests and evals.
 
 Reproduce with `python evals/run_evals.py` (writes `evals/RESULTS.md`).
 
-**Detection** against 24 labeled synthetic domains: 24/24 exact finding-set matches, precision 1.000, recall 1.000
-(29 TP, 0 FP, 0 FN). Boundaries are covered (exactly 10 SPF lookups is fine, 11 is flagged; nested includes; include
-loops; bare `all` means `+all`; `redirect=` replaces `all`).
+**Detection** against 31 labeled synthetic domains: 31/31 exact finding-set matches, precision 1.000, recall 1.000
+(34 TP, 0 FP, 0 FN). Boundaries covered include: exactly 10 SPF lookups fine / 11 flagged; exactly 2 SPF void
+lookups fine / 3 flagged; 2048-bit DKIM fine / 1024-bit flagged; nested includes; include loops; bare `all` means
+`+all`; `redirect=` replaces `all`; absent DMARC `sp=` inherits `p=` (not flagged).
 
-**Guardrail**: nine scripted model behaviors run against every fixture that has findings (20 of 24):
+**Guardrail**: nine scripted model behaviors run against every fixture that has findings (24 of 31):
 
 | Model behavior | Result |
 |---|---|
-| faithful JSON rewrite | accepted 20/20 |
-| invents a finding | rejected 20/20 |
-| invents a DNS record | rejected 20/20 |
+| faithful JSON rewrite | accepted 24/24 |
+| invents a finding | rejected 24/24 |
+| invents a DNS record | rejected 24/24 |
 | drops a critical/high finding | rejected 10/10 where one exists |
 | changes a number in an explanation | rejected 2/2 where a lookup count was altered |
-| malformed JSON | rejected 20/20 |
-| duplicate ids | rejected 20/20 |
-| API error, or empty output | rejected 20/20 each |
+| malformed JSON | rejected 24/24 |
+| duplicate ids | rejected 24/24 |
+| API error, or empty output | rejected 24/24 each |
 
 Planted hallucinations delivered to the user: **0**, measured by searching the delivered text for the planted
 strings, not by re-running the verifier (that would be circular).
 
-**Mutation check** (`python evals/mutation_check.py`): 9 deliberate bugs, each injected into a copy of the code
-(SPF limit off by one, verifier checks disabled including numeric claims, fallback removed, and so on). All 9 make
-the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
+**Mutation check** (`python evals/mutation_check.py`): 13 deliberate bugs, each injected into a copy of the code
+(SPF limit / void limit off by one, DKIM/DMARC regressions, verifier checks disabled, fallback removed, and so on).
+All 13 make the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
 
-**Unit tests**: `python -m pytest -q` runs 62 tests.
+**Unit tests**: `python -m pytest -q` runs 74 tests.
+
+### Checks added in this revision (with sources)
+
+- **DKIM_WEAK_KEY** — RSA `p=` shorter than 2048 bits when DER SPKI parses (RFC 8301 §3.2 SHOULD ≥2048).
+- **SPF_VOID_LOOKUPS** — more than 2 void lookups for include/a/mx/exists/redirect (RFC 7208 §4.6.4).
+- **DMARC_SP_NONE** — `sp=none` while `p=quarantine|reject` (RFC 7489 §6.3 subdomain policy).
+- **DMARC_STRICT_ALIGNMENT** — `adkim=s` and/or `aspf=s` (RFC 7489 §6.3; changes subdomain-sending advice).
+
+### Checks considered and rejected
+
+- **BIMI / MTA-STS / TLS-RPT / DNSSEC / ARC** — useful later, but need extra record types and (for BIMI) VMC material we cannot honestly fixture without inventing validation we did not implement.
+- **DMARC `ruf=`** — forensic reports are often unused and raise privacy issues; not actionable for most cold-email setups.
+- **Empty DKIM `p=` (revoked key)** — distinct from weak keys; skipped to keep the key-strength check focused.
+- **SPF `ptr` void lookups** — RFC counts them, but the Resolver has no PTR API; voids for ptr are not counted (ptr is already flagged separately as deprecated).
+- **Ed25519 DKIM key “strength”** — not RSA; bit-length rule does not apply.
 
 ## Known limitations (read before trusting this)
 
@@ -91,6 +107,9 @@ the eval suite fail. That is the evidence the evals are not just rubber-stamping
   nothing about how real-world domains behave. A real labeled set of domains is the first thing I would build next.
 - **DKIM cannot be enumerated.** DNS has no way to list selectors, so the check tries 9 common ones and reports a
   possible false positive for custom selectors (use `--dkim-selector`).
+- **DKIM key size only when parseable.** If `p=` is not valid base64 DER SubjectPublicKeyInfo, key strength is not
+  guessed — no fabricated bit length.
+- **SPF ptr voids not counted.** See rejected checks above.
 - **DNS only.** It does not measure inbox placement, warmup quality, list quality, or sender reputation.
 - **Live mode is verified with stubs, not end to end.** The sandbox this was built in returns NXDOMAIN for every
   name, so I could not run a real lookup against a real domain. Run it on your machine and check a domain you know.
@@ -101,7 +120,7 @@ the eval suite fail. That is the evidence the evals are not just rubber-stamping
 
 ```bash
 pip install -e ".[dev]"            # or: pip install langgraph dnspython pytest
-python -m pytest -q                # 62 tests
+python -m pytest -q                # 74 tests
 python evals/run_evals.py          # detection + guardrail evals
 python evals/mutation_check.py     # prove the evals can fail
 
@@ -123,6 +142,6 @@ python -m setup_doctor yourdomain.com --llm                        # live DNS + 
 ```
 src/setup_doctor/   models, resolver, spf, checks, explain (+verifier), graph, report, cli
 evals/              fixtures (labeled), fakes (scripted model failures), run_evals, mutation_check, RESULTS.md
-tests/              62 pytest tests
+tests/              74 pytest tests
 examples/           frozen DNS records for offline demos
 ```

@@ -11,7 +11,25 @@ show how often real-world domains are misdiagnosed.
 from __future__ import annotations
 
 GOOD_DMARC = "v=DMARC1; p=quarantine; rua=mailto:dmarc@{d}"
-GOOD_DKIM = "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN"
+# 2048-bit RSA SubjectPublicKeyInfo (RFC 8301 SHOULD minimum), generated for fixtures.
+DKIM_P_2048 = (
+    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0WnEGDIPFNH5UG2le9lh"
+    "EVoIylPAbo71yySYoMAYmZ94+vXDrZSW2aNgJtmlY5nR4UIXaMx8WpgGdlbv5aDu"
+    "33StF6+Mbd4vvAWC7wFF7KDEE6TugTZNME3YNlzN01HAtZfUBeNQgqVtwAQwS1QS"
+    "/ygP3zYFC3o892C8Jz1Jp+Si4cM3BeylvBm1OQZbU+SapxM15+q3XzQdiNS+6EzA"
+    "WUCD7Ika9lwh8ES5Cuyk1EmFUmjbHX1fmKQ6NYGvK4M8LoIImN5X9J+EI8ZXW7Ks"
+    "2eKX4OvYtuv+4xumUmn4Y4nj4e8FsrNdqW7X+ZVKhfETlNvxTBILASoyvmqScwAH"
+    "MwIDAQAB"
+)
+# 1024-bit RSA key — still common, but below the RFC 8301 SHOULD size.
+DKIM_P_1024 = (
+    "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzX7QtE91+aVHFcIV82S12Thrc"
+    "VxO0Dh39MurQD37tT8mY5FxEzl8zzVsfbFJsH8c6bOqrd7SIZTiPQNaO2WI/dqC6"
+    "r+VULdITDNF8ZbN0lpkwYhWymc22cAAYgRwHPf7tI2yFm/RsxxhANDQsbuXgW2y9"
+    "CF90eo/6kEq4C9yAFwIDAQAB"
+)
+GOOD_DKIM = f"v=DKIM1; k=rsa; p={DKIM_P_2048}"
+WEAK_DKIM = f"v=DKIM1; k=rsa; p={DKIM_P_1024}"
 GOOGLE_SPF = "v=spf1 include:_spf.google.com ~all"
 
 
@@ -76,7 +94,8 @@ case("spf_nested_lookups", "nested.test",
          "n4.test": {"TXT": ["v=spf1 a mx -all"]},
          "n5.test": {"TXT": ["v=spf1 a -all"]},
      }),
-     ["SPF_TOO_MANY_LOOKUPS"], "nested includes, hand-counted: root 3 + n1 12 = 15 lookups")
+     ["SPF_TOO_MANY_LOOKUPS", "SPF_VOID_LOOKUPS"],
+     "nested includes, hand-counted: 15 lookups; a/mx on TXT-only leaves are void (>2)")
 
 case("spf_include_loop", "loop.test",
      make("loop.test", spf=["v=spf1 include:loopa.test -all"], extra={
@@ -129,11 +148,42 @@ case("mx_missing", "nomx.test", make("nomx.test", mx=[]), ["MX_MISSING"])
 
 case("dkim_missing", "nodkim.test", make("nodkim.test", dkim=[]), ["DKIM_NOT_FOUND"])
 
+case("dkim_weak_1024", "weakdkim.test", make("weakdkim.test", dkim=[WEAK_DKIM]),
+     ["DKIM_WEAK_KEY"], "RFC 8301 SHOULD >=2048; 1024-bit must be flagged")
+
+case("dkim_strong_2048", "strongdkim.test", make("strongdkim.test", dkim=[GOOD_DKIM]),
+     [], "boundary: exactly 2048-bit RSA must NOT be flagged")
+
 case("dkim_microsoft_selector_ok", "m365.test",
      make("m365.test", spf=["v=spf1 include:spf.protection.outlook.com ~all"], dkim=[],
           extra={"spf.protection.outlook.com": {"TXT": ["v=spf1 ip4:40.92.0.0/15 -all"]},
                  "selector1._domainkey.m365.test": {"TXT": [GOOD_DKIM]}}),
      [], "selector1 is a Microsoft 365 default and must be found")
+
+case("spf_void_3_includes", "void3.test",
+     make("void3.test",
+          spf=["v=spf1 include:missing1.test include:missing2.test include:missing3.test -all"]),
+     ["SPF_VOID_LOOKUPS"], "three includes to empty names exceed the RFC 7208 void limit of 2")
+
+case("spf_void_exactly_2", "void2.test",
+     make("void2.test",
+          spf=["v=spf1 include:missing1.test include:missing2.test -all"]),
+     [], "boundary: exactly two void lookups must NOT be flagged")
+
+case("dmarc_sp_none_under_reject", "dmarcsp.test",
+     make("dmarcsp.test",
+          dmarc=["v=DMARC1; p=reject; sp=none; rua=mailto:r@dmarcsp.test"]),
+     ["DMARC_SP_NONE"], "sp=none under p=reject leaves subdomains unenforced")
+
+case("dmarc_sp_inherits_ok", "dmarcspinherit.test",
+     make("dmarcspinherit.test",
+          dmarc=["v=DMARC1; p=reject; rua=mailto:r@dmarcspinherit.test"]),
+     [], "absent sp= inherits p= and must NOT be flagged")
+
+case("dmarc_strict_alignment", "dmarcstrict.test",
+     make("dmarcstrict.test",
+          dmarc=["v=DMARC1; p=quarantine; adkim=s; aspf=s; rua=mailto:r@dmarcstrict.test"]),
+     ["DMARC_STRICT_ALIGNMENT"], "strict adkim/aspf changes advice for subdomain sending")
 
 case("nxdomain_everything_missing", "ghost.test", {},
      ["DKIM_NOT_FOUND", "DMARC_MISSING", "MX_MISSING", "SPF_MISSING"],

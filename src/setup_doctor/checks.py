@@ -7,6 +7,10 @@ complaints low).
 """
 from __future__ import annotations
 
+import base64
+import binascii
+import re
+
 from . import spf
 from .models import Finding, prioritize
 from .resolver import Resolver
@@ -17,6 +21,8 @@ DEFAULT_DKIM_SELECTORS = (
 
 SPF_G = "`v=spf1 include:_spf.google.com ~all`"
 SPF_M = "`v=spf1 include:spf.protection.outlook.com ~all`"
+
+_DKIM_TAG_RE = re.compile(r"([a-z]+)=([^;]*)", re.I)
 
 
 def check_spf(domain: str, resolver: Resolver) -> list[Finding]:
@@ -51,6 +57,19 @@ def check_spf(domain: str, resolver: Resolver) -> list[Finding]:
             "Remove unused include: entries, replace include: chains with ip4:/ip6: ranges (SPF flattening), "
             "and use dedicated sending domains with a minimal SPF record.",
             {"lookups": str(lookups), "loop": str(loop).lower(), "record": record},
+        ))
+
+    # RFC 7208 §4.6.4: more than two void lookups SHOULD cause PermError.
+    voids = spf.count_void_lookups(domain, resolver)
+    if voids > 2:
+        out.append(Finding(
+            "SPF_VOID_LOOKUPS", "medium",
+            f"SPF causes {voids} void DNS lookups (limit is 2)",
+            "RFC 7208 section 4.6.4: DNS lookups that return nothing (NXDOMAIN/NODATA) for "
+            "include/a/mx/exists/redirect count as void lookups; more than two is a permanent error, "
+            "so SPF fails for every message.",
+            "Remove or fix include:/a/mx/exists/redirect= targets that do not resolve, then re-check.",
+            {"void_lookups": str(voids), "record": record},
         ))
 
     q = spf.all_qualifier(record)
@@ -90,12 +109,85 @@ def check_spf(domain: str, resolver: Resolver) -> list[Finding]:
     return out
 
 
+def _parse_dkim_tags(record: str) -> dict[str, str]:
+    return {k.lower(): v.strip() for k, v in _DKIM_TAG_RE.findall(record)}
+
+
+def _der_len(data: bytes, i: int) -> tuple[int, int]:
+    length = data[i]
+    i += 1
+    if length & 0x80:
+        n = length & 0x7F
+        length = int.from_bytes(data[i:i + n], "big")
+        i += n
+    return length, i
+
+
+def dkim_rsa_key_bits(p_b64: str) -> int | None:
+    """Return RSA modulus bit length from a DKIM p= value, or None if unknown.
+
+    DKIM RSA keys (RFC 6376 / RFC 8301) publish the public key as base64 DER
+    SubjectPublicKeyInfo. We only report a size when that structure parses.
+    """
+    cleaned = "".join(p_b64.split())
+    if not cleaned or cleaned == "":
+        return None
+    try:
+        raw = base64.b64decode(cleaned, validate=False)
+    except (binascii.Error, ValueError):
+        return None
+    try:
+        if not raw or raw[0] != 0x30:
+            return None
+        _, i = _der_len(raw, 1)
+        if i >= len(raw) or raw[i] != 0x30:  # AlgorithmIdentifier
+            return None
+        alen, j = _der_len(raw, i + 1)
+        i = j + alen
+        if i >= len(raw) or raw[i] != 0x03:  # subjectPublicKey BIT STRING
+            return None
+        _, i = _der_len(raw, i + 1)
+        if i >= len(raw) or raw[i] != 0x00:
+            return None
+        i += 1
+        if i >= len(raw) or raw[i] != 0x30:  # RSAPublicKey
+            return None
+        _, i = _der_len(raw, i + 1)
+        if i >= len(raw) or raw[i] != 0x02:  # modulus INTEGER
+            return None
+        mlen, i = _der_len(raw, i + 1)
+        modulus = raw[i:i + mlen]
+        if not modulus:
+            return None
+        if modulus[0] == 0:
+            modulus = modulus[1:]
+        return len(modulus) * 8
+    except (IndexError, ValueError):
+        return None
+
+
 def check_dkim(domain: str, resolver: Resolver, selectors: tuple[str, ...]) -> list[Finding]:
     for sel in selectors:
         for txt in resolver.txt(f"{sel}._domainkey.{domain}"):
             low = txt.lower()
-            if "v=dkim1" in low or "p=" in low:
-                return []
+            if "v=dkim1" not in low and "p=" not in low:
+                continue
+            tags = _parse_dkim_tags(txt)
+            # RFC 8301 §3.2: Signers SHOULD use RSA keys of at least 2048 bits.
+            k = tags.get("k", "rsa").lower()
+            if k == "rsa" and "p" in tags:
+                bits = dkim_rsa_key_bits(tags["p"])
+                if bits is not None and bits < 2048:
+                    return [Finding(
+                        "DKIM_WEAK_KEY", "medium",
+                        f"DKIM RSA key at selector '{sel}' is {bits} bits (below 2048)",
+                        "RFC 8301 recommends RSA keys of at least 2048 bits; shorter keys are easier to "
+                        "attack offline and some receivers weigh key length when judging signatures.",
+                        "Generate a new 2048-bit (or larger) DKIM key in your mailbox provider, publish "
+                        f"the new TXT at {sel}._domainkey.{domain}, and switch signing to it.",
+                        {"selector": sel, "bits": str(bits), "record": txt},
+                    )]
+            return []
     return [Finding(
         "DKIM_NOT_FOUND", "medium",
         f"No DKIM key found at {len(selectors)} common selectors for {domain}",
@@ -169,6 +261,39 @@ def check_dmarc(domain: str, resolver: Resolver) -> list[Finding]:
                 "Raise pct to 100 once reports look clean.",
                 {"record": record, "pct": str(pct)},
             ))
+        # RFC 7489 §6.3: sp= is the subdomain policy; absent means inherit p=.
+        # Flag only when sp=none under a stronger organizational policy — that
+        # leaves mail.example.com unprotected while example.com is locked down.
+        sp = tags.get("sp", "").lower()
+        if sp == "none" and policy in ("quarantine", "reject"):
+            out.append(Finding(
+                "DMARC_SP_NONE", "medium",
+                f"DMARC subdomain policy is sp=none while p={policy}",
+                "Subdomains inherit no enforcement, so spoofed mail from host.yourdomain.com can still land "
+                "while the apex policy looks strict.",
+                f"Set `sp={policy}` (or omit sp so it inherits p=), unless you intentionally monitor subdomains only.",
+                {"record": record, "p": policy, "sp": sp},
+            ))
+
+    # RFC 7489 §6.3: adkim/aspf default to relaxed (r). Strict (s) fails when the
+    # From domain is a subdomain of the aligned SPF/DKIM domain — common for cold email.
+    strict_bits = []
+    if tags.get("adkim", "r").lower() == "s":
+        strict_bits.append("adkim=s")
+    if tags.get("aspf", "r").lower() == "s":
+        strict_bits.append("aspf=s")
+    if strict_bits:
+        joined = " and ".join(strict_bits)
+        out.append(Finding(
+            "DMARC_STRICT_ALIGNMENT", "low",
+            f"DMARC uses strict alignment ({joined})",
+            "Strict alignment requires an exact organizational-domain match; sending from a subdomain "
+            "(e.g. news.example.com) while SPF/DKIM cover example.com will fail DMARC.",
+            "Switch to relaxed alignment (`adkim=r; aspf=r`, the defaults) unless every From domain "
+            "exactly matches your SPF and DKIM domains.",
+            {"record": record, "tags": joined},
+        ))
+
     if "rua" not in tags:
         out.append(Finding(
             "DMARC_NO_REPORTING", "info",

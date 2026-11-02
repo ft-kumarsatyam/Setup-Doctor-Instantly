@@ -13,10 +13,11 @@ from typing import Protocol
 class Resolver(Protocol):
     def txt(self, name: str) -> list[str]: ...
     def mx(self, name: str) -> list[str]: ...
+    def a(self, name: str) -> list[str]: ...
 
 
 class FixtureResolver:
-    """records = {"example.test": {"TXT": ["v=spf1 ..."], "MX": ["mx.example.test"]}}"""
+    """records = {"example.test": {"TXT": [...], "MX": [...], "A": ["192.0.2.1"]}}"""
 
     def __init__(self, records: dict[str, dict[str, list[str]]]):
         self._records = {k.lower().rstrip("."): v for k, v in records.items()}
@@ -26,6 +27,9 @@ class FixtureResolver:
 
     def mx(self, name: str) -> list[str]:
         return list(self._records.get(name.lower().rstrip("."), {}).get("MX", []))
+
+    def a(self, name: str) -> list[str]:
+        return list(self._records.get(name.lower().rstrip("."), {}).get("A", []))
 
 
 class ResolverError(RuntimeError):
@@ -80,3 +84,6 @@ class LiveResolver:
 
     def mx(self, name: str) -> list[str]:
         return [str(r.exchange).rstrip(".") for r in self._query(name, "MX")]
+
+    def a(self, name: str) -> list[str]:
+        return [r.address for r in self._query(name, "A")]

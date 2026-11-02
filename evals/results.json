@@ -1,15 +1,18 @@
 {
   "detection": {
-    "cases": 24,
-    "exact_match": 24,
+    "cases": 31,
+    "exact_match": 31,
     "precision": 1.0,
     "recall": 1.0,
-    "tp": 29,
+    "tp": 34,
     "fp": 0,
     "fn": 0,
     "per_id": {
       "DKIM_NOT_FOUND": {
         "tp": 3
+      },
+      "DKIM_WEAK_KEY": {
+        "tp": 1
       },
       "DMARC_INVALID": {
         "tp": 1
@@ -28,6 +31,12 @@
       },
       "DMARC_POLICY_NONE": {
         "tp": 3
+      },
+      "DMARC_SP_NONE": {
+        "tp": 1
+      },
+      "DMARC_STRICT_ALIGNMENT": {
+        "tp": 1
       },
       "MX_MISSING": {
         "tp": 3
@@ -52,6 +61,9 @@
       },
       "SPF_TOO_MANY_LOOKUPS": {
         "tp": 3
+      },
+      "SPF_VOID_LOOKUPS": {
+        "tp": 2
       }
     },
     "misses": []
@@ -59,69 +71,69 @@
   "guardrail": {
     "behaviors": {
       "faithful": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
         "exercised": 0,
-        "accepted": 20
+        "accepted": 24
       },
       "hallucinated_finding": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       },
       "hallucinated_record": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       },
       "drops_severe_finding": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
         "exercised": 10,
         "fell_back": 10,
-        "accepted": 10
+        "accepted": 14
       },
       "misstates_numbers": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
         "exercised": 2,
-        "accepted": 18,
+        "accepted": 22,
         "fell_back": 2
       },
       "malformed_json": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       },
       "duplicate_ids": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       },
       "raises": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       },
       "empty": {
-        "skipped_no_findings": 4,
-        "with_findings": 20,
+        "skipped_no_findings": 7,
+        "with_findings": 24,
         "with_severe": 10,
-        "exercised": 20,
-        "fell_back": 20
+        "exercised": 24,
+        "fell_back": 24
       }
     }
   },
