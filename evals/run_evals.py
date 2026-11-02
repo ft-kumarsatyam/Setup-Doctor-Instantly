@@ -106,10 +106,12 @@ def check_expectations(det: dict, guard: dict) -> list[str]:
             bad.append(f"{name}: every draft should be rejected")
     if b["drops_severe_finding"].get("fell_back", 0) != b["drops_severe_finding"]["with_severe"]:
         bad.append("drops_severe_finding: should be rejected exactly when a critical/high finding exists")
+    if b["misstates_numbers"].get("fell_back", 0) != b["misstates_numbers"].get("exercised", 0):
+        bad.append("misstates_numbers: should be rejected exactly when a number was changed")
     for name, row in b.items():
         if row.get("planted_hallucinations_delivered", 0):
             bad.append(f"{name}: planted hallucination reached the user")
-        if row.get("delivered_failing_verifier", 0) and name != "misstates_numbers":
+        if row.get("delivered_failing_verifier", 0):
             bad.append(f"{name}: delivered text fails verification")
     return bad
 
@@ -138,7 +140,7 @@ def render(det: dict, guard: dict, failures: list[str]) -> str:
         "hallucinated_finding": "reject all",
         "hallucinated_record": "reject all",
         "drops_severe_finding": "reject iff a critical/high finding exists",
-        "misstates_numbers": "NOT caught (known gap)",
+        "misstates_numbers": "reject when number changed",
         "raises": "reject all",
         "empty": "reject all",
     }
@@ -146,10 +148,11 @@ def render(det: dict, guard: dict, failures: list[str]) -> str:
         L.append(f"| `{name}` | {r.get('exercised', 0)} | {r.get('accepted', 0)} | {r.get('fell_back', 0)} | "
                  f"{r.get('planted_hallucinations_delivered', 0) if name in PLANTED_MARKERS else 'n/a'} | {expect[name]} |")
     ms = guard["behaviors"]["misstates_numbers"]
-    L += ["", f"Known gap: `misstates_numbers` alters a lookup count while citing real ids and records. "
-          f"It changed the text in only {ms.get('exercised', 0)} fixtures, and the verifier accepted every one, "
-          "because it checks ids and DNS records, not numeric claims. "
-          "Closing it means extracting numbers from the draft and comparing them with finding evidence.", ""]
+    L += ["", f"`misstates_numbers` alters a lookup count while citing real ids and records. "
+          f"It changed the text in {ms.get('exercised', 0)} fixtures; the verifier rejected "
+          f"{ms.get('fell_back', 0)} of those and fell back to the template. "
+          "Numeric grounding covers allow-listed claim shapes (lookup counts, pct=, "
+          "\"N% of mail\", limit is N) against finding titles/evidence only.", ""]
     return "\n".join(L)
 
 

@@ -31,6 +31,8 @@ MUTANTS = [
      "if _RECORD_RE.search(code) and code.lower() not in allowed:", "if False:"),
     ("verifier ignores dropped severe findings", "src/setup_doctor/explain.py",
      'if f.severity in ("critical", "high") and f.id not in cited', "if False"),
+    ("verifier ignores ungrounded numeric claims", "src/setup_doctor/explain.py",
+     "if n not in allowed_nums:", "if False:"),
     ("graph never falls back", "src/setup_doctor/graph.py",
      'return "fallback" if state.get("violations") else "render"', 'return "render"'),
 ]
@@ -46,7 +48,12 @@ def main() -> int:
     survivors = []
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp) / "baseline"
-        shutil.copytree(ROOT, base, ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache"))
+        shutil.copytree(
+            ROOT, base,
+            ignore=shutil.ignore_patterns(
+                "__pycache__", ".pytest_cache", ".venv", "venv", ".git", ".cursor",
+            ),
+        )
         if run_suite(base) != 0:
             print("Baseline suite already fails; fix that first.")
             return 2

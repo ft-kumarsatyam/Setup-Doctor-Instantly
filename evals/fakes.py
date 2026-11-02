@@ -47,8 +47,8 @@ def drops_severe_finding(prompt: str) -> str:
 
 
 def misstates_numbers(prompt: str) -> str:
-    """Cites real ids and real records but changes a number. KNOWN GAP: the verifier
-    checks ids and records, not numeric claims, so this is not caught."""
+    """Cites real ids and real records but changes a lookup count. The numeric
+    grounding check must reject this and trigger fallback."""
     text = faithful(prompt)
     return re.sub(r"needs (\d+) DNS lookups", lambda m: f"needs {int(m.group(1)) + 3} DNS lookups", text)
 

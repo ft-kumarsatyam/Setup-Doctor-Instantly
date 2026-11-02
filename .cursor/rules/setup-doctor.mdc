@@ -1,0 +1,50 @@
+---
+description: Setup Doctor project context, architecture, and non-negotiable rules
+alwaysApply: true
+---
+
+# Setup Doctor — project context and rules
+
+## What this project is
+
+Setup Doctor diagnoses the DNS side of a cold-email setup (SPF, DKIM, DMARC, MX) and explains the fix order in plain English. It is a portfolio project for an AI Engineer application at Instantly (a cold-email platform), so quality, honesty and verifiability matter more than feature count.
+
+The core idea, which every change must preserve:
+
+The LLM never decides what is wrong. Deterministic code produces Findings. The model only rewrites them into a plan. A verifier rejects any draft that cites a finding or DNS record the checks did not produce, and the workflow then falls back to a deterministic template. A hallucination must never reach the user.
+
+## Architecture (LangGraph)
+
+```
+check -> explain -> verify --(grounded)--> render
+                       \--(violations / empty / model error)--> fallback -> render
+```
+
+- `src/setup_doctor/models.py`: Finding dataclass (id, severity, title, why, fix, evidence) and sorting.
+- `resolver.py`: Resolver protocol, FixtureResolver (tests/evals), LiveResolver (dnspython), ResolverError. NXDOMAIN/NoAnswer mean "absent"; timeouts and other failures raise. An outage must never look like a missing record.
+- `spf.py`: SPF parsing and the RFC 7208 10-lookup counter (recursive, loop-safe, duplicates charged twice).
+- `checks.py`: all SPF/DKIM/DMARC/MX checks. No LLM calls here, ever.
+- `explain.py`: TemplateExplainer, LLMExplainer(complete), anthropic_completer, and verify_grounding.
+- `graph.py`: the LangGraph workflow. `report.py`: Markdown report. `cli.py`: command line.
+- `evals/`: fixtures.py (24 labeled synthetic domains), fakes.py (scripted model failure modes), run_evals.py (detection + guardrail evals, exits non-zero on any broken expectation), mutation_check.py (injects bugs and requires the evals to fail).
+- `tests/`: pytest tests.
+
+## Commands (run these yourself; never claim a result you did not run)
+
+```
+python -m pytest -q
+python evals/run_evals.py
+python evals/mutation_check.py
+```
+
+## Non-negotiable rules
+
+- Never weaken a test or eval to make it pass. Do not edit a fixture's expected labels, loosen an assertion, or delete a mutant to get green. If a test fails, fix the code, or explain in your reply why the test is wrong.
+- Every new check needs three things: a labeled fixture (including a boundary case), a unit test, and a mutant in `evals/mutation_check.py` that proves the evals catch a regression in it.
+- The model is never the source of truth. Do not let model output create, remove or re-rank findings.
+- Outage is not absence. Any new resolver or API code must distinguish "does not exist" from "could not ask".
+- No fabricated numbers. Do not invent metrics, accuracy figures, customer data or API behavior. If you do not know an API's shape, read its documentation first and say what you could not verify.
+- Keep README claims equal to measured results. After any change, re-run the suite and update the README and `evals/RESULTS.md` numbers so they match, including the Known limitations section.
+- No secrets in code, logs, tests or output. API keys come from environment variables only and are never printed.
+- Small, reviewable steps. One numbered task per commit. Do not refactor unrelated code.
+- Python 3.10+, type hints, no new dependency without a stated reason.

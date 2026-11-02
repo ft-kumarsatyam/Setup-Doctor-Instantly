@@ -5,7 +5,7 @@ import pytest
 from evals.fakes import BEHAVIORS, PLANTED_MARKERS
 from evals.fixtures import CASES
 from setup_doctor import FixtureResolver, LLMExplainer, TemplateExplainer, diagnose, run_checks, verify_grounding
-from setup_doctor.models import Finding
+from setup_doctor.explain import PROMPT
 
 WORST = next(c for c in CASES if c["name"] == "worst_case_combo")
 CLEAN = next(c for c in CASES if c["name"] == "clean")
@@ -88,9 +88,22 @@ def test_prompt_contains_only_findings_not_raw_dns():
     assert {p["id"] for p in payload} == {f.id for f in findings_for(WORST)}
 
 
-def test_known_gap_numeric_misstatement_is_not_caught():
-    """Documented limitation, pinned so a future fix is a deliberate change."""
+def test_numeric_misstatement_is_rejected():
+    """Lookup-count lies must fail grounding and never reach the user."""
     c = next(c for c in CASES if c["name"] == "spf_11_lookups")
     state = diagnose(c["domain"], FixtureResolver(c["records"]), LLMExplainer(BEHAVIORS["misstates_numbers"]))
-    assert state["used_fallback"] is False
-    assert "needs 14 DNS lookups" in state["explanation"]  # real value is 11
+    assert state["used_fallback"] is True
+    assert "needs 14 DNS lookups" not in state["explanation"]
+    assert verify_grounding(state["explanation"], state["findings"]) == []
+
+
+def test_faithful_and_template_pass_numeric_grounding_for_all_fixtures():
+    for c in CASES:
+        fs = findings_for(c)
+        if not fs:
+            continue
+        assert verify_grounding(TemplateExplainer().explain(fs), fs) == []
+        draft = BEHAVIORS["faithful"](
+            PROMPT.format(findings=json.dumps([f.to_dict() for f in fs], indent=2))
+        )
+        assert verify_grounding(draft, fs) == []

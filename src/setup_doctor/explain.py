@@ -17,6 +17,15 @@ from .models import Finding
 _ID_RE = re.compile(r"\[([A-Z][A-Z0-9_]+)\]")
 _CODE_RE = re.compile(r"`([^`]+)`")
 _RECORD_RE = re.compile(r"v=(spf1|dmarc1|dkim1)", re.I)
+_NUM_RE = re.compile(r"\d+")
+# Allow-listed claim shapes only — not arbitrary digits in prose or fix advice.
+_NUMERIC_CLAIM_RES = [
+    re.compile(r"needs (\d+) DNS lookups", re.I),
+    re.compile(r"limit is (\d+)", re.I),
+    re.compile(r"pct\s*=\s*(\d+)", re.I),
+    re.compile(r"only (\d+)%", re.I),
+    re.compile(r"(\d+)% of mail", re.I),
+]
 
 
 class Explainer(Protocol):
@@ -86,6 +95,16 @@ def anthropic_completer(model: str | None = None, max_tokens: int = 1200) -> Cal
     return complete
 
 
+def _allowed_numbers(findings: list[Finding]) -> set[int]:
+    """Integers that appear in finding titles or evidence (ground truth only)."""
+    allowed: set[int] = set()
+    for f in findings:
+        for s in (f.title, *f.evidence.values()):
+            for m in _NUM_RE.findall(s):
+                allowed.add(int(m))
+    return allowed
+
+
 def verify_grounding(text: str, findings: list[Finding]) -> list[str]:
     """Return a list of violations; empty means the text is grounded.
 
@@ -93,6 +112,8 @@ def verify_grounding(text: str, findings: list[Finding]) -> list[str]:
     2. Every critical/high finding must be cited.
     3. Every backticked DNS record (v=spf1 / v=DMARC1 / v=DKIM1) must appear
        in some finding's fix or evidence.
+    4. Allow-listed numeric claims (lookup counts, pct=, "N% of mail", etc.)
+       must match a number in some finding's title or evidence.
     """
     ids = {f.id for f in findings}
     cited = set(_ID_RE.findall(text))
@@ -108,4 +129,10 @@ def verify_grounding(text: str, findings: list[Finding]) -> list[str]:
     for code in _CODE_RE.findall(text):
         if _RECORD_RE.search(code) and code.lower() not in allowed:
             violations.append(f"record not grounded in findings: {code}")
+    allowed_nums = _allowed_numbers(findings)
+    for pat in _NUMERIC_CLAIM_RES:
+        for m in pat.finditer(text):
+            n = int(m.group(1))
+            if n not in allowed_nums:
+                violations.append(f"numeric claim not grounded: {m.group(0)}")
     return violations

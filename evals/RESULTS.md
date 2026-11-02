@@ -37,8 +37,8 @@ Each scripted model behavior is run against every fixture that has findings (20 
 | `hallucinated_finding` | 20 | 0 | 20 | 0 | reject all |
 | `hallucinated_record` | 20 | 0 | 20 | 0 | reject all |
 | `drops_severe_finding` | 10 | 10 | 10 | n/a | reject iff a critical/high finding exists |
-| `misstates_numbers` | 2 | 20 | 0 | n/a | NOT caught (known gap) |
+| `misstates_numbers` | 2 | 18 | 2 | n/a | reject when number changed |
 | `raises` | 20 | 0 | 20 | n/a | reject all |
 | `empty` | 20 | 0 | 20 | n/a | reject all |
 
-Known gap: `misstates_numbers` alters a lookup count while citing real ids and records. It changed the text in only 2 fixtures, and the verifier accepted every one, because it checks ids and DNS records, not numeric claims. Closing it means extracting numbers from the draft and comparing them with finding evidence.
+`misstates_numbers` alters a lookup count while citing real ids and records. It changed the text in 2 fixtures; the verifier rejected 2 of those and fell back to the template. Numeric grounding covers allow-listed claim shapes (lookup counts, pct=, "N% of mail", limit is N) against finding titles/evidence only.

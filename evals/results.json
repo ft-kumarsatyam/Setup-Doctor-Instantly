@@ -92,7 +92,8 @@
         "with_findings": 20,
         "with_severe": 10,
         "exercised": 2,
-        "accepted": 20
+        "accepted": 18,
+        "fell_back": 2
       },
       "raises": {
         "skipped_no_findings": 4,
