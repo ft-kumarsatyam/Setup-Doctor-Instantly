@@ -81,7 +81,7 @@ strings, not by re-running the verifier (that would be circular).
 (SPF limit / void limit off by one, DKIM/DMARC regressions, verifier checks disabled, fallback removed, and so on).
 All 13 make the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
 
-**Unit tests**: `python -m pytest -q` runs 74 tests.
+**Unit tests**: `python -m pytest -q` runs 100 tests.
 
 ### Checks added in this revision (with sources)
 
@@ -113,14 +113,33 @@ All 13 make the eval suite fail. That is the evidence the evals are not just rub
 - **DNS only.** It does not measure inbox placement, warmup quality, list quality, or sender reputation.
 - **Live mode is verified with stubs, not end to end.** The sandbox this was built in returns NXDOMAIN for every
   name, so I could not run a real lookup against a real domain. Run it on your machine and check a domain you know.
+  The HTTP API's live path was likewise not exercised end to end here; tests inject `FixtureResolver` only.
 - **The Anthropic adapter is untested against the real API.** The suite uses scripted fakes. `--llm` needs
   `ANTHROPIC_API_KEY` and `SETUP_DOCTOR_MODEL`.
+
+## HTTP API (optional)
+
+```bash
+pip install -e ".[api]"            # adds fastapi + uvicorn (reason: free-tool HTTP surface)
+uvicorn setup_doctor.api:app --reload
+# POST /diagnose  {"domain": "example.com"}  -> {domain, findings, report, cached}
+```
+
+Hostname input is validated to reject IPs, localhost/internal suffixes, schemes, paths, ports, and over-long
+strings (SSRF / internal probing). Per-IP rate limiting and a short in-memory response cache are on by default.
+DNS work has a hard timeout; `ResolverError` returns **502** with a clear message and **no** fabricated findings.
+
+### Privacy
+
+The API does not log request bodies or domain names by default — only aggregate fields (HTTP status, findings
+count, duration, cache hit). Do not put API keys in the request; the free-tool path uses live DNS + the
+deterministic template explainer only.
 
 ## Quickstart
 
 ```bash
-pip install -e ".[dev]"            # or: pip install langgraph dnspython pytest
-python -m pytest -q                # 74 tests
+pip install -e ".[dev]"            # langgraph, dnspython, pytest, fastapi, httpx
+python -m pytest -q                # 100 tests
 python evals/run_evals.py          # detection + guardrail evals
 python evals/mutation_check.py     # prove the evals can fail
 
@@ -140,8 +159,8 @@ python -m setup_doctor yourdomain.com --llm                        # live DNS + 
 ## Layout
 
 ```
-src/setup_doctor/   models, resolver, spf, checks, explain (+verifier), graph, report, cli
+src/setup_doctor/   models, resolver, spf, checks, explain (+verifier), graph, report, cli, api
 evals/              fixtures (labeled), fakes (scripted model failures), run_evals, mutation_check, RESULTS.md
-tests/              74 pytest tests
+tests/              100 pytest tests
 examples/           frozen DNS records for offline demos
 ```

@@ -10,8 +10,12 @@ requires-python = ">=3.10"
 dependencies = ["langgraph", "dnspython"]
 
 [project.optional-dependencies]
+# anthropic: optional LLM explanation adapter (--llm).
 llm = ["anthropic"]
-dev = ["pytest"]
+# fastapi + uvicorn: thin free-tool HTTP API (src/setup_doctor/api.py).
+api = ["fastapi>=0.110", "uvicorn>=0.27"]
+# httpx: Starlette/FastAPI TestClient. fastapi: import api in tests.
+dev = ["pytest", "fastapi>=0.110", "httpx>=0.27"]
 
 [project.scripts]
 setup-doctor = "setup_doctor.cli:main"
