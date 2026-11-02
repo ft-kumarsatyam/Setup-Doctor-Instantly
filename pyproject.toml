@@ -5,17 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "setup-doctor"
 version = "0.1.0"
-description = "Grounded diagnosis of cold-email DNS setup: deterministic checks, LangGraph workflow, LLM explanation with a hallucination guardrail."
+description = "DNS diagnosis for cold-email setup (SPF/DKIM/DMARC/MX)."
 requires-python = ">=3.10"
 dependencies = ["langgraph", "dnspython"]
 
 [project.optional-dependencies]
-# anthropic: optional LLM explanation adapter (--llm).
 llm = ["anthropic"]
-# fastapi + uvicorn: thin free-tool HTTP API (src/setup_doctor/api.py).
 api = ["fastapi>=0.110", "uvicorn>=0.27"]
-# httpx: Starlette/FastAPI TestClient. fastapi: import api in tests.
-# ruff: lint in CI (.github/workflows/ci.yml).
 dev = ["pytest", "fastapi>=0.110", "httpx>=0.27", "ruff>=0.6"]
 
 [tool.ruff]
@@ -24,11 +20,9 @@ src = ["src", "tests", "evals"]
 line-length = 120
 
 [tool.ruff.lint]
-# Keep rules light: this is a portfolio repo; avoid mass reformatting.
 select = ["E", "F", "I", "W"]
-ignore = [
-  "E501",  # line length — existing prose/docstrings are long on purpose
-]
+ignore = ["E501"]
+
 
 [project.scripts]
 setup-doctor = "setup_doctor.cli:main"

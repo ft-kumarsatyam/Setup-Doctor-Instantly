@@ -1,4 +1,4 @@
-"""Run the full eval suite and write evals/RESULTS.md + evals/results.json.
+"""Run the full eval suite and write evals/RESULTS.md.
 
     python evals/run_evals.py          # exit code 0 only if every expectation holds
 
@@ -165,7 +165,6 @@ def main() -> int:
     det, guard = eval_detection(), eval_guardrail()
     failures = check_expectations(det, guard)
     out = Path(__file__).resolve().parent
-    (out / "results.json").write_text(json.dumps({"detection": det, "guardrail": guard, "failures": failures}, indent=2))
     md = render(det, guard, failures)
     (out / "RESULTS.md").write_text(md)
     print(md)
