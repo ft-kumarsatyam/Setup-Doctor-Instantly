@@ -23,8 +23,8 @@ def render_markdown(domain: str, findings: list[Finding], explanation: str,
     if source == "template":
         lines.append("_Explanation source: deterministic template (no model used)._")
     elif source == "model_verified":
-        lines.append("_Explanation source: model draft, verified (every finding id and DNS record "
-                     "matches the findings)._")
+        lines.append("_Explanation source: model draft, verified (JSON plan ids match findings; "
+                     "DNS/numeric claims in explanations grounded; fixes taken from findings)._")
     else:
         lines.append("_Explanation source: deterministic template. The model draft was rejected by the "
                      f"grounding check ({'; '.join(violations)})._")

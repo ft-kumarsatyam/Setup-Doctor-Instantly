@@ -101,7 +101,10 @@ def check_expectations(det: dict, guard: dict) -> list[str]:
     n = b["faithful"]["with_findings"]
     if b["faithful"].get("accepted", 0) != n:
         bad.append("faithful drafts should all be accepted")
-    for name in ("hallucinated_finding", "hallucinated_record", "raises", "empty"):
+    for name in (
+        "hallucinated_finding", "hallucinated_record", "malformed_json",
+        "duplicate_ids", "raises", "empty",
+    ):
         if b[name].get("fell_back", 0) != n:
             bad.append(f"{name}: every draft should be rejected")
     if b["drops_severe_finding"].get("fell_back", 0) != b["drops_severe_finding"]["with_severe"]:
@@ -141,6 +144,8 @@ def render(det: dict, guard: dict, failures: list[str]) -> str:
         "hallucinated_record": "reject all",
         "drops_severe_finding": "reject iff a critical/high finding exists",
         "misstates_numbers": "reject when number changed",
+        "malformed_json": "reject all",
+        "duplicate_ids": "reject all",
         "raises": "reject all",
         "empty": "reject all",
     }

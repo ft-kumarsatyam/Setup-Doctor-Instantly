@@ -2,7 +2,7 @@
 
 Each takes the prompt string (like a real completer) and returns text. They parse
 the findings JSON out of the prompt so they behave like a model that was shown
-the same input.
+the same input. The LLM contract is a JSON list of {id, explanation}.
 """
 from __future__ import annotations
 
@@ -10,47 +10,81 @@ import json
 import re
 
 _JSON_RE = re.compile(r"Findings \(JSON\):\n(.*)\Z", re.S)
+_NEEDS_LOOKUPS = re.compile(r"needs (\d+) DNS lookups", re.I)
 
 
 def _findings(prompt: str) -> list[dict]:
     return json.loads(_JSON_RE.search(prompt).group(1))
 
 
-def _faithful_lines(findings: list[dict], skip_first_severe: bool = False) -> list[str]:
-    lines, skipped = [], False
-    for i, f in enumerate(findings, 1):
+def _faithful_items(findings: list[dict], skip_first_severe: bool = False) -> list[dict]:
+    items, skipped = [], False
+    for f in findings:
         if skip_first_severe and not skipped and f["severity"] in ("critical", "high"):
             skipped = True
             continue
-        lines.append(f"{i}. [{f['id']}] {f['title']}. Fix: {f['fix']}")
-    return lines
+        items.append({"id": f["id"], "explanation": f["why"]})
+    return items
+
+
+def _dumps(items: list[dict]) -> str:
+    return json.dumps(items, indent=2)
 
 
 def faithful(prompt: str) -> str:
-    """Rewrites every finding, cites ids, copies record text only from fixes."""
-    return "Here is your plan:\n" + "\n".join(_faithful_lines(_findings(prompt)))
+    """One object per finding; explanation copied from the finding why."""
+    return _dumps(_faithful_items(_findings(prompt)))
 
 
 def hallucinated_finding(prompt: str) -> str:
     """Adds a problem that no check found."""
-    return faithful(prompt) + "\n99. [SPF_DOMAIN_SPOOFED] Your domain is being spoofed right now."
+    items = _faithful_items(_findings(prompt))
+    items.append({
+        "id": "SPF_DOMAIN_SPOOFED",
+        "explanation": "Your domain is being spoofed right now.",
+    })
+    return _dumps(items)
 
 
 def hallucinated_record(prompt: str) -> str:
     """Suggests a DNS record the system never produced."""
-    return faithful(prompt) + "\nAlso publish `v=spf1 include:totally-made-up.test -all` for safety."
+    items = _faithful_items(_findings(prompt))
+    if items:
+        items[0]["explanation"] += (
+            " Also publish `v=spf1 include:totally-made-up.test -all` for safety."
+        )
+    return _dumps(items)
 
 
 def drops_severe_finding(prompt: str) -> str:
     """Silently omits the first critical/high finding."""
-    return "Here is your plan:\n" + "\n".join(_faithful_lines(_findings(prompt), skip_first_severe=True))
+    return _dumps(_faithful_items(_findings(prompt), skip_first_severe=True))
 
 
 def misstates_numbers(prompt: str) -> str:
-    """Cites real ids and real records but changes a lookup count. The numeric
-    grounding check must reject this and trigger fallback."""
-    text = faithful(prompt)
-    return re.sub(r"needs (\d+) DNS lookups", lambda m: f"needs {int(m.group(1)) + 3} DNS lookups", text)
+    """Cites real ids but puts a wrong lookup count in an explanation."""
+    items = []
+    for f in _findings(prompt):
+        expl = f["why"]
+        m = _NEEDS_LOOKUPS.search(f["title"])
+        if m:
+            wrong = int(m.group(1)) + 3
+            expl = f"This record needs {wrong} DNS lookups, which exceeds the limit."
+        items.append({"id": f["id"], "explanation": expl})
+    return _dumps(items)
+
+
+def malformed_json(prompt: str) -> str:
+    """Returns text that is not valid JSON."""
+    return '{"id": "SPF_MISSING", "explanation": "broken"'
+
+
+def duplicate_ids(prompt: str) -> str:
+    """Repeats the first finding id so set equality fails."""
+    items = _faithful_items(_findings(prompt))
+    if items:
+        items.append({"id": items[0]["id"], "explanation": items[0]["explanation"]})
+    return _dumps(items)
 
 
 def raises(prompt: str) -> str:
@@ -74,6 +108,8 @@ BEHAVIORS = {
     "hallucinated_record": hallucinated_record,
     "drops_severe_finding": drops_severe_finding,
     "misstates_numbers": misstates_numbers,
+    "malformed_json": malformed_json,
+    "duplicate_ids": duplicate_ids,
     "raises": raises,
     "empty": empty,
 }

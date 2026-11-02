@@ -3,8 +3,10 @@
 Diagnoses the DNS side of a cold-email setup (SPF, DKIM, DMARC, MX) and explains the fix order in plain English.
 The interesting part is not the DNS checks. It is how an LLM is allowed to touch the result.
 
-> **The LLM never decides what is wrong.** Deterministic code produces the findings. The model only rewrites them
-> into a plan, and a verifier rejects any draft that cites a problem or DNS record the checks did not produce. Rejected drafts fall back to a deterministic template, so a hallucination cannot reach the user.
+> **The LLM never decides what is wrong.** Deterministic code produces the findings. The model returns a JSON plan
+> of `{id, explanation}` objects only; a verifier rejects any draft whose ids do not match the findings or whose
+> explanations invent DNS records or allow-listed numbers. Validated plans are rendered with each finding's own
+> title and fix. Rejected drafts fall back to a deterministic template, so a hallucination cannot reach the user.
 
 ## Why this exists
 
@@ -23,14 +25,15 @@ internal data, and the first step in a real deployment would be to check it agai
  [check]    deterministic SPF/DKIM/DMARC/MX checks  ->  Findings   (ground truth, no LLM)
    |
    v
- [explain]  LLM (or template) drafts a prioritized plan from the Findings only
+ [explain]  LLM returns JSON [{id, explanation}, ...] (or template writes prose)
    |
    v
- [verify]   every [FINDING_ID] real?  every critical/high finding present?  every DNS record grounded?
+ [verify]   parse JSON; id set == findings; DNS + numeric claims in explanations grounded?
    |            |
-   | ok         | violations / empty / model error
+   | ok         | violations / empty / malformed / model error
    v            v
  [render]   [fallback] deterministic template  --->  [render]
+            (model path: title+fix from Findings, explanation from JSON)
 ```
 
 Built with LangGraph (conditional edge on the verify step). Real DNS is behind a small `Resolver` interface, so the
@@ -39,10 +42,10 @@ same code runs against live DNS, or against frozen records in tests and evals.
 ## Design decisions worth reviewing
 
 1. **Findings are the only source of truth.** The prompt contains the findings JSON and nothing else, and the test
-   suite asserts that.
-2. **Grounding verifier.** Rejects unknown finding ids, omitted critical/high findings, DNS records that appear
-   in neither a finding's evidence nor its fix, and allow-listed numeric claims (lookup counts, pct=, etc.) that
-   do not match a number in a finding's title or evidence.
+   suite asserts that. Model output cannot create, remove, or re-rank findings; render takes title/fix from Findings.
+2. **Structured grounding verifier.** Model drafts must be a JSON list of `{id, explanation}`. Rejects malformed
+   JSON, duplicate ids, id-set mismatches, DNS records in explanations that appear in neither fix nor evidence, and
+   allow-listed numeric claims that do not match a number in a finding's title or evidence.
 3. **An outage is not a missing record.** `LiveResolver` treats NXDOMAIN/no-answer as "absent" but raises
    `ResolverError` on timeouts, and the CLI refuses to diagnose a domain whose apex does not resolve. I found this
    while building: in my sandbox the resolver answered NXDOMAIN for every name, including `example.com`, and the
@@ -57,16 +60,18 @@ Reproduce with `python evals/run_evals.py` (writes `evals/RESULTS.md`).
 (29 TP, 0 FP, 0 FN). Boundaries are covered (exactly 10 SPF lookups is fine, 11 is flagged; nested includes; include
 loops; bare `all` means `+all`; `redirect=` replaces `all`).
 
-**Guardrail**: seven scripted model behaviors run against every fixture that has findings (20 of 24):
+**Guardrail**: nine scripted model behaviors run against every fixture that has findings (20 of 24):
 
 | Model behavior | Result |
 |---|---|
-| faithful rewrite | accepted 20/20 |
+| faithful JSON rewrite | accepted 20/20 |
 | invents a finding | rejected 20/20 |
 | invents a DNS record | rejected 20/20 |
 | drops a critical/high finding | rejected 10/10 where one exists |
+| changes a number in an explanation | rejected 2/2 where a lookup count was altered |
+| malformed JSON | rejected 20/20 |
+| duplicate ids | rejected 20/20 |
 | API error, or empty output | rejected 20/20 each |
-| changes a number in the text | rejected 2/2 where a lookup count was altered |
 
 Planted hallucinations delivered to the user: **0**, measured by searching the delivered text for the planted
 strings, not by re-running the verifier (that would be circular).
@@ -75,7 +80,7 @@ strings, not by re-running the verifier (that would be circular).
 (SPF limit off by one, verifier checks disabled including numeric claims, fallback removed, and so on). All 9 make
 the eval suite fail. That is the evidence the evals are not just rubber-stamping the code.
 
-**Unit tests**: `python -m pytest -q` runs 58 tests.
+**Unit tests**: `python -m pytest -q` runs 62 tests.
 
 ## Known limitations (read before trusting this)
 
@@ -96,7 +101,7 @@ the eval suite fail. That is the evidence the evals are not just rubber-stamping
 
 ```bash
 pip install -e ".[dev]"            # or: pip install langgraph dnspython pytest
-python -m pytest -q                # 58 tests
+python -m pytest -q                # 62 tests
 python evals/run_evals.py          # detection + guardrail evals
 python evals/mutation_check.py     # prove the evals can fail
 
@@ -118,6 +123,6 @@ python -m setup_doctor yourdomain.com --llm                        # live DNS + 
 ```
 src/setup_doctor/   models, resolver, spf, checks, explain (+verifier), graph, report, cli
 evals/              fixtures (labeled), fakes (scripted model failures), run_evals, mutation_check, RESULTS.md
-tests/              58 pytest tests
+tests/              62 pytest tests
 examples/           frozen DNS records for offline demos
 ```

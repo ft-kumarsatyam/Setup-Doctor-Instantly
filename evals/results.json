@@ -95,6 +95,20 @@
         "accepted": 18,
         "fell_back": 2
       },
+      "malformed_json": {
+        "skipped_no_findings": 4,
+        "with_findings": 20,
+        "with_severe": 10,
+        "exercised": 20,
+        "fell_back": 20
+      },
+      "duplicate_ids": {
+        "skipped_no_findings": 4,
+        "with_findings": 20,
+        "with_severe": 10,
+        "exercised": 20,
+        "fell_back": 20
+      },
       "raises": {
         "skipped_no_findings": 4,
         "with_findings": 20,

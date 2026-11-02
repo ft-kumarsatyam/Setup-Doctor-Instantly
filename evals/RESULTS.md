@@ -38,6 +38,8 @@ Each scripted model behavior is run against every fixture that has findings (20 
 | `hallucinated_record` | 20 | 0 | 20 | 0 | reject all |
 | `drops_severe_finding` | 10 | 10 | 10 | n/a | reject iff a critical/high finding exists |
 | `misstates_numbers` | 2 | 18 | 2 | n/a | reject when number changed |
+| `malformed_json` | 20 | 0 | 20 | n/a | reject all |
+| `duplicate_ids` | 20 | 0 | 20 | n/a | reject all |
 | `raises` | 20 | 0 | 20 | n/a | reject all |
 | `empty` | 20 | 0 | 20 | n/a | reject all |
 
