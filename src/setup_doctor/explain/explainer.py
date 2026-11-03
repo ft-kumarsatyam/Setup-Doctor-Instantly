@@ -13,7 +13,7 @@ import os
 import re
 from typing import Callable, Protocol
 
-from .models import Finding
+from setup_doctor.core.models import Finding
 
 _ID_RE = re.compile(r"\[([A-Z][A-Z0-9_]+)\]")
 _CODE_RE = re.compile(r"`([^`]+)`")

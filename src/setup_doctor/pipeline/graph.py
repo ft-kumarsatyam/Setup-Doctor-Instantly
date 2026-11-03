@@ -16,19 +16,19 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from .checks import DEFAULT_DKIM_SELECTORS, run_checks
-from .explain import (
+from setup_doctor.checks import DEFAULT_DKIM_SELECTORS, run_checks
+from setup_doctor.core.models import Finding
+from setup_doctor.core.observability import log_diagnosis
+from setup_doctor.core.result import DiagnosisResult, DiagnosisSignals
+from setup_doctor.dns.resolver import Resolver
+from setup_doctor.explain import (
     Explainer,
     TemplateExplainer,
     parse_model_plan,
     render_plan,
     verify_plan,
 )
-from .models import Finding
-from .observability import log_diagnosis
-from .report import render_markdown
-from .resolver import Resolver
-from .result import DiagnosisResult, DiagnosisSignals
+from setup_doctor.explain.report import render_markdown
 
 
 class State(TypedDict, total=False):

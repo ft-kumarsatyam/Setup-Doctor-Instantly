@@ -5,7 +5,7 @@ import pytest
 from evals.fixtures import CASES
 
 from setup_doctor import LiveResolver, ResolverError
-from setup_doctor.cli import main
+from setup_doctor.surfaces.cli import main
 
 
 class _Rdata:

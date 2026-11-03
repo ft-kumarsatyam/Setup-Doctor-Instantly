@@ -29,8 +29,8 @@ from evals.detection.fixtures import ADVISORY_CASES, CASES  # noqa: E402
 from evals.guardrails.fakes import BEHAVIORS, PLANTED_MARKERS, faithful  # noqa: E402
 from evals.shadow.run_shadow import eval_shadow  # noqa: E402
 from setup_doctor import FixtureResolver, LLMExplainer, diagnose, run_checks, verify_grounding  # noqa: E402
+from setup_doctor.checks.registry import ALL_DNS_PACKS  # noqa: E402
 from setup_doctor.explain import PROMPT  # noqa: E402
-from setup_doctor.registry import ALL_DNS_PACKS  # noqa: E402
 
 
 def _score_cases(cases: list[dict], *, packs=None) -> dict:

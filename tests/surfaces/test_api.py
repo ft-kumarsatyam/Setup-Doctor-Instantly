@@ -5,13 +5,13 @@ import pytest
 from evals.fixtures import CASES
 from fastapi.testclient import TestClient
 
-from setup_doctor.api import (
+from setup_doctor.dns.resolver import FixtureResolver, ResolverError
+from setup_doctor.surfaces.api import (
     _RateLimiter,
     _ResponseCache,
     create_app,
     validate_hostname,
 )
-from setup_doctor.resolver import FixtureResolver, ResolverError
 
 CLEAN = next(c for c in CASES if c["name"] == "clean")
 MESS = next(c for c in CASES if c["name"] == "worst_case_combo")

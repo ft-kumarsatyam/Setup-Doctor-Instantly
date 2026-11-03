@@ -8,8 +8,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable
 
-from .models import Finding, prioritize
-from .resolver import Resolver
+from setup_doctor.core.models import Finding, prioritize
+from setup_doctor.dns.resolver import Resolver
 
 CheckFn = Callable[[str, Resolver], list[Finding]]
 DkimCheckFn = Callable[[str, Resolver, tuple[str, ...]], list[Finding]]
@@ -73,7 +73,7 @@ class CheckRegistry:
 
 def build_default_registry() -> CheckRegistry:
     """Wire the shipping DNS-auth checks. Imported lazily to avoid cycles."""
-    from . import checks as c
+    from setup_doctor.checks import engine as c
 
     reg = CheckRegistry()
     reg.register_plain(

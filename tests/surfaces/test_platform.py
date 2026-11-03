@@ -5,15 +5,15 @@ import pytest
 from evals.detection.fixtures import ADVISORY_CASES, CASES, make
 from fastapi.testclient import TestClient
 
-from setup_doctor.api import create_app
-from setup_doctor.auth import ApiKeyAuth, load_api_keys
-from setup_doctor.bulk import parse_domain_list, run_bulk
 from setup_doctor.checks import check_bimi, check_mta_sts, check_tls_rpt, run_checks
-from setup_doctor.registry import ALL_DNS_PACKS, get_default_registry
-from setup_doctor.reputation import NullReputationProvider, StaticListProvider, check_reputation
-from setup_doctor.resolver import FixtureResolver
-from setup_doctor.result import SCHEMA_VERSION, DiagnosisResult
-from setup_doctor.selectors import resolve_selectors
+from setup_doctor.checks.registry import ALL_DNS_PACKS, get_default_registry
+from setup_doctor.checks.selectors import resolve_selectors
+from setup_doctor.core.result import SCHEMA_VERSION, DiagnosisResult
+from setup_doctor.dns.resolver import FixtureResolver
+from setup_doctor.integrations.reputation import NullReputationProvider, StaticListProvider, check_reputation
+from setup_doctor.surfaces.api import create_app
+from setup_doctor.surfaces.auth import ApiKeyAuth, load_api_keys
+from setup_doctor.surfaces.bulk import parse_domain_list, run_bulk
 
 
 def test_diagnosis_result_schema_keys():
@@ -134,7 +134,7 @@ def test_bimi_mta_sts_tls_helpers():
 
 
 def test_mcp_tool_diagnose_offline(monkeypatch):
-    from setup_doctor import mcp_server
+    from setup_doctor.surfaces import mcp_server
 
     case = next(c for c in CASES if c["name"] == "spf_missing")
 

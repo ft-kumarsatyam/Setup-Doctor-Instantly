@@ -1,0 +1,61 @@
+# Setup Doctor architecture
+
+## Layered packages
+
+```
+src/setup_doctor/
+  core/           Finding, DiagnosisResult, observability   (no I/O)
+  dns/            Resolver, SPF parse                       (injectable DNS)
+  checks/         registry + engine (SPF/DKIM/DMARC/MX/…)   (Findings only)
+  explain/        template/LLM rewrite + verify + report    (never invent Findings)
+  pipeline/       LangGraph diagnose                        (orchestration)
+  integrations/   Instantly, reputation                     (signals / unknown)
+  surfaces/       CLI, HTTP API, MCP, auth, bulk            (thin adapters)
+```
+
+Dependency rule (inward only):
+
+```
+surfaces → pipeline → checks/explain → dns/core
+integrations → surfaces/pipeline (signals only)
+```
+
+Surfaces must not reimplement SPF/DKIM logic. Skills/MCP call surfaces or the public `diagnose_result` API.
+
+## Data flow
+
+```
+Resolver → CheckRegistry.run → Findings
+     → Explainer (optional LLM) → verify_plan → render
+     → DiagnosisResult (+ optional signals)
+```
+
+## Tests mirror packages
+
+```
+tests/core|dns|checks|explain|pipeline|integrations|surfaces/
+```
+
+## Evals
+
+```
+evals/detection|guardrails|mutations|shadow|contracts/
+```
+
+## Adding a check (scale path)
+
+1. Implement in `checks/` (or new pack module).
+2. Register in `checks/registry.py`.
+3. Labeled fixture (+ boundary) under `evals/detection/`.
+4. Unit test under `tests/checks/`.
+5. Mutant in `evals/mutations/mutation_check.py`.
+6. Keep advisory packs opt-in unless product decides otherwise.
+
+## Entrypoints
+
+| Surface | Module |
+|---------|--------|
+| CLI | `python -m setup_doctor` → `surfaces.cli` |
+| API | `uvicorn setup_doctor.api:app` (shim) or `setup_doctor.surfaces.api:app` |
+| MCP | `python -m setup_doctor.mcp_server` |
+| Library | `from setup_doctor import diagnose, diagnose_result, run_checks` |

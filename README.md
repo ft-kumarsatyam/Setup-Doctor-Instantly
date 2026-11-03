@@ -30,7 +30,8 @@ python evals/mutation_check.py
 HTTP API (optional: `pip install -e ".[api]"`):
 
 ```bash
-uvicorn setup_doctor.api:app
+uvicorn setup_doctor.surfaces.api:app
+# (compat) uvicorn setup_doctor.api:app
 # POST /diagnose {"domain":"example.com"}
 # POST /bulk {"domains":["a.test","b.test"]}
 # GET  /schema
@@ -40,7 +41,7 @@ uvicorn setup_doctor.api:app
 MCP (optional: `pip install -e ".[mcp]"`):
 
 ```bash
-python -m setup_doctor.mcp_server
+python -m setup_doctor.surfaces.mcp_server
 ```
 
 Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/eval-check`.
@@ -76,10 +77,20 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 
 ## Layout
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for layering rules.
+
 ```
-src/setup_doctor/   checks, registry, result, explain, graph, api, mcp_server, instantly_*
-evals/              detection/, guardrails/, mutations/, shadow/, contracts/, run_evals.py
+src/setup_doctor/
+  core/             Finding, DiagnosisResult, observability
+  dns/              Resolver, SPF parse
+  checks/           registry + engine (Findings only)
+  explain/          rewrite + verify + report
+  pipeline/         diagnose graph
+  integrations/     Instantly, reputation
+  surfaces/         CLI, API, MCP, auth, bulk
+evals/              detection/, guardrails/, mutations/, shadow/, contracts/
+tests/              mirrors packages (core|dns|checks|explain|…)
 .cursor/skills/     /diagnose, /spf, /dkim, …
-tests/              pytest
+docs/               ARCHITECTURE.md
 examples/           offline DNS fixtures
 ```

@@ -11,9 +11,9 @@ import base64
 import binascii
 import re
 
-from . import spf
-from .models import Finding
-from .resolver import Resolver
+from setup_doctor.core.models import Finding
+from setup_doctor.dns import spf
+from setup_doctor.dns.resolver import Resolver
 
 DEFAULT_DKIM_SELECTORS = (
     "google", "selector1", "selector2", "default", "k1", "s1", "s2", "mail", "dkim",
@@ -372,7 +372,7 @@ def run_checks(
     Default packs are core dns_auth only. Pass registry.ALL_DNS_PACKS (or include
     dns_auth_advisory) for BIMI / MTA-STS / TLS-RPT advisory findings.
     """
-    from .registry import DEFAULT_PACKS, get_default_registry
+    from setup_doctor.checks.registry import DEFAULT_PACKS, get_default_registry
 
     return get_default_registry().run(
         domain,

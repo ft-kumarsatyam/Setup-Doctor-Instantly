@@ -3,7 +3,7 @@ from evals.fixtures import CASES, DKIM_P_1024, DKIM_P_2048
 
 from setup_doctor import FixtureResolver, run_checks
 from setup_doctor.checks import dkim_rsa_key_bits
-from setup_doctor.models import SEVERITY_ORDER
+from setup_doctor.core.models import SEVERITY_ORDER
 
 
 @pytest.mark.parametrize("c", CASES, ids=[c["name"] for c in CASES])

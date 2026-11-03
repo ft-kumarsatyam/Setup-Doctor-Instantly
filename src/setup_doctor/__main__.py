@@ -1,5 +1,3 @@
-import sys
+from setup_doctor.surfaces.cli import main
 
-from .cli import main
-
-sys.exit(main())
+raise SystemExit(main())

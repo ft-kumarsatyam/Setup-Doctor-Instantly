@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 
-from .models import Finding
+from setup_doctor.core.models import Finding
 
 SOURCES = ("template", "model_verified", "template_fallback")
 

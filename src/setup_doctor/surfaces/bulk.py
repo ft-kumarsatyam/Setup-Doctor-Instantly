@@ -11,10 +11,10 @@ import io
 from dataclasses import dataclass, field
 from typing import Any, Iterable
 
-from .explain import Explainer, TemplateExplainer
-from .graph import diagnose
-from .resolver import Resolver, ResolverError
-from .result import DiagnosisResult
+from setup_doctor.core.result import DiagnosisResult
+from setup_doctor.dns.resolver import Resolver, ResolverError
+from setup_doctor.explain import Explainer, TemplateExplainer
+from setup_doctor.pipeline import diagnose
 
 
 @dataclass
@@ -73,7 +73,6 @@ def parse_domain_list(text: str) -> list[str]:
     text = text.strip()
     if not text:
         return []
-    # Heuristic: CSV header with domain
     sample = text.splitlines()[0]
     if "," in sample or sample.lower().strip() in ("domain", "domains"):
         reader = csv.DictReader(io.StringIO(text))

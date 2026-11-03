@@ -5,7 +5,7 @@ from evals.fakes import BEHAVIORS
 from evals.fixtures import CASES
 
 from setup_doctor import FixtureResolver, LLMExplainer, diagnose
-from setup_doctor.observability import domain_hash, log_diagnosis
+from setup_doctor.core.observability import domain_hash, log_diagnosis
 
 CLEAN = next(c for c in CASES if c["name"] == "clean")
 MESS = next(c for c in CASES if c["name"] == "worst_case_combo")

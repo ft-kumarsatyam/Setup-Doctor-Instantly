@@ -1,7 +1,7 @@
 from evals.fixtures import CASES
 
 from setup_doctor import FixtureResolver
-from setup_doctor.spf import (
+from setup_doctor.dns.spf import (
     all_qualifier,
     count_lookups,
     count_void_lookups,

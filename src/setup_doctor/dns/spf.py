@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from .resolver import Resolver
+from .resolver import Resolver  # noqa: I001
 
 _QUALIFIERS = "+-~?"
 _ALL_RE = re.compile(r"^[+\-~?]?all$", re.I)

@@ -9,19 +9,28 @@ DNS diagnosis (SPF/DKIM/DMARC/MX). Findings come from deterministic checks only.
 
 ```
 check → explain → verify → render
-                 ↘ fallback → render
+ ↘ fallback → render
 ```
 
-Key paths: `checks.py`, `registry.py`, `result.py`, `spf.py`, `explain.py`, `graph.py`, `resolver.py`, `api.py`, `mcp_server.py`, `evals/`, `.cursor/skills/`, `tests/`.
+Packages (see `docs/ARCHITECTURE.md`):
+
+- `core/` — Finding, DiagnosisResult, observability
+- `dns/` — Resolver, SPF parse
+- `checks/` — registry + engine (Findings only)
+- `explain/` — template/LLM + verify + report
+- `pipeline/` — diagnose graph
+- `integrations/` — Instantly, reputation (signals / unknown)
+- `surfaces/` — CLI, API, MCP (thin; no parallel DNS logic)
 
 ## Rules
 
 - Never weaken tests, fixture labels, or mutants to get green.
-- New checks need: labeled fixture (incl. boundary), unit test, mutant in `evals/mutations/mutation_check.py`; register in `CheckRegistry`.
+- New checks need: labeled fixture (incl. boundary), unit test under `tests/checks/`, mutant in `evals/mutations/mutation_check.py`; register in `checks/registry.py`.
 - Model output must not create, remove, or re-rank findings.
-- Surfaces (CLI/API/MCP/skills) call `diagnose` / `diagnose_result` — no parallel DNS logic in skills.
+- Surfaces/skills call `diagnose` / `diagnose_result` — no SPF/DKIM logic in Markdown skills.
 - Outage ≠ absence (`ResolverError` vs empty records).
-- No fabricated metrics or API shapes — read docs; say what you did not verify. Instantly/reputation missing ⇒ unknown / not_checked.
-- After changes: run `pytest`, `evals/run_evals.py`, `evals/mutation_check.py`; keep README / `evals/RESULTS.md` numbers honest. Shadow corpus never inflates synthetic P/R.
+- No fabricated metrics or API shapes — Instantly/reputation missing ⇒ unknown / not_checked.
+- After changes: run `pytest`, `evals/run_evals.py`, `evals/mutation_check.py`; keep README / `evals/RESULTS.md` numbers honest. Shadow never inflates synthetic P/R.
 - Secrets only via env; never print keys.
 - Python 3.10+, type hints; no new deps without a reason.
+- Keep dependency direction: surfaces → pipeline → checks/explain → dns/core.

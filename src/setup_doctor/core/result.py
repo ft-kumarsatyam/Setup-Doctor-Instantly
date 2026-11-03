@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from .models import Finding
+from .models import Finding  # noqa: I001 — same package
 
 SCHEMA_VERSION = "1.0"
 

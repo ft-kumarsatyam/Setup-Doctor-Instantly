@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from evals.fixtures import CASES
 from setup_doctor import FixtureResolver, diagnose_result
-from setup_doctor.result import SCHEMA_VERSION
+from setup_doctor.core.result import SCHEMA_VERSION
 
 REQUIRED_KEYS = {
     "schema_version",

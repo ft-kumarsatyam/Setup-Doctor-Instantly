@@ -5,8 +5,14 @@ import json
 
 import pytest
 
-from setup_doctor.instantly_client import InstantlyClient, InstantlyError, RecordingTransport
-from setup_doctor.instantly_compare import compare_warmup_to_placement, render_comparison_markdown, verdict_for
+from setup_doctor.integrations.instantly import (
+    InstantlyClient,
+    InstantlyError,
+    RecordingTransport,
+    compare_warmup_to_placement,
+    render_comparison_markdown,
+    verdict_for,
+)
 
 ACCOUNTS = {
     "items": [
