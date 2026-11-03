@@ -12,7 +12,7 @@ import binascii
 import re
 
 from . import spf
-from .models import Finding, prioritize
+from .models import Finding
 from .resolver import Resolver
 
 DEFAULT_DKIM_SELECTORS = (
@@ -316,13 +316,67 @@ def check_mx(domain: str, resolver: Resolver) -> list[Finding]:
     )]
 
 
-def run_checks(domain: str, resolver: Resolver,
-               dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS) -> list[Finding]:
-    domain = domain.strip().lower().rstrip(".")
-    findings = (
-        check_spf(domain, resolver)
-        + check_dkim(domain, resolver, dkim_selectors)
-        + check_dmarc(domain, resolver)
-        + check_mx(domain, resolver)
+def check_bimi(domain: str, resolver: Resolver) -> list[Finding]:
+    """Advisory BIMI presence. Absence is info — BIMI is optional for cold email."""
+    name = f"default._bimi.{domain}"
+    records = [t for t in resolver.txt(name) if "v=bimi1" in t.lower()]
+    if records:
+        return []
+    return [Finding(
+        "BIMI_MISSING", "info",
+        f"No BIMI record at {name}",
+        "BIMI can show a brand logo in supporting inboxes when DMARC is enforced; it is optional for deliverability.",
+        f"After DMARC is at p=quarantine or p=reject with a VMC, publish TXT at {name}: "
+        "`v=BIMI1; l=https://example.com/logo.svg`.",
+    )]
+
+
+def check_mta_sts(domain: str, resolver: Resolver) -> list[Finding]:
+    """Advisory MTA-STS DNS TXT. Policy file fetch is out of scope (no HTTP in checks)."""
+    name = f"_mta-sts.{domain}"
+    records = [t for t in resolver.txt(name) if "v=stsv1" in t.lower()]
+    if records:
+        return []
+    return [Finding(
+        "MTA_STS_MISSING", "info",
+        f"No MTA-STS TXT record at {name}",
+        "MTA-STS tells receiving MTAs to require TLS for your domain; useful for inbound security, optional for cold-email send setup.",
+        f"Publish TXT at {name}: `v=STSv1; id=20240101T000000Z`, host a policy at "
+        f"https://mta-sts.{domain}/.well-known/mta-sts.txt, then add TLS-RPT.",
+    )]
+
+
+def check_tls_rpt(domain: str, resolver: Resolver) -> list[Finding]:
+    """Advisory TLS-RPT. Complements MTA-STS; absence is info."""
+    name = f"_smtp._tls.{domain}"
+    records = [t for t in resolver.txt(name) if "v=tlsrptv1" in t.lower()]
+    if records:
+        return []
+    return [Finding(
+        "TLS_RPT_MISSING", "info",
+        f"No TLS-RPT record at {name}",
+        "TLS reporting helps you see TLS failures for mail to your domain; optional for outbound cold-email auth.",
+        f"Publish TXT at {name}: `v=TLSRPTv1; rua=mailto:tlsrpt@{domain}`.",
+    )]
+
+
+def run_checks(
+    domain: str,
+    resolver: Resolver,
+    dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS,
+    *,
+    packs: frozenset[str] | None = None,
+) -> list[Finding]:
+    """Run registered deterministic checks. Findings come only from this path.
+
+    Default packs are core dns_auth only. Pass registry.ALL_DNS_PACKS (or include
+    dns_auth_advisory) for BIMI / MTA-STS / TLS-RPT advisory findings.
+    """
+    from .registry import DEFAULT_PACKS, get_default_registry
+
+    return get_default_registry().run(
+        domain,
+        resolver,
+        dkim_selectors=dkim_selectors,
+        packs=DEFAULT_PACKS if packs is None else packs,
     )
-    return prioritize(findings)

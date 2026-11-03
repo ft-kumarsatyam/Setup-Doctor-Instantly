@@ -27,6 +27,12 @@ _NUMERIC_CLAIM_RES = [
     re.compile(r"pct\s*=\s*(\d+)", re.I),
     re.compile(r"only (\d+)%", re.I),
     re.compile(r"(\d+)% of mail", re.I),
+    re.compile(r"(\d+) bits", re.I),
+    re.compile(r"(\d+) void DNS lookups", re.I),
+    re.compile(r"causes (\d+) void", re.I),
+    re.compile(r"(\d+) SPF records", re.I),
+    re.compile(r"(\d+) DMARC records", re.I),
+    re.compile(r"(\d+) common selectors", re.I),
 ]
 
 

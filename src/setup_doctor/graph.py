@@ -28,6 +28,7 @@ from .models import Finding
 from .observability import log_diagnosis
 from .report import render_markdown
 from .resolver import Resolver
+from .result import DiagnosisResult, DiagnosisSignals
 
 
 class State(TypedDict, total=False):
@@ -42,13 +43,22 @@ class State(TypedDict, total=False):
     report: str
 
 
-def build_graph(resolver: Resolver, explainer: Explainer,
-                dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS):
+def build_graph(
+    resolver: Resolver,
+    explainer: Explainer,
+    dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS,
+    *,
+    packs: frozenset[str] | None = None,
+):
     template = TemplateExplainer()
     uses_model = not isinstance(explainer, TemplateExplainer)
 
     def check(state: State) -> State:
-        return {"findings": run_checks(state["domain"], resolver, dkim_selectors)}
+        return {
+            "findings": run_checks(
+                state["domain"], resolver, dkim_selectors, packs=packs,
+            )
+        }
 
     def explain(state: State) -> State:
         findings = state["findings"]
@@ -121,11 +131,19 @@ def build_graph(resolver: Resolver, explainer: Explainer,
     return g.compile()
 
 
-def diagnose(domain: str, resolver: Resolver, explainer: Explainer | None = None,
-             dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS) -> State:
+def diagnose(
+    domain: str,
+    resolver: Resolver,
+    explainer: Explainer | None = None,
+    dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS,
+    *,
+    packs: frozenset[str] | None = None,
+) -> State:
     domain = domain.strip().lower().rstrip(".")
     started = time.monotonic()
-    app = build_graph(resolver, explainer or TemplateExplainer(), dkim_selectors)
+    app = build_graph(
+        resolver, explainer or TemplateExplainer(), dkim_selectors, packs=packs,
+    )
     state = app.invoke({"domain": domain})
     duration_ms = int((time.monotonic() - started) * 1000)
     log_diagnosis(
@@ -137,3 +155,19 @@ def diagnose(domain: str, resolver: Resolver, explainer: Explainer | None = None
         cached=False,
     )
     return state
+
+
+def diagnose_result(
+    domain: str,
+    resolver: Resolver,
+    explainer: Explainer | None = None,
+    dkim_selectors: tuple[str, ...] = DEFAULT_DKIM_SELECTORS,
+    *,
+    packs: frozenset[str] | None = None,
+    signals: DiagnosisSignals | None = None,
+) -> DiagnosisResult:
+    """Same pipeline as diagnose(), returning the versioned product contract."""
+    state = diagnose(
+        domain, resolver, explainer, dkim_selectors, packs=packs,
+    )
+    return DiagnosisResult.from_state(state, signals=signals)

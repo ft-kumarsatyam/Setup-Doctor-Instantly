@@ -2,9 +2,12 @@
 
     python evals/run_evals.py          # exit code 0 only if every expectation holds
 
-Two questions are answered separately:
+Questions answered separately:
   1. Detection: do the deterministic checks find exactly the planted problems?
-  2. Guardrail: when the LLM misbehaves, does bad text ever reach the user?
+  2. Advisory detection: BIMI/MTA-STS/TLS-RPT packs (opt-in)
+  3. Guardrail: when the LLM misbehaves, does bad text ever reach the user?
+  4. Schema contract: DiagnosisResult shape stable
+  5. Shadow: reported separately (skipped in CI without corpus)
 
 The guardrail leak metric is deliberately NOT computed with the verifier under
 test (that would be circular). Hallucinating fakes plant a marker string, and we
@@ -21,19 +24,24 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from evals.fakes import BEHAVIORS, PLANTED_MARKERS, faithful  # noqa: E402
-from evals.fixtures import CASES  # noqa: E402
+from evals.contracts.schema_contract import eval_schema_contract  # noqa: E402
+from evals.detection.fixtures import ADVISORY_CASES, CASES  # noqa: E402
+from evals.guardrails.fakes import BEHAVIORS, PLANTED_MARKERS, faithful  # noqa: E402
+from evals.shadow.run_shadow import eval_shadow  # noqa: E402
 from setup_doctor import FixtureResolver, LLMExplainer, diagnose, run_checks, verify_grounding  # noqa: E402
 from setup_doctor.explain import PROMPT  # noqa: E402
+from setup_doctor.registry import ALL_DNS_PACKS  # noqa: E402
 
 
-def eval_detection() -> dict:
+def _score_cases(cases: list[dict], *, packs=None) -> dict:
     tp = fp = fn = 0
     exact = 0
     per_id: dict[str, Counter] = defaultdict(Counter)
     misses = []
-    for c in CASES:
-        got = sorted(f.id for f in run_checks(c["domain"], FixtureResolver(c["records"])))
+    for c in cases:
+        got = sorted(
+            f.id for f in run_checks(c["domain"], FixtureResolver(c["records"]), packs=packs)
+        )
         want = c["expected"]
         g, w = set(got), set(want)
         tp += len(g & w)
@@ -46,13 +54,21 @@ def eval_detection() -> dict:
         if got != want:
             misses.append({"case": c["name"], "expected": want, "got": got})
     return {
-        "cases": len(CASES), "exact_match": exact,
+        "cases": len(cases), "exact_match": exact,
         "precision": tp / (tp + fp) if tp + fp else 1.0,
         "recall": tp / (tp + fn) if tp + fn else 1.0,
         "tp": tp, "fp": fp, "fn": fn,
         "per_id": {k: dict(v) for k, v in sorted(per_id.items())},
         "misses": misses,
     }
+
+
+def eval_detection() -> dict:
+    return _score_cases(CASES)
+
+
+def eval_advisory_detection() -> dict:
+    return _score_cases(ADVISORY_CASES, packs=ALL_DNS_PACKS)
 
 
 def _severe(findings) -> bool:
@@ -72,11 +88,10 @@ def eval_guardrail() -> dict:
             resolver = FixtureResolver(c["records"])
             findings = run_checks(c["domain"], resolver)
             if not findings:
-                r["skipped_no_findings"] += 1  # nothing to explain; model never called
+                r["skipped_no_findings"] += 1
                 continue
             r["with_findings"] += 1
             r["with_severe"] += _severe(findings)
-            # Was the model's output actually different from a faithful one in this case?
             try:
                 differs = fn(_prompt_for(findings)) != faithful(_prompt_for(findings))
             except Exception:
@@ -85,18 +100,21 @@ def eval_guardrail() -> dict:
             state = diagnose(c["domain"], resolver, LLMExplainer(fn))
             r["fell_back" if state["used_fallback"] else "accepted"] += 1
             if marker and marker in state["explanation"]:
-                r["planted_hallucinations_delivered"] += 1  # independent of the verifier
+                r["planted_hallucinations_delivered"] += 1
             if verify_grounding(state["explanation"], state["findings"]):
-                r["delivered_failing_verifier"] += 1        # self-consistency only
+                r["delivered_failing_verifier"] += 1
         rows[name] = dict(r)
     return {"behaviors": rows}
 
 
-def check_expectations(det: dict, guard: dict) -> list[str]:
-    """Machine-checked claims. Anything listed here makes the run fail."""
+def check_expectations(det: dict, guard: dict, adv: dict, contract: dict) -> list[str]:
     bad = []
     if det["exact_match"] != det["cases"]:
         bad.append(f"detection: {det['cases'] - det['exact_match']} case(s) mismatched")
+    if adv["exact_match"] != adv["cases"]:
+        bad.append(f"advisory detection: {adv['cases'] - adv['exact_match']} case(s) mismatched")
+    if not contract.get("ok"):
+        bad.append(f"schema contract failed: {contract}")
     b = guard["behaviors"]
     n = b["faithful"]["with_findings"]
     if b["faithful"].get("accepted", 0) != n:
@@ -119,10 +137,11 @@ def check_expectations(det: dict, guard: dict) -> list[str]:
     return bad
 
 
-def render(det: dict, guard: dict, failures: list[str]) -> str:
+def render(det: dict, guard: dict, adv: dict, contract: dict, shadow: dict, failures: list[str]) -> str:
     L = ["# Eval results", "",
-         "Generated by `python evals/run_evals.py`. Fixtures are synthetic (see fixtures.py), "
-         "so detection numbers show correctness and regression safety, not real-world accuracy.", "",
+         "Generated by `python evals/run_evals.py`. Fixtures are synthetic "
+         "(see `evals/detection/fixtures.py`), so detection numbers show correctness "
+         "and regression safety, not real-world accuracy.", "",
          f"**Status: {'PASS' if not failures else 'FAIL'}**"]
     L += [f"- {f}" for f in failures]
     L += ["", "## 1. Detection (deterministic checks vs planted ground truth)", "",
@@ -132,6 +151,9 @@ def render(det: dict, guard: dict, failures: list[str]) -> str:
     L += ["| Finding id | TP | FP | FN |", "|---|---|---|---|"]
     for k, v in det["per_id"].items():
         L.append(f"| `{k}` | {v.get('tp', 0)} | {v.get('fp', 0)} | {v.get('fn', 0)} |")
+    L += ["", "## 1b. Advisory detection (BIMI / MTA-STS / TLS-RPT)", "",
+          f"- Cases: **{adv['cases']}**; exact match: **{adv['exact_match']}/{adv['cases']}**",
+          f"- Precision: **{adv['precision']:.3f}**, recall: **{adv['recall']:.3f}**", ""]
     L += ["", "## 2. Guardrail", "",
           "Each scripted model behavior is run against every fixture that has findings "
           f"({guard['behaviors']['faithful']['with_findings']} of {det['cases']}). "
@@ -156,16 +178,26 @@ def render(det: dict, guard: dict, failures: list[str]) -> str:
     L += ["", f"`misstates_numbers` alters a lookup count while citing real ids and records. "
           f"It changed the text in {ms.get('exercised', 0)} fixtures; the verifier rejected "
           f"{ms.get('fell_back', 0)} of those and fell back to the template. "
-          "Numeric grounding covers allow-listed claim shapes (lookup counts, pct=, "
-          "\"N% of mail\", limit is N) against finding titles/evidence only.", ""]
+          "Numeric grounding covers allow-listed claim shapes against finding titles/evidence only.", ""]
+    L += ["", "## 3. Schema contract", "",
+          f"- schema_version: `{contract.get('schema_version')}` "
+          f"(expected `{contract.get('expected_schema_version')}`)",
+          f"- ok: **{contract.get('ok')}**", ""]
+    L += ["", "## 4. Shadow corpus (not production accuracy)", "",
+          f"- status: **{shadow.get('status')}** · cases: {shadow.get('cases', 0)}",
+          f"- {shadow.get('note', '')}", ""]
     return "\n".join(L)
 
 
 def main() -> int:
-    det, guard = eval_detection(), eval_guardrail()
-    failures = check_expectations(det, guard)
+    det = eval_detection()
+    adv = eval_advisory_detection()
+    guard = eval_guardrail()
+    contract = eval_schema_contract()
+    shadow = eval_shadow()
+    failures = check_expectations(det, guard, adv, contract)
     out = Path(__file__).resolve().parent
-    md = render(det, guard, failures)
+    md = render(det, guard, adv, contract, shadow, failures)
     (out / "RESULTS.md").write_text(md)
     print(md)
     return 1 if failures else 0

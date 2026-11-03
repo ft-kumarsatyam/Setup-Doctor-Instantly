@@ -1,6 +1,6 @@
 # Setup Doctor
 
-DNS checks for cold-email setup (SPF, DKIM, DMARC, MX), then a plain-English fix order.
+DNS checks for cold-email setup (SPF, DKIM, DMARC, MX), then a plain-English fix order. Optional advisory packs (BIMI / MTA-STS / TLS-RPT), Instantly signals, bulk scan, HTTP API, MCP, and Cursor `/skills`.
 
 Deterministic code owns the Findings. An optional LLM only rewrites them. A verifier blocks invented ids, records, and allow-listed numbers; failures fall back to a template.
 
@@ -8,6 +8,8 @@ Deterministic code owns the Findings. An optional LLM only rewrites them. A veri
 check → explain → verify → render
                  ↘ fallback → render
 ```
+
+Versioned product contract: `DiagnosisResult` (`schema_version` **1.0**) shared by CLI, API, MCP, and skills.
 
 ## Run
 
@@ -17,6 +19,8 @@ pip install -e ".[dev]"
 python -m setup_doctor mess.test --records examples/mess.json
 python -m setup_doctor yourdomain.com
 python -m setup_doctor yourdomain.com --llm   # needs ANTHROPIC_API_KEY + SETUP_DOCTOR_MODEL
+python -m setup_doctor yourdomain.com --advisory --esp-pack google --json
+python -m setup_doctor --bulk domains.csv
 
 python -m pytest -q
 python evals/run_evals.py
@@ -28,37 +32,54 @@ HTTP API (optional: `pip install -e ".[api]"`):
 ```bash
 uvicorn setup_doctor.api:app
 # POST /diagnose {"domain":"example.com"}
+# POST /bulk {"domains":["a.test","b.test"]}
+# GET  /schema
+# Auth: set SETUP_DOCTOR_API_KEYS=key:tenant (X-API-Key). LLM: SETUP_DOCTOR_API_LLM=true
 ```
+
+MCP (optional: `pip install -e ".[mcp]"`):
+
+```bash
+python -m setup_doctor.mcp_server
+```
+
+Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/eval-check`.
 
 Instantly warmup vs placement (read-only API v2, needs `INSTANTLY_API_KEY`):
 
 ```bash
 python -m setup_doctor --instantly-compare
+python -m setup_doctor yourdomain.com --with-instantly --json
 ```
 
 CI: `.github/workflows/ci.yml` (Python 3.11 / 3.13 — ruff, pytest, evals, mutants).
 
 ## Results
 
-From `python evals/run_evals.py` (see `evals/RESULTS.md`):
+From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS.md`):
 
 - Detection: **31/31** labeled fixtures (precision/recall 1.000)
+- Advisory detection: **4/4** BIMI / MTA-STS / TLS-RPT fixtures
 - Guardrail: faithful accepted; invented ids/records, bad JSON, dupes, empty/errors rejected; numeric misstatements rejected when exercised
-- Mutations: **13/13** killed
-- Tests: **111** pytest
+- Schema contract: `DiagnosisResult` `schema_version=1.0` ok
+- Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
+- Mutations: **15/15** killed
+- Tests: **123** pytest
 
 ## Limits
 
 - Fixtures are synthetic — not real-world accuracy.
-- DKIM selectors can’t be listed from DNS (common selectors + `--dkim-selector`).
+- DKIM selectors can’t be listed from DNS (common selectors + `--dkim-selector` / `--esp-pack`).
 - Numeric grounding is allow-list patterns only.
 - Live DNS / real Anthropic / real Instantly account data are not assumed green in CI; Instantly mode reports missing scores/tests as **unknown**.
+- Reputation adapters default to **not checked** (never fabricated clean).
 
 ## Layout
 
 ```
-src/setup_doctor/   checks, explain, graph, api, instantly_*
-evals/              fixtures, fakes, run_evals, mutation_check
+src/setup_doctor/   checks, registry, result, explain, graph, api, mcp_server, instantly_*
+evals/              detection/, guardrails/, mutations/, shadow/, contracts/, run_evals.py
+.cursor/skills/     /diagnose, /spf, /dkim, …
 tests/              pytest
 examples/           offline DNS fixtures
 ```

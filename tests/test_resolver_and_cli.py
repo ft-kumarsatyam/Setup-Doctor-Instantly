@@ -53,7 +53,9 @@ def test_cli_offline_report_and_json(tmp_path, capsys):
     assert "SPF_PLUS_ALL" in out and "# Setup Doctor report: mess.test" in out
 
     assert main([case["domain"], "--records", str(path), "--json"]) == 0
-    ids = {f["id"] for f in json.loads(capsys.readouterr().out)}
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["schema_version"] == "1.0"
+    ids = {f["id"] for f in payload["findings"]}
     assert ids == set(case["expected"])
 
 

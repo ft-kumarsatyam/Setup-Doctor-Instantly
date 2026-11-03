@@ -57,9 +57,11 @@ def test_diagnose_returns_findings_and_report():
     r = client.post("/diagnose", json={"domain": MESS["domain"]})
     assert r.status_code == 200
     body = r.json()
+    assert body["schema_version"] == "1.0"
     assert body["domain"] == MESS["domain"]
     assert {f["id"] for f in body["findings"]} == set(MESS["expected"])
     assert "Setup Doctor report" in body["report"]
+    assert body["explanation_source"] in ("template", "model_verified", "template_fallback")
     assert body["cached"] is False
 
 

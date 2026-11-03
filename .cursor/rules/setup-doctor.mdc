@@ -12,15 +12,16 @@ check → explain → verify → render
                  ↘ fallback → render
 ```
 
-Key paths: `checks.py`, `spf.py`, `explain.py`, `graph.py`, `resolver.py`, `evals/`, `tests/`.
+Key paths: `checks.py`, `registry.py`, `result.py`, `spf.py`, `explain.py`, `graph.py`, `resolver.py`, `api.py`, `mcp_server.py`, `evals/`, `.cursor/skills/`, `tests/`.
 
 ## Rules
 
 - Never weaken tests, fixture labels, or mutants to get green.
-- New checks need: labeled fixture (incl. boundary), unit test, mutant in `evals/mutation_check.py`.
+- New checks need: labeled fixture (incl. boundary), unit test, mutant in `evals/mutations/mutation_check.py`; register in `CheckRegistry`.
 - Model output must not create, remove, or re-rank findings.
+- Surfaces (CLI/API/MCP/skills) call `diagnose` / `diagnose_result` — no parallel DNS logic in skills.
 - Outage ≠ absence (`ResolverError` vs empty records).
-- No fabricated metrics or API shapes — read docs; say what you did not verify.
-- After changes: run `pytest`, `evals/run_evals.py`, `evals/mutation_check.py`; keep README / `evals/RESULTS.md` numbers honest.
+- No fabricated metrics or API shapes — read docs; say what you did not verify. Instantly/reputation missing ⇒ unknown / not_checked.
+- After changes: run `pytest`, `evals/run_evals.py`, `evals/mutation_check.py`; keep README / `evals/RESULTS.md` numbers honest. Shadow corpus never inflates synthetic P/R.
 - Secrets only via env; never print keys.
 - Python 3.10+, type hints; no new deps without a reason.
