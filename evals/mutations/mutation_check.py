@@ -51,6 +51,9 @@ MUTANTS = [
     ("MTA-STS missing never flagged", "src/setup_doctor/checks/engine.py",
      'return [Finding(\n        "MTA_STS_MISSING", "info",',
      'return []  # mutant\n    return [Finding(\n        "MTA_STS_MISSING", "info",'),
+    ("instantly rewrite skips grounding verify", "src/setup_doctor/explain/instantly_rewrite.py",
+     "violations = verify_instantly_rewrite(items, comparisons)",
+     "violations = []  # mutant"),
 ]
 
 

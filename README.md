@@ -32,7 +32,9 @@ HTTP API (optional: `pip install -e ".[api]"`):
 ```bash
 uvicorn setup_doctor.surfaces.api:app
 # (compat) uvicorn setup_doctor.api:app
-# POST /diagnose {"domain":"example.com"}
+# POST /diagnose {"domain":"example.com", "include_instantly": false}
+# POST /instantly/compare {"domain": null}
+# POST /instantly/ready {"ctd_hosts": []}
 # POST /bulk {"domains":["a.test","b.test"]}
 # GET  /schema
 # Auth: set SETUP_DOCTOR_API_KEYS=key:tenant (X-API-Key). LLM: SETUP_DOCTOR_API_LLM=true
@@ -46,11 +48,13 @@ python -m setup_doctor.surfaces.mcp_server
 
 Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/eval-check`.
 
-Instantly warmup vs placement (read-only API v2, needs `INSTANTLY_API_KEY`):
+Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals/CTD are signals — they never invent Findings:
 
 ```bash
 python -m setup_doctor --instantly-compare
 python -m setup_doctor yourdomain.com --with-instantly --json
+python -m setup_doctor --instantly-ready --ctd-host track.example.com
+python -m setup_doctor --from-instantly --json
 ```
 
 CI: `.github/workflows/ci.yml` (Python 3.11 / 3.13 — ruff, pytest, evals, mutants).
@@ -64,8 +68,9 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Guardrail: faithful accepted; invented ids/records, bad JSON, dupes, empty/errors rejected; numeric misstatements rejected when exercised
 - Schema contract: `DiagnosisResult` `schema_version=1.0` ok
 - Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
-- Mutations: **15/15** killed
-- Tests: **123** pytest
+- Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
+- Mutations: **16/16** killed
+- Tests: **138** pytest
 
 ## Limits
 
@@ -74,6 +79,7 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Numeric grounding is allow-list patterns only.
 - Live DNS / real Anthropic / real Instantly account data are not assumed green in CI; Instantly mode reports missing scores/tests as **unknown**.
 - Reputation adapters default to **not checked** (never fabricated clean).
+- Instantly write APIs (pause accounts, enable warmup, create campaigns) are out of scope.
 
 ## Layout
 

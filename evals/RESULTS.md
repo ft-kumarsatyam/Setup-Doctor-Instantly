@@ -56,6 +56,16 @@ Each scripted model behavior is run against every fixture that has findings (24 
 `misstates_numbers` alters a lookup count while citing real ids and records. It changed the text in 2 fixtures; the verifier rejected 2 of those and fell back to the template. Numeric grounding covers allow-listed claim shapes against finding titles/evidence only.
 
 
+## 2b. Instantly signal rewrite guardrail
+
+- Invented scores fall back: **True**
+- Faithful rewrite accepted: **True**
+- Invented verdict rejected: **True**
+- Template keeps unknown: **True**
+
+Instantly rewrite never invents Findings; missing Instantly data stays unknown.
+
+
 ## 3. Schema contract
 
 - schema_version: `1.0` (expected `1.0`)

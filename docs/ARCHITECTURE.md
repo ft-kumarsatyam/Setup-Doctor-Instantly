@@ -30,6 +30,25 @@ Resolver → CheckRegistry.run → Findings
      → DiagnosisResult (+ optional signals)
 ```
 
+## Instantly integration (signals only)
+
+```
+InstantlyClient (read-only API v2)
+  → compare_warmup_to_placement (aligned|mismatch|unknown)
+  → account vitals / CTD / placement insights / Deliverability Agent state
+  → DiagnosisSignals.instantly  (never Findings)
+  → optional LLM rewrite with verify_instantly_rewrite (fallback = template)
+
+Workspace readiness:
+  Instantly accounts → unique domains → diagnose (+ esp-pack instantly)
+  → correlate vitals agree|disagree|unknown vs Findings
+```
+
+Missing Instantly data ⇒ `unknown` / `not_checked`. Surfaces: CLI
+(`--with-instantly`, `--instantly-compare`, `--instantly-ready`, `--from-instantly`),
+HTTP (`/instantly/compare`, `/instantly/ready`, `include_instantly` on `/diagnose`),
+MCP (`compare_instantly`, `instantly_ready`, diagnose flag).
+
 ## Tests mirror packages
 
 ```

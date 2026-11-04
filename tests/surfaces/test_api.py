@@ -126,3 +126,76 @@ def test_response_cache_sets_cached_flag():
 def test_healthz():
     r = _client(CLEAN["records"]).get("/healthz")
     assert r.status_code == 200 and r.json()["status"] == "ok"
+
+
+def test_instantly_compare_endpoint_with_factory():
+    from setup_doctor.integrations.instantly import InstantlyClient, RecordingTransport
+
+    accounts = {
+        "items": [{"email": "a@clean.test", "stat_warmup_score": 80}],
+        "next_starting_after": None,
+    }
+    tests = {"items": [{"id": "t1", "emails": ["a@clean.test"]}], "next_starting_after": None}
+    stats = [{"test_id": "t1", "inbox_percent": 80, "spam_percent": 20}]
+    analytics = {"aggregate_data": {"a@clean.test": {"health_score": 80}}, "email_date_data": {}}
+    transport = RecordingTransport({
+        ("GET", "/accounts"): (200, accounts),
+        ("GET", "/inbox-placement-tests"): (200, tests),
+        ("POST", "/inbox-placement-analytics/stats-by-test-id"): (200, stats),
+        ("POST", "/accounts/warmup-analytics"): (200, analytics),
+    })
+
+    def factory():
+        return InstantlyClient(
+            api_key="k",
+            base_url="https://example.test/api/v2",
+            transport=transport,
+        )
+
+    client = _client(CLEAN["records"], instantly_factory=factory)
+    r = client.post("/instantly/compare", json={})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["schema_version"] == "1.0"
+    assert body["accounts"][0]["email"] == "a@clean.test"
+    assert body["accounts"][0]["verdict"] in ("aligned", "mismatch", "unknown")
+
+    r2 = client.get("/instantly/compare", params={"domain": "clean.test"})
+    assert r2.status_code == 200
+    assert len(r2.json()["accounts"]) == 1
+
+
+def test_diagnose_include_instantly_attaches_signals():
+    from setup_doctor.integrations.instantly import InstantlyClient, RecordingTransport
+
+    accounts = {
+        "items": [{"email": f"a@{CLEAN['domain']}", "stat_warmup_score": 40}],
+        "next_starting_after": None,
+    }
+    tests = {"items": [], "next_starting_after": None}
+    analytics = {"aggregate_data": {}, "email_date_data": {}}
+    transport = RecordingTransport({
+        ("GET", "/accounts"): (200, accounts),
+        ("GET", "/inbox-placement-tests"): (200, tests),
+        ("POST", "/inbox-placement-analytics/stats-by-test-id"): (200, []),
+        ("POST", "/accounts/warmup-analytics"): (200, analytics),
+    })
+
+    def factory():
+        return InstantlyClient(
+            api_key="k",
+            base_url="https://example.test/api/v2",
+            transport=transport,
+        )
+
+    client = _client(CLEAN["records"], instantly_factory=factory)
+    r = client.post(
+        "/diagnose",
+        json={"domain": CLEAN["domain"], "include_instantly": True},
+    )
+    assert r.status_code == 200
+    signals = r.json()["signals"]
+    assert signals is not None
+    assert signals["instantly"] is not None
+    assert "instantly" not in signals["not_checked"]
+    assert signals["instantly"][0]["verdict"] == "unknown"

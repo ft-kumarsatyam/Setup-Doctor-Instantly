@@ -1,15 +1,18 @@
 """Read-only Instantly API v2 client.
 
 Endpoints and scopes (documented; no inventing):
-- GET  /accounts                         scopes: accounts:read | accounts:all | all:read | all:all
-  https://developer.instantly.ai/api-reference/account/list-account
+- GET  /accounts                         scopes: accounts:read | …
 - POST /accounts/warmup-analytics        scopes: accounts:read | …
-  https://developer.instantly.ai/api-reference/account/get-warmup-analytics
 - GET  /inbox-placement-tests            scopes: inbox_placement_tests:read | …
-  https://developer.instantly.ai/api-reference/inboxplacementtest/list-inbox-placement-test
 - POST /inbox-placement-analytics/stats-by-test-id
   scopes: inbox_placement_analytics:read | …
-  https://developer.instantly.ai/api-reference/inboxplacementanalytics/retrieve-inbox-placement-analytics-stats-by-test-id
+- POST /accounts/test/vitals             scopes: accounts:read | …
+- GET  /accounts/ctd/status              scopes: accounts:read | …
+- POST /inbox-placement-analytics/deliverability-insights
+- GET  /inbox-placement-reports          scopes: inbox_placement_reports:read | … (requires test_id)
+- GET  /ai-agents/deliverability/state
+- GET  /ai-agents/deliverability/{id}/feed-items
+- GET  /campaigns/{id}/sending-status
 
 Auth: Authorization Bearer — https://developer.instantly.ai/getting-started/authorization
 Rate limits / 429: https://developer.instantly.ai/getting-started/rate-limit
@@ -17,7 +20,7 @@ Mock base: https://developer.instantly.ai/_mock/api/v2
 Live base: https://api.instantly.ai/api/v2
 
 The API key must come from INSTANTLY_API_KEY (or an explicit constructor arg for tests).
-It is never logged.
+It is never logged. No write/mutation endpoints.
 """
 from __future__ import annotations
 
@@ -191,6 +194,109 @@ class InstantlyClient:
             elif isinstance(data, dict) and isinstance(data.get("items"), list):
                 results.extend(data["items"])
         return results
+
+    def test_account_vitals(self, accounts: list[str] | None = None) -> dict[str, Any]:
+        """POST /accounts/test/vitals — boolean mx/spf/dkim/dmarc per domain.
+
+        https://developer.instantly.ai/api-reference/account/test-account-vitals
+        """
+        body: dict[str, Any] = {}
+        if accounts:
+            body["accounts"] = accounts
+        data = self.request("POST", "/accounts/test/vitals", json_body=body)
+        return data if isinstance(data, dict) else {"status": "unknown", "raw": data}
+
+    def custom_tracking_domain_status(self, host: str) -> dict[str, Any]:
+        """GET /accounts/ctd/status?host= — success/ssl/cname for a tracking host.
+
+        https://developer.instantly.ai/api-reference/account/get-custom-tracking-domain-status
+        """
+        data = self.request("GET", "/accounts/ctd/status", params={"host": host})
+        return data if isinstance(data, dict) else {"host": host, "raw": data}
+
+    def inbox_placement_deliverability_insights(
+        self,
+        test_id: str,
+        *,
+        extra: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
+        """POST /inbox-placement-analytics/deliverability-insights."""
+        body: dict[str, Any] = {"test_id": test_id}
+        if extra:
+            body.update(extra)
+        data = self.request(
+            "POST", "/inbox-placement-analytics/deliverability-insights",
+            json_body=body,
+        )
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict) and isinstance(data.get("items"), list):
+            return data["items"]
+        return []
+
+    def list_inbox_placement_blacklist_reports(
+        self,
+        test_id: str,
+        *,
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        """Paginate GET /inbox-placement-reports (requires test_id)."""
+        items: list[dict[str, Any]] = []
+        starting_after: str | None = None
+        while True:
+            data = self.request(
+                "GET", "/inbox-placement-reports",
+                params={
+                    "test_id": test_id,
+                    "limit": limit,
+                    "starting_after": starting_after,
+                },
+            )
+            batch = data.get("items") if isinstance(data, dict) else data
+            if not isinstance(batch, list):
+                break
+            items.extend(batch)
+            starting_after = data.get("next_starting_after") if isinstance(data, dict) else None
+            if not starting_after or not batch:
+                break
+        return items
+
+    def get_default_deliverability_agent_state(self) -> dict[str, Any]:
+        """GET /ai-agents/deliverability/state — default agent state (read-only).
+
+        Missing agent is reported as agent=null by Instantly — never invent health.
+        """
+        data = self.request("GET", "/ai-agents/deliverability/state")
+        return data if isinstance(data, dict) else {"raw": data}
+
+    def list_deliverability_agent_feed(
+        self,
+        agent_id: str,
+        *,
+        limit: int = 100,
+    ) -> list[dict[str, Any]]:
+        """Paginate GET /ai-agents/deliverability/{id}/feed-items."""
+        items: list[dict[str, Any]] = []
+        starting_after: str | None = None
+        path = f"/ai-agents/deliverability/{agent_id}/feed-items"
+        while True:
+            data = self.request(
+                "GET", path,
+                params={"limit": limit, "starting_after": starting_after},
+            )
+            batch = data.get("items") if isinstance(data, dict) else data
+            if not isinstance(batch, list):
+                break
+            items.extend(batch)
+            starting_after = data.get("next_starting_after") if isinstance(data, dict) else None
+            if not starting_after or not batch:
+                break
+        return items
+
+    def get_campaign_sending_status(self, campaign_id: str) -> dict[str, Any]:
+        """GET /campaigns/{id}/sending-status — why a campaign may not be sending."""
+        data = self.request("GET", f"/campaigns/{campaign_id}/sending-status")
+        return data if isinstance(data, dict) else {"campaign_id": campaign_id, "raw": data}
 
 
 class RecordingTransport:

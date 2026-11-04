@@ -36,6 +36,14 @@ from setup_doctor.core.observability import log_diagnosis
 from setup_doctor.core.result import SCHEMA_VERSION, DiagnosisSignals
 from setup_doctor.dns.resolver import LiveResolver, Resolver, ResolverError
 from setup_doctor.explain import LLMExplainer, TemplateExplainer, anthropic_completer
+from setup_doctor.integrations.instantly import (
+    InstantlyClient,
+    InstantlyError,
+    compare_warmup_to_placement,
+    comparisons_as_dicts,
+    render_readiness_markdown,
+    run_workspace_readiness,
+)
 from setup_doctor.integrations.reputation import check_reputation
 from setup_doctor.pipeline import diagnose_result
 from setup_doctor.surfaces.auth import ApiKeyAuth
@@ -69,6 +77,7 @@ class DiagnoseRequest(BaseModel):
     include_advisory: bool = False
     use_llm: bool = False
     include_reputation: bool = False
+    include_instantly: bool = False
 
 
 class DiagnoseResponse(BaseModel):
@@ -84,10 +93,21 @@ class DiagnoseResponse(BaseModel):
     cached: bool = False
 
 
+class InstantlyCompareRequest(BaseModel):
+    domain: str | None = Field(default=None, max_length=MAX_DOMAIN_LEN + 32)
+
+
+class InstantlyReadyRequest(BaseModel):
+    ctd_hosts: list[str] = Field(default_factory=list)
+    include_rich_signals: bool = True
+    use_llm: bool = False
+
+
 class BulkRequest(BaseModel):
     domains: list[str] = Field(..., min_length=1, max_length=BULK_MAX_DOMAINS)
     include_advisory: bool = False
     use_llm: bool = False
+    include_instantly: bool = False
 
 
 class BulkResponse(BaseModel):
@@ -96,6 +116,9 @@ class BulkResponse(BaseModel):
     ok: int
     errors: int
     rows: list[dict[str, Any]]
+
+
+InstantlyFactory = Callable[[], InstantlyClient]
 
 
 def validate_hostname(raw: str) -> str:
@@ -212,6 +235,7 @@ def create_app(
     cache: _ResponseCache | None = None,
     dns_timeout: float = DNS_TIMEOUT_SEC,
     auth: ApiKeyAuth | None = None,
+    instantly_factory: InstantlyFactory | None = None,
 ) -> FastAPI:
     """Build the API app. Tests inject a FixtureResolver via resolver_factory."""
     executor = ThreadPoolExecutor(max_workers=8, thread_name_prefix="sd-dns")
@@ -237,6 +261,7 @@ def create_app(
     app.state.dns_timeout = dns_timeout
     app.state.executor = executor
     app.state.auth = auth if auth is not None else ApiKeyAuth()
+    app.state.instantly_factory = instantly_factory or (lambda: InstantlyClient())
 
     def _require_auth(
         x_api_key: str | None,
@@ -260,6 +285,12 @@ def create_app(
                 "report": "markdown report",
                 "explanation_source": "template | model_verified | template_fallback",
                 "signals": "optional instantly/reputation side reports",
+                "include_instantly": "attach domain-scoped Instantly warmup/placement signals",
+            },
+            "instantly": {
+                "POST /instantly/compare": "warmup vs placement (optional domain filter)",
+                "GET /instantly/compare": "same as POST",
+                "POST /instantly/ready": "workspace readiness + vitals/CTD signals",
             },
             "auth": "X-API-Key or Authorization: Bearer when SETUP_DOCTOR_API_KEYS is set",
         }
@@ -301,9 +332,21 @@ def create_app(
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
         packs = ALL_DNS_PACKS if body.include_advisory else DEFAULT_PACKS
+        esp_packs = list(body.esp_packs)
+        if body.include_instantly and "instantly" not in esp_packs:
+            esp_packs = ["instantly", *esp_packs]
+            try:
+                selectors = resolve_selectors(
+                    explicit=tuple(body.dkim_selectors),
+                    packs=tuple(esp_packs),
+                    defaults=DEFAULT_DKIM_SELECTORS,
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+
         cache_key = (
             f"{domain}|{','.join(selectors)}|{sorted(packs)}|"
-            f"{body.use_llm}|{body.include_reputation}"
+            f"{body.use_llm}|{body.include_reputation}|{body.include_instantly}"
         )
         cached_hit = app.state.cache.get(cache_key)
         if cached_hit is not None:
@@ -321,6 +364,7 @@ def create_app(
 
         explainer = _make_explainer(body.use_llm)
         resolver = app.state.resolver_factory()
+        timeout = app.state.dns_timeout * (2 if body.include_instantly else 1)
         try:
             future = app.state.executor.submit(
                 _run_diagnose,
@@ -330,8 +374,10 @@ def create_app(
                 selectors,
                 packs,
                 body.include_reputation,
+                body.include_instantly,
+                app.state.instantly_factory,
             )
-            payload = future.result(timeout=app.state.dns_timeout)
+            payload = future.result(timeout=timeout)
         except FuturesTimeout as exc:
             future.cancel()
             _log_http(504, started, domain=domain)
@@ -348,6 +394,12 @@ def create_app(
                     "No diagnosis was produced — an outage is not the same as missing records."
                 ),
             ) from exc
+        except InstantlyError as exc:
+            _log_http(502, started, domain=domain)
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}). No Instantly signals attached.",
+            ) from exc
         except ValueError as exc:
             _log_http(404, started, domain=domain)
             raise HTTPException(status_code=404, detail=str(exc)) from exc
@@ -359,6 +411,79 @@ def create_app(
         if tenant:
             response.headers["X-Tenant"] = tenant.tenant_id
         return payload
+
+    def _instantly_compare(domain: str | None) -> dict[str, Any]:
+        filtered = None
+        if domain:
+            try:
+                filtered = validate_hostname(domain)
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+        try:
+            client = app.state.instantly_factory()
+            reports = compare_warmup_to_placement(client, domain=filtered)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except InstantlyError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}).",
+            ) from exc
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "accounts": comparisons_as_dicts(reports),
+        }
+
+    @app.post("/instantly/compare")
+    def instantly_compare_endpoint(
+        body: InstantlyCompareRequest | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _require_auth(x_api_key, authorization)
+        body = body or InstantlyCompareRequest()
+        return _instantly_compare(body.domain)
+
+    @app.get("/instantly/compare")
+    def instantly_compare_get(
+        domain: str | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _require_auth(x_api_key, authorization)
+        return _instantly_compare(domain)
+
+    @app.post("/instantly/ready")
+    def instantly_ready_endpoint(
+        body: InstantlyReadyRequest | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _require_auth(x_api_key, authorization)
+        body = body or InstantlyReadyRequest()
+        explainer = _make_explainer(body.use_llm)
+        resolver = app.state.resolver_factory()
+        try:
+            client = app.state.instantly_factory()
+            report = run_workspace_readiness(
+                client,
+                resolver,
+                explainer,
+                ctd_hosts=list(body.ctd_hosts),
+                include_rich_signals=body.include_rich_signals,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except InstantlyError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}).",
+            ) from exc
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "report": report.to_dict(),
+            "markdown": render_readiness_markdown(report),
+        }
 
     @app.post("/bulk", response_model=BulkResponse)
     def bulk_endpoint(
@@ -420,22 +545,31 @@ def _run_diagnose(
     selectors: tuple[str, ...],
     packs: frozenset[str],
     include_reputation: bool,
+    include_instantly: bool = False,
+    instantly_factory: InstantlyFactory | None = None,
 ) -> DiagnoseResponse:
     if isinstance(resolver, LiveResolver) and not resolver.domain_exists(domain):
         raise ValueError(
             f"{domain} does not exist in DNS (NXDOMAIN). "
             "Check the spelling; no diagnosis was produced."
         )
-    signals = None
     not_checked: list[str] = []
     reputation = None
+    instantly = None
     if include_reputation:
         reputation = check_reputation(domain)
     else:
         not_checked.append("reputation")
-    not_checked.append("instantly")  # Instantly is account-scoped; use /instantly or CLI
+    if include_instantly:
+        factory = instantly_factory or (lambda: InstantlyClient())
+        client = factory()
+        instantly = comparisons_as_dicts(
+            compare_warmup_to_placement(client, domain=domain)
+        )
+    else:
+        not_checked.append("instantly")
     signals = DiagnosisSignals(
-        instantly=None,
+        instantly=instantly,
         reputation=reputation,
         not_checked=not_checked,
     )

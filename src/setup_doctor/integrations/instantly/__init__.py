@@ -1,12 +1,47 @@
 from .client import InstantlyClient, InstantlyError, RecordingTransport
-from .compare import AccountComparison, compare_warmup_to_placement, render_comparison_markdown, verdict_for
+from .compare import (
+    AccountComparison,
+    compare_warmup_to_placement,
+    comparisons_as_dicts,
+    dicts_as_comparisons,
+    email_domain,
+    filter_comparisons_by_domain,
+    normalize_domain,
+    render_comparison_markdown,
+    unique_sender_domains,
+    verdict_for,
+)
+from .readiness import (
+    CtdSignal,
+    DomainReadiness,
+    VitalsCorrelation,
+    WorkspaceReadinessReport,
+    check_ctd,
+    correlate_vitals,
+    render_readiness_markdown,
+    run_workspace_readiness,
+)
 
 __all__ = [
     "AccountComparison",
+    "CtdSignal",
+    "DomainReadiness",
     "InstantlyClient",
     "InstantlyError",
     "RecordingTransport",
+    "VitalsCorrelation",
+    "WorkspaceReadinessReport",
+    "check_ctd",
     "compare_warmup_to_placement",
+    "comparisons_as_dicts",
+    "correlate_vitals",
+    "dicts_as_comparisons",
+    "email_domain",
+    "filter_comparisons_by_domain",
+    "normalize_domain",
     "render_comparison_markdown",
+    "render_readiness_markdown",
+    "run_workspace_readiness",
+    "unique_sender_domains",
     "verdict_for",
 ]

@@ -10,6 +10,12 @@ from typing import Any
 
 from .client import InstantlyClient
 
+# Shared thresholds for warmup / health vs inbox placement.
+HIGH_SCORE = 70.0
+LOW_SCORE = 50.0
+HIGH_INBOX = 70.0
+LOW_INBOX = 50.0
+
 
 @dataclass
 class AccountComparison:
@@ -40,39 +46,102 @@ def _mean(values: list[float]) -> float | None:
     return sum(values) / len(values) if values else None
 
 
-def verdict_for(warmup: float | None, inbox_percent: float | None) -> tuple[str, str]:
-    """How well the warmup score predicts placement. Missing data => unknown."""
-    if warmup is None and inbox_percent is None:
-        return "unknown", "No warmup score and no inbox-placement results for this account."
-    if warmup is None:
-        return "unknown", "Warmup score missing on the account; cannot judge prediction."
+def email_domain(email: str) -> str | None:
+    """Return the domain part of an email, lowercased, or None if malformed."""
+    if not email or "@" not in email:
+        return None
+    host = email.rsplit("@", 1)[-1].strip().lower().rstrip(".")
+    return host or None
+
+
+def normalize_domain(domain: str | None) -> str | None:
+    if not domain:
+        return None
+    return domain.strip().lower().rstrip(".") or None
+
+
+def filter_comparisons_by_domain(
+    reports: list[AccountComparison],
+    domain: str | None,
+) -> list[AccountComparison]:
+    """Keep accounts whose email domain matches ``domain`` (exact match)."""
+    want = normalize_domain(domain)
+    if not want:
+        return list(reports)
+    return [r for r in reports if email_domain(r.email) == want]
+
+
+def unique_sender_domains(accounts: list[dict[str, Any]]) -> list[str]:
+    """Sorted unique domains from Instantly account emails."""
+    seen: set[str] = set()
+    for acct in accounts:
+        email = (acct.get("email") or "").strip()
+        host = email_domain(email)
+        if host:
+            seen.add(host)
+    return sorted(seen)
+
+
+def verdict_for(
+    warmup: float | None,
+    inbox_percent: float | None,
+    health_score: float | None = None,
+) -> tuple[str, str]:
+    """How well warmup/health predicts placement. Missing data => unknown.
+
+    Prefers ``warmup`` when present; otherwise uses ``health_score``. Same
+    HIGH/LOW thresholds apply to either score. Never reports healthy when a
+    required side is missing.
+    """
+    if warmup is not None:
+        score = warmup
+        score_label = f"Warmup score {warmup:g}"
+    elif health_score is not None:
+        score = health_score
+        score_label = f"Health score {health_score:g}"
+    else:
+        score = None
+        score_label = ""
+
+    if score is None and inbox_percent is None:
+        return "unknown", "No warmup/health score and no inbox-placement results for this account."
+    if score is None:
+        return "unknown", "Warmup and health scores missing on the account; cannot judge prediction."
     if inbox_percent is None:
         return "unknown", "No inbox-placement test results linked to this sending account."
-    # High score claiming health while placement is poor — the complaint this mode targets.
-    if warmup >= 70 and inbox_percent < 50:
+
+    if score >= HIGH_SCORE and inbox_percent < LOW_INBOX:
         return (
             "mismatch",
-            f"Warmup score {warmup:g} looks strong but inbox placement is {inbox_percent:g}% "
+            f"{score_label} looks strong but inbox placement is {inbox_percent:g}% "
             "(dashboard can look healthy while mail lands in spam).",
         )
-    if warmup < 50 and inbox_percent >= 70:
+    if score < LOW_SCORE and inbox_percent >= HIGH_INBOX:
         return (
             "mismatch",
-            f"Warmup score {warmup:g} is weak but inbox placement is {inbox_percent:g}% "
+            f"{score_label} is weak but inbox placement is {inbox_percent:g}% "
             "(score understates placement).",
         )
-    if (warmup >= 70 and inbox_percent >= 70) or (warmup < 50 and inbox_percent < 50):
+    if (score >= HIGH_SCORE and inbox_percent >= HIGH_INBOX) or (
+        score < LOW_SCORE and inbox_percent < LOW_INBOX
+    ):
         return (
             "aligned",
-            f"Warmup score {warmup:g} and inbox placement {inbox_percent:g}% point the same way.",
+            f"{score_label} and inbox placement {inbox_percent:g}% point the same way.",
         )
     return (
         "aligned",
-        f"Warmup score {warmup:g} and inbox placement {inbox_percent:g}% are in a mid range; no strong contradiction.",
+        f"{score_label} and inbox placement {inbox_percent:g}% are in a mid range; "
+        "no strong contradiction.",
     )
 
 
-def compare_warmup_to_placement(client: InstantlyClient) -> list[AccountComparison]:
+def compare_warmup_to_placement(
+    client: InstantlyClient,
+    *,
+    domain: str | None = None,
+) -> list[AccountComparison]:
+    """Fetch Instantly accounts/tests and compare. Optional domain filter."""
     accounts = client.list_accounts()
     tests = client.list_inbox_placement_tests()
 
@@ -125,7 +194,7 @@ def compare_warmup_to_placement(client: InstantlyClient) -> list[AccountComparis
                 spam_vals.append(sp)
         inbox_pct = _mean(inbox_vals)
         spam_pct = _mean(spam_vals)
-        verdict, note = verdict_for(warmup, inbox_pct)
+        verdict, note = verdict_for(warmup, inbox_pct, health)
         reports.append(AccountComparison(
             email=email,
             warmup_score=warmup,
@@ -136,7 +205,7 @@ def compare_warmup_to_placement(client: InstantlyClient) -> list[AccountComparis
             verdict=verdict,
             note=note,
         ))
-    return reports
+    return filter_comparisons_by_domain(reports, domain)
 
 
 def render_comparison_markdown(reports: list[AccountComparison]) -> str:
@@ -170,3 +239,23 @@ def render_comparison_markdown(reports: list[AccountComparison]) -> str:
 
 def _fmt(v: float | None) -> str:
     return "unknown" if v is None else f"{v:g}"
+
+
+def comparisons_as_dicts(reports: list[AccountComparison]) -> list[dict[str, Any]]:
+    return [r.to_dict() for r in reports]
+
+
+def dicts_as_comparisons(rows: list[dict[str, Any]]) -> list[AccountComparison]:
+    out: list[AccountComparison] = []
+    for r in rows:
+        out.append(AccountComparison(
+            email=r.get("email", ""),
+            warmup_score=r.get("warmup_score"),
+            health_score=r.get("health_score"),
+            inbox_percent=r.get("inbox_percent"),
+            spam_percent=r.get("spam_percent"),
+            test_ids=list(r.get("test_ids") or []),
+            verdict=r.get("verdict", "unknown"),
+            note=r.get("note", ""),
+        ))
+    return out

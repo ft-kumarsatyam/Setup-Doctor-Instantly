@@ -4,7 +4,9 @@
     python -m setup_doctor example.com --llm
     python -m setup_doctor broken.test --records examples/broken.json
     python -m setup_doctor --instantly-compare
+    python -m setup_doctor --instantly-ready
     python -m setup_doctor --bulk domains.csv
+    python -m setup_doctor --from-instantly
 """
 from __future__ import annotations
 
@@ -21,12 +23,22 @@ from setup_doctor.checks import (
 )
 from setup_doctor.core.result import DiagnosisSignals
 from setup_doctor.dns.resolver import FixtureResolver, LiveResolver, ResolverError
-from setup_doctor.explain import LLMExplainer, TemplateExplainer, anthropic_completer
+from setup_doctor.explain import (
+    LLMExplainer,
+    TemplateExplainer,
+    anthropic_completer,
+    rewrite_instantly_signals,
+)
 from setup_doctor.integrations.instantly import (
     InstantlyClient,
     InstantlyError,
     compare_warmup_to_placement,
+    comparisons_as_dicts,
+    dicts_as_comparisons,
     render_comparison_markdown,
+    render_readiness_markdown,
+    run_workspace_readiness,
+    unique_sender_domains,
 )
 from setup_doctor.integrations.reputation import check_reputation
 from setup_doctor.pipeline import diagnose_result
@@ -35,7 +47,11 @@ from setup_doctor.surfaces.bulk import parse_domain_list, run_bulk
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="setup-doctor", description="Diagnose cold-email DNS setup.")
-    p.add_argument("domain", nargs="?", help="domain to diagnose (omit with --instantly-compare/--bulk)")
+    p.add_argument(
+        "domain",
+        nargs="?",
+        help="domain to diagnose (omit with Instantly/bulk modes)",
+    )
     p.add_argument("--records", help="JSON file of frozen DNS records (offline mode)")
     p.add_argument("--dkim-selector", action="append", help="extra DKIM selector to try (repeatable)")
     p.add_argument(
@@ -67,6 +83,21 @@ def main(argv: list[str] | None = None) -> int:
         help="compare Instantly warmup scores to inbox-placement tests (read-only API v2)",
     )
     p.add_argument(
+        "--instantly-ready",
+        action="store_true",
+        help="workspace readiness: diagnose Instantly sender domains + Instantly signals",
+    )
+    p.add_argument(
+        "--ctd-host",
+        action="append",
+        help="custom tracking domain host to check via Instantly CTD status (repeatable)",
+    )
+    p.add_argument(
+        "--from-instantly",
+        action="store_true",
+        help="bulk-diagnose unique sender domains from the Instantly workspace",
+    )
+    p.add_argument(
         "--bulk",
         metavar="FILE",
         help="diagnose many domains from a CSV or newline list",
@@ -74,13 +105,19 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
 
     if args.instantly_compare:
-        return _instantly_compare(as_json=args.json)
+        return _instantly_compare(as_json=args.json, domain=args.domain, use_llm=args.llm)
 
-    if args.bulk:
+    if args.instantly_ready:
+        return _instantly_ready(args)
+
+    if args.from_instantly or args.bulk:
         return _bulk(args)
 
     if not args.domain:
-        p.error("domain is required unless --instantly-compare or --bulk is set")
+        p.error(
+            "domain is required unless --instantly-compare, --instantly-ready, "
+            "--from-instantly, or --bulk is set"
+        )
 
     if args.records:
         with open(args.records) as fh:
@@ -89,10 +126,13 @@ def main(argv: list[str] | None = None) -> int:
         resolver = LiveResolver()
 
     explainer = LLMExplainer(anthropic_completer()) if args.llm else TemplateExplainer()
+    esp_packs = list(args.esp_pack or ())
+    if args.with_instantly and "instantly" not in esp_packs:
+        esp_packs = ["instantly", *esp_packs]
     try:
         selectors = resolve_selectors(
             explicit=tuple(args.dkim_selector or ()),
-            packs=tuple(args.esp_pack or ()),
+            packs=tuple(esp_packs),
             defaults=DEFAULT_DKIM_SELECTORS,
         )
     except ValueError as exc:
@@ -135,26 +175,20 @@ def main(argv: list[str] | None = None) -> int:
         print(result.report)
         if result.signals and result.signals.instantly:
             print()
-            print(render_comparison_markdown(_dicts_as_comparisons(result.signals.instantly)))
+            rows = dicts_as_comparisons(result.signals.instantly)
+            print(_instantly_markdown(rows, use_llm=args.llm))
     return 0
 
 
-def _dicts_as_comparisons(rows: list[dict]):
-    from setup_doctor.integrations.instantly import AccountComparison
-
-    out = []
-    for r in rows:
-        out.append(AccountComparison(
-            email=r.get("email", ""),
-            warmup_score=r.get("warmup_score"),
-            health_score=r.get("health_score"),
-            inbox_percent=r.get("inbox_percent"),
-            spam_percent=r.get("spam_percent"),
-            test_ids=list(r.get("test_ids") or []),
-            verdict=r.get("verdict", "unknown"),
-            note=r.get("note", ""),
-        ))
-    return out
+def _instantly_markdown(rows, *, use_llm: bool) -> str:
+    if not use_llm:
+        return render_comparison_markdown(rows)
+    try:
+        complete = anthropic_completer()
+    except Exception:
+        return render_comparison_markdown(rows)
+    md, _src, _violations = rewrite_instantly_signals(rows, complete)
+    return md
 
 
 def _build_signals(args) -> DiagnosisSignals | None:
@@ -165,7 +199,9 @@ def _build_signals(args) -> DiagnosisSignals | None:
     reputation = None
     if args.with_instantly:
         client = InstantlyClient()
-        instantly = [r.to_dict() for r in compare_warmup_to_placement(client)]
+        instantly = comparisons_as_dicts(
+            compare_warmup_to_placement(client, domain=args.domain)
+        )
     else:
         not_checked.append("instantly")
     if args.reputation:
@@ -179,25 +215,81 @@ def _build_signals(args) -> DiagnosisSignals | None:
     )
 
 
-def _bulk(args) -> int:
-    path = args.bulk
-    with open(path) as fh:
-        domains = parse_domain_list(fh.read())
-    if not domains:
-        print("No domains found in bulk file.", file=sys.stderr)
-        return 2
+def _resolver_from_args(args):
     if args.records:
         with open(args.records) as fh:
-            resolver = FixtureResolver(json.load(fh))
-    else:
-        resolver = LiveResolver()
+            return FixtureResolver(json.load(fh))
+    return LiveResolver()
+
+
+def _bulk(args) -> int:
+    domains: list[str] = []
+    if args.from_instantly:
+        try:
+            client = InstantlyClient()
+            domains = unique_sender_domains(client.list_accounts())
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        except InstantlyError as exc:
+            print(
+                f"Instantly API request failed (HTTP {exc.status}). "
+                "No bulk domains were loaded.",
+                file=sys.stderr,
+            )
+            return 2
+        if not domains:
+            print("No sending-account domains found in Instantly workspace.", file=sys.stderr)
+            return 2
+    if args.bulk:
+        with open(args.bulk) as fh:
+            from_file = parse_domain_list(fh.read())
+        if args.from_instantly:
+            # Union, Instantly first then file extras
+            seen = set(domains)
+            for d in from_file:
+                if d not in seen:
+                    domains.append(d)
+                    seen.add(d)
+        else:
+            domains = from_file
+    if not domains:
+        print("No domains found for bulk diagnosis.", file=sys.stderr)
+        return 2
+
+    resolver = _resolver_from_args(args)
     explainer = LLMExplainer(anthropic_completer()) if args.llm else TemplateExplainer()
+    esp_packs = list(args.esp_pack or ())
+    if args.from_instantly and "instantly" not in esp_packs:
+        esp_packs = ["instantly", *esp_packs]
     selectors = resolve_selectors(
         explicit=tuple(args.dkim_selector or ()),
-        packs=tuple(args.esp_pack or ()),
+        packs=tuple(esp_packs),
         defaults=DEFAULT_DKIM_SELECTORS,
     )
-    report = run_bulk(domains, resolver, explainer, dkim_selectors=selectors)
+
+    signals_factory = None
+    if args.with_instantly or args.from_instantly:
+        try:
+            client = InstantlyClient()
+            all_cmp = compare_warmup_to_placement(client)
+
+            def signals_factory(domain: str) -> DiagnosisSignals:
+                filtered = [
+                    c for c in all_cmp
+                    if c.email.rsplit("@", 1)[-1] == domain
+                ]
+                return DiagnosisSignals(
+                    instantly=comparisons_as_dicts(filtered),
+                    reputation=None,
+                    not_checked=["reputation"],
+                )
+        except (ValueError, InstantlyError):
+            signals_factory = None
+
+    report = run_bulk(
+        domains, resolver, explainer, dkim_selectors=selectors, signals_factory=signals_factory,
+    )
     if args.json:
         print(json.dumps(report.to_dict(), indent=2))
     else:
@@ -205,10 +297,10 @@ def _bulk(args) -> int:
     return 0
 
 
-def _instantly_compare(*, as_json: bool) -> int:
+def _instantly_compare(*, as_json: bool, domain: str | None = None, use_llm: bool = False) -> int:
     try:
         client = InstantlyClient()
-        reports = compare_warmup_to_placement(client)
+        reports = compare_warmup_to_placement(client, domain=domain)
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
@@ -223,7 +315,45 @@ def _instantly_compare(*, as_json: bool) -> int:
     if as_json:
         print(json.dumps([r.to_dict() for r in reports], indent=2))
     else:
-        print(render_comparison_markdown(reports))
+        print(_instantly_markdown(reports, use_llm=use_llm))
+    return 0
+
+
+def _instantly_ready(args) -> int:
+    try:
+        client = InstantlyClient()
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    resolver = _resolver_from_args(args)
+    explainer = LLMExplainer(anthropic_completer()) if args.llm else TemplateExplainer()
+    try:
+        report = run_workspace_readiness(
+            client,
+            resolver,
+            explainer,
+            ctd_hosts=list(args.ctd_host or ()),
+            include_rich_signals=True,
+        )
+    except InstantlyError as exc:
+        print(
+            f"Instantly API request failed (HTTP {exc.status}). "
+            "No readiness report was produced.",
+            file=sys.stderr,
+        )
+        return 2
+    except ResolverError as exc:
+        print(
+            f"Could not complete DNS checks during readiness: {exc}",
+            file=sys.stderr,
+        )
+        return 2
+
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2))
+    else:
+        print(render_readiness_markdown(report))
     return 0
 
 
