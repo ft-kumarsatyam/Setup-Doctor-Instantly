@@ -7,7 +7,7 @@
       }
     },
     "setup-doctor": {
-      "url": "https://YOUR_HOST/mcp",
+      "url": "https://setup-doctor-instantly.fly.dev/mcp",
       "headers": {
         "X-API-Key": "YOUR_SETUP_DOCTOR_KEY",
         "X-Instantly-Api-Key": "YOUR_INSTANTLY_KEY"

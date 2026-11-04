@@ -4,9 +4,12 @@ from __future__ import annotations
 import logging
 
 import pytest
+from fastapi.testclient import TestClient as FastAPITestClient
 from starlette.testclient import TestClient
 
+from setup_doctor.dns.resolver import FixtureResolver
 from setup_doctor.integrations.instantly import InstantlyClient, RecordingTransport
+from setup_doctor.surfaces.api import create_app
 from setup_doctor.surfaces.auth import ApiKeyAuth
 from setup_doctor.surfaces.mcp_server import (
     TOOLS,
@@ -29,7 +32,8 @@ def test_mcp_http_rejects_missing_api_key():
     with TestClient(app) as client:
         r = client.post("/mcp", json={})
     assert r.status_code == 401
-    assert "Invalid" in r.json()["detail"] or "missing" in r.json()["detail"].lower()
+    detail = r.json()["detail"].lower()
+    assert "api key" in detail
 
 
 def test_mcp_http_allows_valid_api_key_through_gate():
@@ -98,3 +102,36 @@ def test_tools_registry_includes_pre_launch_gate():
         "instantly_ready",
         "pre_launch_gate",
     }
+
+
+def test_mounted_mcp_no_http_307_on_bare_path():
+    """Fly/proxy clients break on 307 Location: http://…/mcp/ — rewrite in-process."""
+    app = create_app(
+        resolver_factory=lambda: FixtureResolver({}),
+        auth=ApiKeyAuth(keys={"secret": "t1"}),
+        mount_mcp=True,
+    )
+    with FastAPITestClient(app, follow_redirects=False) as client:
+        r = client.post(
+            "/mcp",
+            headers={
+                "X-API-Key": "secret",
+                "X-Forwarded-Proto": "https",
+            },
+            json={},
+        )
+    # In-process rewrite → MCP protocol response (e.g. 406), never Mount 307 to http://…/mcp/
+    assert r.status_code not in (301, 302, 307, 308)
+    assert r.headers.get("location") is None
+
+
+def test_schema_reports_auth_and_connect_docs():
+    app = create_app(
+        resolver_factory=lambda: FixtureResolver({}),
+        auth=ApiKeyAuth(keys={"secret": "t1"}),
+    )
+    r = FastAPITestClient(app).get("/schema")
+    assert r.status_code == 200
+    body = r.json()
+    assert body.get("auth_required") is True
+    assert "connect" in (body.get("connect_docs") or "").lower()

@@ -15,17 +15,33 @@ Before activating a campaign: run Setup Doctor readiness. If Findings are `criti
 
 ## Hosted Setup Doctor (recommended)
 
-1. Deploy with Docker Compose from this repo (`SETUP_DOCTOR_MOUNT_MCP=1`).
-2. Set `SETUP_DOCTOR_API_KEYS=your-key:tenant` (required for public hosts).
+1. Deploy with Docker Compose or Fly (`fly.toml` in this repo; `SETUP_DOCTOR_MOUNT_MCP=1`).
+2. **Required for any public Instantly share:** invent a secret and set
+   `SETUP_DOCTOR_API_KEYS=your-key:tenant`
+   (`fly secrets set SETUP_DOCTOR_API_KEYS='…'` — do not leave diagnose open).
+   **There is no Setup Doctor signup page** — the host creates the key in env and shares it.
 3. Optional process-wide Instantly key: `INSTANTLY_API_KEY=…` (read scopes only).
+   Instantly keys come from Instantly Settings → Integrations / API — not from Setup Doctor.
 4. Or pass Instantly per request: header `X-Instantly-Api-Key`.
 
 Endpoints:
 
+- Web connect one-pager (this doc, live): `https://YOUR_HOST/connect`
 - API: `https://YOUR_HOST/healthz`, `POST /diagnose`, `POST /instantly/ready`
-- MCP (streamable HTTP): `https://YOUR_HOST/mcp`
+- MCP (streamable HTTP): **`https://YOUR_HOST/mcp`** (HTTPS only; trailing slash optional)
+
+**MCP clients (Cursor / Claude):** use the HTTPS URL above. The API rewrites `/mcp` → `/mcp/` in-process and trusts `X-Forwarded-Proto` so Fly never returns a bare `http://…/mcp/` 307 that breaks MCP clients. Prefer documenting `/mcp` (no slash); both work over HTTPS.
 
 Auth: `X-API-Key: your-key` or `Authorization: Bearer your-key`.
+
+### Fly demo host
+
+```bash
+fly secrets set SETUP_DOCTOR_API_KEYS='demo-key:instantly-demo'
+fly deploy
+# MCP: https://setup-doctor-instantly.fly.dev/mcp
+# Connect UI: https://setup-doctor-instantly.fly.dev/connect
+```
 
 ## Cursor — dual MCP
 

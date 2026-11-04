@@ -20,10 +20,11 @@ We **do not** seed placement networks, verify prospect emails, or write Instantl
 
 **MCP directories:**  
 Name: `setup-doctor`  
-URL: `https://YOUR_HOST/mcp`  
-Auth: `X-API-Key`  
+URL: `https://YOUR_HOST/mcp` (HTTPS only; e.g. `https://setup-doctor-instantly.fly.dev/mcp`)  
+Auth: `X-API-Key` (require `SETUP_DOCTOR_API_KEYS` on public hosts)  
 Optional: `X-Instantly-Api-Key`  
-Tools: `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`
+Tools: `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`  
+Connect one-pager: `https://YOUR_HOST/connect`
 
 **OpenAPI:** expose FastAPI `/schema`, `/diagnose`, `/instantly/ready`, `/instantly/pre-launch-gate`, `/fix-packet`.
 

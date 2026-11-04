@@ -49,7 +49,8 @@ Missing Instantly data ⇒ `unknown` / `not_checked`. Surfaces: CLI
 HTTP (`/instantly/compare`, `/instantly/ready`, `include_instantly` on `/diagnose`),
 MCP stdio + streamable HTTP (`compare_instantly`, `instantly_ready`, diagnose flag).
 Instantly key order: `X-Instantly-Api-Key` → tenant vault (optional) → env.
-Hosted dual-MCP: [INSTANTLY_CONNECT.md](INSTANTLY_CONNECT.md).
+Hosted dual-MCP: [INSTANTLY_CONNECT.md](INSTANTLY_CONNECT.md) (also live at `GET /connect`).
+MCP mount rewrites `/mcp`→`/mcp/` in-process and forces HTTPS Location headers behind Fly (`force_https` + `ProxyHeadersMiddleware`).
 Launch gate: `integrations/instantly/launch.py` (`launch_verdict`, `pre_launch_gate`).
 Fix packets: `explain/fix_packets.py`. Webhook: `POST /hooks/instantly`.
 Partner copy: [MARKETPLACE.md](MARKETPLACE.md).

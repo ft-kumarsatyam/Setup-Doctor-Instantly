@@ -54,6 +54,26 @@ def test_web_checker_serves_html():
     assert r.status_code == 200
     assert "Setup Doctor" in r.text
     assert "/diagnose" in r.text
+    assert "safe to launch" in r.text.lower()
+    assert "Advanced — API keys" in r.text
+    assert "mcp.instantly.ai" in r.text
+    assert 'href="/connect"' in r.text
+    assert 'data-auth-required="0"' in r.text
+    assert "Where do I get a Setup Doctor API key?" in r.text
+    assert "Enter domain" in r.text
+    assert "friendlyError" in r.text
+
+
+def test_connect_page_mirrors_instantly_docs():
+    app = create_app(resolver_factory=lambda: FixtureResolver({}))
+    r = TestClient(app).get("/connect")
+    assert r.status_code == 200
+    assert "Connect Instantly MCP" in r.text
+    assert "mcp.instantly.ai" in r.text
+    assert "SETUP_DOCTOR_API_KEYS" in r.text
+    assert "pre_launch_gate" in r.text
+    assert "docs/INSTANTLY_CONNECT.md" in r.text
+    assert "no</em> public signup" in r.text or "no public signup" in r.text.lower()
 
 
 def test_fix_packet_endpoint():

@@ -67,9 +67,10 @@ from setup_doctor.surfaces.instantly_ctx import (
     TenantVault,
     make_request_instantly_factory,
 )
+from setup_doctor.surfaces.connect_page import CONNECT_PAGE_HTML
 from setup_doctor.surfaces.notify import notify_slack
 from setup_doctor.surfaces.vault import EncryptedTenantVault, default_vault_from_env
-from setup_doctor.surfaces.web_check import WEB_CHECK_HTML
+from setup_doctor.surfaces.web_check import render_web_check_html
 
 MAX_DOMAIN_LEN = 253
 MOUNT_MCP_ENV = "SETUP_DOCTOR_MOUNT_MCP"
@@ -173,33 +174,48 @@ InstantlyFactory = Callable[[], InstantlyClient]
 def validate_hostname(raw: str) -> str:
     """Normalize and accept only public-looking DNS hostnames."""
     if raw is None:
-        raise ValueError("domain is required")
+        raise ValueError("Enter a sending domain (for example send.yourcompany.com).")
     s = raw.strip()
     if not s or len(s) > MAX_DOMAIN_LEN:
-        raise ValueError("domain must be a hostname of at most 253 characters")
+        raise ValueError(
+            "Enter a hostname up to 253 characters — no spaces "
+            "(example: send.yourcompany.com)."
+        )
     lower = s.lower()
     if any(c in lower for c in ("/", "\\", "?", "#", "@", " ", "\t", "\n", "\r")):
-        raise ValueError("domain must not contain a path, query, or userinfo")
+        raise ValueError(
+            "Use only the hostname — not a full URL or email. "
+            "Example: send.yourcompany.com"
+        )
     if "://" in lower or lower.startswith(("http:", "https:", "ftp:")):
-        raise ValueError("domain must not include a URL scheme")
+        raise ValueError(
+            "Drop https:// — paste just the domain (example: send.yourcompany.com)."
+        )
     if lower.startswith("[") or "%" in lower:
-        raise ValueError("domain must not be an IP address")
+        raise ValueError("Paste a domain name, not an IP address.")
     if lower.endswith("."):
         lower = lower[:-1]
     if ":" in lower:
-        raise ValueError("domain must not include a port")
+        raise ValueError("Remove the port (use send.yourcompany.com, not host:443).")
     try:
         ipaddress.ip_address(lower)
-        raise ValueError("domain must not be an IP address")
+        raise ValueError("Paste a domain name, not an IP address.")
     except ValueError as exc:
-        if "must not be an IP" in str(exc):
+        if "not an IP" in str(exc):
             raise
     if lower in _BLOCKED_EXACT or any(lower.endswith(suf) for suf in _BLOCKED_SUFFIXES):
-        raise ValueError("domain must not be a localhost or internal name")
+        raise ValueError(
+            "That looks like a local/internal name. Use a public sending domain."
+        )
     if lower.count(".") == 0:
-        raise ValueError("domain must be a fully-qualified hostname")
+        raise ValueError(
+            "Use a full domain with a dot (example: send.yourcompany.com)."
+        )
     if not _HOSTNAME_RE.match(lower):
-        raise ValueError("domain is not a valid hostname")
+        raise ValueError(
+            "That doesn't look like a valid hostname. "
+            "Example: send.yourcompany.com"
+        )
     return lower
 
 
@@ -379,13 +395,15 @@ def create_app(
                 "header": f"{HEADER_INSTANTLY_API_KEY} overrides INSTANTLY_API_KEY for this request",
             },
             "auth": "X-API-Key or Authorization: Bearer when SETUP_DOCTOR_API_KEYS is set",
-            "mcp": "/mcp streamable HTTP when SETUP_DOCTOR_MOUNT_MCP=1",
+            "mcp": "/mcp streamable HTTP when SETUP_DOCTOR_MOUNT_MCP=1 (use https://HOST/mcp)",
             "pre_launch_gate": "POST /instantly/pre-launch-gate — allowed_to_activate iff launch_verdict=ready",
             "fix_packets": f"providers: {', '.join(FIX_PACKET_PROVIDERS)}",
             "web": "GET / — public checker UI (same /diagnose engine)",
+            "connect_docs": "GET /connect — Instantly dual-MCP one-pager",
             "hooks": "POST /hooks/instantly — HMAC SETUP_DOCTOR_INSTANTLY_HOOK_SECRET",
             "connect": "POST /connect/instantly — store encrypted Instantly key per tenant (SETUP_DOCTOR_VAULT_KEY)",
             "all_workspaces": "POST /instantly/ready {all_workspaces:true} — workspace-group admin + x-as-workspace",
+            "auth_required": app.state.auth.required,
         }
 
     @app.post("/connect/instantly")
@@ -445,7 +463,13 @@ def create_app(
 
     @app.get("/", response_class=HTMLResponse)
     def web_checker() -> HTMLResponse:
-        return HTMLResponse(content=WEB_CHECK_HTML)
+        return HTMLResponse(
+            content=render_web_check_html(auth_required=app.state.auth.required),
+        )
+
+    @app.get("/connect", response_class=HTMLResponse)
+    def connect_docs() -> HTMLResponse:
+        return HTMLResponse(content=CONNECT_PAGE_HTML)
 
     @app.post("/diagnose", response_model=DiagnoseResponse)
     def diagnose_endpoint(
@@ -473,7 +497,9 @@ def create_app(
             _log_http(429, started, domain=domain)
             raise HTTPException(
                 status_code=429,
-                detail="Rate limit exceeded. Try again in a minute.",
+                detail=(
+                    "You're checking too quickly. Wait about a minute, then try again."
+                ),
             )
 
         try:
@@ -540,22 +566,30 @@ def create_app(
             _log_http(504, started, domain=domain)
             raise HTTPException(
                 status_code=504,
-                detail="DNS checks timed out. No diagnosis was produced.",
+                detail=(
+                    "DNS lookup took too long — no Findings were produced. "
+                    "Try again in a moment. A timeout is not the same as missing records."
+                ),
             ) from exc
         except ResolverError as exc:
             _log_http(502, started, domain=domain)
             raise HTTPException(
                 status_code=502,
                 detail=(
-                    "Could not complete DNS checks (resolver error). "
-                    "No diagnosis was produced — an outage is not the same as missing records."
+                    "We couldn't reach DNS for this domain right now — no Findings "
+                    "were produced. An outage is not the same as missing SPF/DKIM/"
+                    "DMARC records. Retry shortly."
                 ),
             ) from exc
         except InstantlyError as exc:
             _log_http(502, started, domain=domain)
             raise HTTPException(
                 status_code=502,
-                detail=f"Instantly API request failed (HTTP {exc.status}). No Instantly signals attached.",
+                detail=(
+                    f"Instantly API returned HTTP {exc.status}, so Instantly signals "
+                    "weren't attached. DNS Findings (if any) still need a successful "
+                    "check — retry, or uncheck Instantly signals and check DNS only."
+                ),
             ) from exc
         except ValueError as exc:
             _log_http(404, started, domain=domain)
@@ -878,7 +912,13 @@ def create_app(
 
 
 def _mount_mcp_on_app(app: FastAPI, mcp_holder: dict[str, Any]) -> None:
-    """Mount streamable HTTP MCP at /mcp (optional dependency)."""
+    """Mount streamable HTTP MCP at /mcp (optional dependency).
+
+    Fixes Fly/proxy issues that break Cursor/Claude MCP clients:
+    - Rewrite ``/mcp`` → ``/mcp/`` in-process (no 307)
+    - Trust ``X-Forwarded-Proto`` so any Location headers stay HTTPS
+    - Rewrite accidental ``http://`` Location redirects to ``https://``
+    """
     try:
         from mcp.server.transport_security import TransportSecuritySettings
         from starlette.middleware.base import BaseHTTPMiddleware
@@ -894,6 +934,11 @@ def _mount_mcp_on_app(app: FastAPI, mcp_holder: dict[str, Any]) -> None:
             "MCP HTTP mount requires the mcp extra: pip install -e '.[mcp]'"
         ) from exc
 
+    try:
+        from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+    except ImportError:  # pragma: no cover
+        ProxyHeadersMiddleware = None  # type: ignore[misc, assignment]
+
     mcp = build_fastmcp(
         streamable_http_path="/",
         transport_security=TransportSecuritySettings(
@@ -904,9 +949,23 @@ def _mount_mcp_on_app(app: FastAPI, mcp_holder: dict[str, Any]) -> None:
     inner = mcp.streamable_http_app()
     mcp_holder["session_manager"] = mcp.session_manager
 
+    class _McpPathAndHttpsMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request: Request, call_next):
+            # Avoid Starlette Mount's 307 /mcp → /mcp/ (often emitted as http:// behind Fly).
+            if request.scope.get("path") == "/mcp":
+                request.scope["path"] = "/mcp/"
+            response = await call_next(request)
+            location = response.headers.get("location")
+            if location and location.startswith("http://"):
+                forwarded = (request.headers.get("x-forwarded-proto") or "").split(",")[0].strip()
+                if forwarded == "https" or request.url.scheme == "https":
+                    response.headers["location"] = "https://" + location[len("http://"):]
+            return response
+
     class _McpGateMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request: Request, call_next):
-            if not request.url.path.startswith("/mcp"):
+            path = request.scope.get("path") or ""
+            if not path.startswith("/mcp"):
                 return await call_next(request)
             try:
                 tenant = app.state.auth.authenticate(
@@ -928,7 +987,11 @@ def _mount_mcp_on_app(app: FastAPI, mcp_holder: dict[str, Any]) -> None:
             finally:
                 reset_request_instantly_context(tokens)
 
+    # Middleware order: last added runs first.
     app.add_middleware(_McpGateMiddleware)
+    app.add_middleware(_McpPathAndHttpsMiddleware)
+    if ProxyHeadersMiddleware is not None:
+        app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
     app.mount("/mcp", inner)
     app.state.mcp = mcp
 

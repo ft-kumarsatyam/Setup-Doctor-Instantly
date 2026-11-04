@@ -49,9 +49,11 @@ python -m setup_doctor.surfaces.mcp_server --transport streamable-http --port 80
 # Or mount MCP on the API: SETUP_DOCTOR_MOUNT_MCP=1 uvicorn setup_doctor.surfaces.api:app
 ```
 
-Docker (API + `/mcp`): `docker compose up --build`. Instantly dual-MCP connect:
-[docs/INSTANTLY_CONNECT.md](docs/INSTANTLY_CONNECT.md). Per-request Instantly key:
-`X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
+Docker (API + `/mcp`): `docker compose up --build`. Fly: `fly.toml` →
+`https://setup-doctor-instantly.fly.dev` (set `SETUP_DOCTOR_API_KEYS` before any Instantly share).
+MCP URL: `https://HOST/mcp` (HTTPS; trailing slash optional — no HTTP 307).
+Connect UI: `GET /connect` (same as [docs/INSTANTLY_CONNECT.md](docs/INSTANTLY_CONNECT.md)).
+Per-request Instantly key: `X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
 
 Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
 
