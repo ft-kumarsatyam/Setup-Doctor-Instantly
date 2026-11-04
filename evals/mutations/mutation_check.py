@@ -54,6 +54,9 @@ MUTANTS = [
     ("instantly rewrite skips grounding verify", "src/setup_doctor/explain/instantly_rewrite.py",
      "violations = verify_instantly_rewrite(items, comparisons)",
      "violations = []  # mutant"),
+    ("pre_launch_gate ignores critical Findings", "src/setup_doctor/integrations/instantly/launch.py",
+     "if blocking:\n        return \"blocked\"",
+     "if False:  # mutant\n        return \"blocked\""),
 ]
 
 

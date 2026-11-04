@@ -29,29 +29,47 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from fastapi import FastAPI, Header, HTTPException, Request, Response
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from setup_doctor.checks import ALL_DNS_PACKS, DEFAULT_DKIM_SELECTORS, DEFAULT_PACKS, resolve_selectors
 from setup_doctor.core.observability import log_diagnosis
 from setup_doctor.core.result import SCHEMA_VERSION, DiagnosisSignals
 from setup_doctor.dns.resolver import LiveResolver, Resolver, ResolverError
-from setup_doctor.explain import LLMExplainer, TemplateExplainer, anthropic_completer
+from setup_doctor.explain import (
+    FIX_PACKET_PROVIDERS,
+    LLMExplainer,
+    TemplateExplainer,
+    anthropic_completer,
+    build_fix_packet,
+    playbook_snippet,
+    verify_fix_packet,
+)
 from setup_doctor.integrations.instantly import (
     InstantlyClient,
     InstantlyError,
+    agency_report_payload,
+    build_pre_launch_gate,
     compare_warmup_to_placement,
     comparisons_as_dicts,
+    render_agency_workspaces_markdown,
     render_readiness_markdown,
+    run_all_workspaces_readiness,
     run_workspace_readiness,
 )
 from setup_doctor.integrations.reputation import check_reputation
+from setup_doctor.integrations.whois_age import lookup_domain_age
 from setup_doctor.pipeline import diagnose_result
 from setup_doctor.surfaces.auth import ApiKeyAuth
+from setup_doctor.surfaces.hooks import extract_domains, parse_json_body, verify_signature
 from setup_doctor.surfaces.instantly_ctx import (
     HEADER_INSTANTLY_API_KEY,
     TenantVault,
     make_request_instantly_factory,
 )
+from setup_doctor.surfaces.notify import notify_slack
+from setup_doctor.surfaces.vault import EncryptedTenantVault, default_vault_from_env
+from setup_doctor.surfaces.web_check import WEB_CHECK_HTML
 
 MAX_DOMAIN_LEN = 253
 MOUNT_MCP_ENV = "SETUP_DOCTOR_MOUNT_MCP"
@@ -84,6 +102,8 @@ class DiagnoseRequest(BaseModel):
     use_llm: bool = False
     include_reputation: bool = False
     include_instantly: bool = False
+    include_domain_age: bool = False
+    fix_packet_provider: str | None = None
 
 
 class DiagnoseResponse(BaseModel):
@@ -97,6 +117,8 @@ class DiagnoseResponse(BaseModel):
     violations: list[str] = Field(default_factory=list)
     signals: dict[str, Any] | None = None
     cached: bool = False
+    fix_packet: dict[str, Any] | None = None
+    domain_age: dict[str, Any] | None = None
 
 
 class InstantlyCompareRequest(BaseModel):
@@ -107,6 +129,27 @@ class InstantlyReadyRequest(BaseModel):
     ctd_hosts: list[str] = Field(default_factory=list)
     include_rich_signals: bool = True
     use_llm: bool = False
+    client_name: str | None = None
+    agency_name: str | None = None
+    agency_export: bool = False
+    all_workspaces: bool = False
+
+
+class PreLaunchGateRequest(BaseModel):
+    domain: str | None = Field(default=None, max_length=MAX_DOMAIN_LEN + 32)
+    ctd_hosts: list[str] = Field(default_factory=list)
+    include_rich_signals: bool = True
+
+
+class FixPacketRequest(BaseModel):
+    domain: str = Field(..., min_length=1, max_length=MAX_DOMAIN_LEN + 32)
+    provider: str = "cloudflare"
+    dkim_selectors: list[str] = Field(default_factory=list)
+    esp_packs: list[str] = Field(default_factory=list)
+
+
+class ConnectInstantlyRequest(BaseModel):
+    instantly_api_key: str = Field(..., min_length=8, max_length=512)
 
 
 class BulkRequest(BaseModel):
@@ -284,7 +327,15 @@ def create_app(
     app.state.executor = executor
     app.state.auth = auth if auth is not None else ApiKeyAuth()
     app.state.instantly_factory = instantly_factory or (lambda: InstantlyClient())
-    app.state.instantly_vault = instantly_vault
+    vault_obj: EncryptedTenantVault | None = None
+    if instantly_vault is not None:
+        app.state.instantly_vault = instantly_vault
+    else:
+        vault_obj = default_vault_from_env()
+        app.state.instantly_vault = vault_obj.as_lookup() if vault_obj else None
+    app.state.vault = vault_obj
+    app.state.webhook_results: dict[str, Any] = {}
+    app.state.webhook_secret = os.environ.get("SETUP_DOCTOR_INSTANTLY_HOOK_SECRET", "").strip()
 
     def _require_auth(
         x_api_key: str | None,
@@ -329,7 +380,72 @@ def create_app(
             },
             "auth": "X-API-Key or Authorization: Bearer when SETUP_DOCTOR_API_KEYS is set",
             "mcp": "/mcp streamable HTTP when SETUP_DOCTOR_MOUNT_MCP=1",
+            "pre_launch_gate": "POST /instantly/pre-launch-gate — allowed_to_activate iff launch_verdict=ready",
+            "fix_packets": f"providers: {', '.join(FIX_PACKET_PROVIDERS)}",
+            "web": "GET / — public checker UI (same /diagnose engine)",
+            "hooks": "POST /hooks/instantly — HMAC SETUP_DOCTOR_INSTANTLY_HOOK_SECRET",
+            "connect": "POST /connect/instantly — store encrypted Instantly key per tenant (SETUP_DOCTOR_VAULT_KEY)",
+            "all_workspaces": "POST /instantly/ready {all_workspaces:true} — workspace-group admin + x-as-workspace",
         }
+
+    @app.post("/connect/instantly")
+    def connect_instantly(
+        body: ConnectInstantlyRequest,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        vault: EncryptedTenantVault | None = app.state.vault
+        if vault is None or not vault.configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Vault disabled. Set SETUP_DOCTOR_VAULT_KEY (and optional SETUP_DOCTOR_VAULT_PATH).",
+            )
+        if tenant is None:
+            raise HTTPException(
+                status_code=401,
+                detail="API key with tenant required to connect Instantly (set SETUP_DOCTOR_API_KEYS=key:tenant).",
+            )
+        try:
+            fp = vault.put(tenant.tenant_id, body.instantly_api_key)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return {
+            "connected": True,
+            "tenant_id": tenant.tenant_id,
+            "fingerprint": fp,
+            "note": "Instantly key stored encrypted at rest. Raw key is never logged.",
+        }
+
+    @app.get("/connect/instantly")
+    def connect_instantly_status(
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        vault: EncryptedTenantVault | None = app.state.vault
+        if vault is None:
+            return {"connected": False, "vault_configured": False}
+        tid = tenant.tenant_id if tenant else "default"
+        return {"tenant_id": tid, **vault.status(tid)}
+
+    @app.delete("/connect/instantly")
+    def disconnect_instantly(
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        vault: EncryptedTenantVault | None = app.state.vault
+        if vault is None or not vault.configured:
+            raise HTTPException(status_code=503, detail="Vault disabled.")
+        if tenant is None:
+            raise HTTPException(status_code=401, detail="API key with tenant required.")
+        removed = vault.delete(tenant.tenant_id)
+        return {"connected": False, "removed": removed, "tenant_id": tenant.tenant_id}
+
+    @app.get("/", response_class=HTMLResponse)
+    def web_checker() -> HTMLResponse:
+        return HTMLResponse(content=WEB_CHECK_HTML)
 
     @app.post("/diagnose", response_model=DiagnoseResponse)
     def diagnose_endpoint(
@@ -384,7 +500,8 @@ def create_app(
 
         cache_key = (
             f"{domain}|{','.join(selectors)}|{sorted(packs)}|"
-            f"{body.use_llm}|{body.include_reputation}|{body.include_instantly}"
+            f"{body.use_llm}|{body.include_reputation}|{body.include_instantly}|"
+            f"{body.include_domain_age}|{body.fix_packet_provider}"
         )
         cached_hit = app.state.cache.get(cache_key)
         if cached_hit is not None:
@@ -414,6 +531,8 @@ def create_app(
                 body.include_reputation,
                 body.include_instantly,
                 request_instantly,
+                body.include_domain_age,
+                body.fix_packet_provider,
             )
             payload = future.result(timeout=timeout)
         except FuturesTimeout as exc:
@@ -515,6 +634,20 @@ def create_app(
         resolver = app.state.resolver_factory()
         try:
             client = _instantly_for_request(tenant, x_instantly_api_key)()
+            if body.all_workspaces:
+                agency = run_all_workspaces_readiness(
+                    client,
+                    resolver,
+                    explainer,
+                    ctd_hosts=list(body.ctd_hosts),
+                    include_rich_signals=body.include_rich_signals,
+                )
+                return {
+                    "schema_version": SCHEMA_VERSION,
+                    "all_workspaces": True,
+                    "agency": agency.to_dict(),
+                    "markdown": render_agency_workspaces_markdown(agency),
+                }
             report = run_workspace_readiness(
                 client,
                 resolver,
@@ -529,11 +662,164 @@ def create_app(
                 status_code=502,
                 detail=f"Instantly API request failed (HTTP {exc.status}).",
             ) from exc
-        return {
+        payload: dict[str, Any] = {
             "schema_version": SCHEMA_VERSION,
             "report": report.to_dict(),
             "markdown": render_readiness_markdown(report),
+            "launch_verdict": report.launch_verdict,
+            "summary_spoken": report.summary_spoken,
         }
+        if body.agency_export:
+            payload["agency"] = agency_report_payload(
+                report,
+                client_name=body.client_name or "Client",
+                agency_name=body.agency_name or "Agency",
+            )
+        return payload
+
+    @app.post("/instantly/pre-launch-gate")
+    def pre_launch_gate_endpoint(
+        body: PreLaunchGateRequest | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        body = body or PreLaunchGateRequest()
+        try:
+            client = _instantly_for_request(tenant, x_instantly_api_key)()
+            report = run_workspace_readiness(
+                client,
+                app.state.resolver_factory(),
+                TemplateExplainer(),
+                ctd_hosts=list(body.ctd_hosts),
+                include_rich_signals=body.include_rich_signals,
+            )
+            domain = validate_hostname(body.domain) if body.domain else None
+            return build_pre_launch_gate(report, domain_filter=domain)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except InstantlyError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}).",
+            ) from exc
+
+    @app.post("/fix-packet")
+    def fix_packet_endpoint(
+        body: FixPacketRequest,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _require_auth(x_api_key, authorization)
+        try:
+            domain = validate_hostname(body.domain)
+            selectors = resolve_selectors(
+                explicit=tuple(body.dkim_selectors),
+                packs=tuple(body.esp_packs),
+                defaults=DEFAULT_DKIM_SELECTORS,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        resolver = app.state.resolver_factory()
+        result = diagnose_result(
+            domain, resolver, TemplateExplainer(), selectors, packs=DEFAULT_PACKS,
+        )
+        try:
+            packet = build_fix_packet(
+                domain, result.findings, provider=body.provider,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        violations = verify_fix_packet(packet, result.findings)
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "fix_packet": packet.to_dict(),
+            "markdown": packet.to_markdown(),
+            "playbook": playbook_snippet(body.provider),
+            "violations": violations,
+            "findings": [f.to_dict() for f in result.findings],
+        }
+
+    @app.post("/hooks/instantly")
+    async def instantly_hook(
+        request: Request,
+        x_setup_doctor_signature: str | None = Header(
+            default=None, alias="X-Setup-Doctor-Signature",
+        ),
+    ) -> dict[str, Any]:
+        secret = app.state.webhook_secret
+        raw = await request.body()
+        if not secret:
+            raise HTTPException(
+                status_code=503,
+                detail="Webhook disabled (set SETUP_DOCTOR_INSTANTLY_HOOK_SECRET).",
+            )
+        if not verify_signature(secret, raw, x_setup_doctor_signature):
+            raise HTTPException(status_code=401, detail="Invalid webhook signature")
+        try:
+            payload = parse_json_body(raw)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        domains = extract_domains(payload)
+        if not domains:
+            raise HTTPException(status_code=400, detail="No domains found in payload")
+        limiter: _RateLimiter = app.state.rate_limiter
+        if not limiter.allow("hook:instantly"):
+            raise HTTPException(status_code=429, detail="Rate limit exceeded.")
+        resolver = app.state.resolver_factory()
+        explainer = TemplateExplainer()
+        rows: list[dict[str, Any]] = []
+        for raw_domain in domains[:BULK_MAX_DOMAINS]:
+            try:
+                domain = validate_hostname(raw_domain)
+            except ValueError as exc:
+                rows.append({"domain": raw_domain, "ok": False, "error": str(exc)})
+                continue
+            try:
+                result = diagnose_result(
+                    domain, resolver, explainer, DEFAULT_DKIM_SELECTORS, packs=DEFAULT_PACKS,
+                )
+                row = {"domain": domain, "ok": True, "result": result.to_dict()}
+                app.state.webhook_results[domain] = row
+                rows.append(row)
+            except ResolverError:
+                rows.append({
+                    "domain": domain,
+                    "ok": False,
+                    "error": "resolver error (not absence)",
+                })
+            except ValueError as exc:
+                rows.append({"domain": domain, "ok": False, "error": str(exc)})
+        ok_n = sum(1 for r in rows if r.get("ok"))
+        slack = notify_slack(
+            f"Setup Doctor Instantly hook: {ok_n}/{len(rows)} domain(s) diagnosed "
+            f"(idempotent_key={payload.get('idempotency_key') or payload.get('id') or 'n/a'})."
+        )
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "idempotent_key": payload.get("idempotency_key") or payload.get("id"),
+            "count": len(rows),
+            "rows": rows,
+            "slack": slack,
+            "note": "Findings from Setup Doctor only; Instantly failure does not invent DNS.",
+        }
+
+    @app.get("/hooks/instantly/last/{domain}")
+    def instantly_hook_last(
+        domain: str,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _require_auth(x_api_key, authorization)
+        try:
+            host = validate_hostname(domain)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        row = app.state.webhook_results.get(host)
+        if not row:
+            raise HTTPException(status_code=404, detail="No stored webhook result")
+        return row
 
     @app.post("/bulk", response_model=BulkResponse)
     def bulk_endpoint(
@@ -657,6 +943,8 @@ def _run_diagnose(
     include_reputation: bool,
     include_instantly: bool = False,
     instantly_factory: InstantlyFactory | None = None,
+    include_domain_age: bool = False,
+    fix_packet_provider: str | None = None,
 ) -> DiagnoseResponse:
     if isinstance(resolver, LiveResolver) and not resolver.domain_exists(domain):
         raise ValueError(
@@ -686,6 +974,20 @@ def _run_diagnose(
     result = diagnose_result(
         domain, resolver, explainer, selectors, packs=packs, signals=signals,
     )
+    fix_packet = None
+    if fix_packet_provider:
+        packet = build_fix_packet(
+            domain, result.findings, provider=fix_packet_provider,
+        )
+        violations = verify_fix_packet(packet, result.findings)
+        if violations:
+            # Still return packet but surface violations; never invent records.
+            fix_packet = {**packet.to_dict(), "violations": violations}
+        else:
+            fix_packet = packet.to_dict()
+    domain_age = None
+    if include_domain_age:
+        domain_age = lookup_domain_age(domain).to_dict()
     return DiagnoseResponse(
         schema_version=result.schema_version,
         domain=result.domain,
@@ -697,6 +999,8 @@ def _run_diagnose(
         violations=list(result.violations),
         signals=result.signals.to_dict() if result.signals else None,
         cached=False,
+        fix_packet=fix_packet,
+        domain_age=domain_age,
     )
 
 

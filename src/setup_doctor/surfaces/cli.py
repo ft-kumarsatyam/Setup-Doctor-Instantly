@@ -24,19 +24,25 @@ from setup_doctor.checks import (
 from setup_doctor.core.result import DiagnosisSignals
 from setup_doctor.dns.resolver import FixtureResolver, LiveResolver, ResolverError
 from setup_doctor.explain import (
+    FIX_PACKET_PROVIDERS,
     LLMExplainer,
     TemplateExplainer,
     anthropic_completer,
+    build_fix_packet,
     rewrite_instantly_signals,
 )
 from setup_doctor.integrations.instantly import (
     InstantlyClient,
     InstantlyError,
+    build_pre_launch_gate,
     compare_warmup_to_placement,
     comparisons_as_dicts,
     dicts_as_comparisons,
+    render_agency_report,
+    render_agency_workspaces_markdown,
     render_comparison_markdown,
     render_readiness_markdown,
+    run_all_workspaces_readiness,
     run_workspace_readiness,
     unique_sender_domains,
 )
@@ -98,6 +104,29 @@ def main(argv: list[str] | None = None) -> int:
         help="bulk-diagnose unique sender domains from the Instantly workspace",
     )
     p.add_argument(
+        "--pre-launch-gate",
+        action="store_true",
+        help="Instantly pre-launch gate (allowed_to_activate iff launch_verdict=ready)",
+    )
+    p.add_argument(
+        "--agency-export",
+        action="store_true",
+        help="with --instantly-ready: print white-label agency markdown",
+    )
+    p.add_argument(
+        "--all-workspaces",
+        action="store_true",
+        help=(
+            "with --instantly-ready: iterate Instantly workspace-group sub-workspaces "
+            "(admin key + x-as-workspace; scopes: workspaces:read + group access)"
+        ),
+    )
+    p.add_argument(
+        "--fix-packet",
+        choices=sorted(FIX_PACKET_PROVIDERS),
+        help="print paste-ready registrar DNS fix packet after diagnose",
+    )
+    p.add_argument(
         "--bulk",
         metavar="FILE",
         help="diagnose many domains from a CSV or newline list",
@@ -106,6 +135,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.instantly_compare:
         return _instantly_compare(as_json=args.json, domain=args.domain, use_llm=args.llm)
+
+    if args.pre_launch_gate:
+        return _pre_launch_gate(args)
 
     if args.instantly_ready:
         return _instantly_ready(args)
@@ -116,7 +148,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.domain:
         p.error(
             "domain is required unless --instantly-compare, --instantly-ready, "
-            "--from-instantly, or --bulk is set"
+            "--pre-launch-gate, --from-instantly, or --bulk is set"
         )
 
     if args.records:
@@ -170,13 +202,24 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.json:
-        print(json.dumps(result.to_dict(), indent=2))
+        payload = result.to_dict()
+        if args.fix_packet:
+            packet = build_fix_packet(
+                args.domain, result.findings, provider=args.fix_packet,
+            )
+            payload["fix_packet"] = packet.to_dict()
+        print(json.dumps(payload, indent=2))
     else:
         print(result.report)
         if result.signals and result.signals.instantly:
             print()
             rows = dicts_as_comparisons(result.signals.instantly)
             print(_instantly_markdown(rows, use_llm=args.llm))
+        if args.fix_packet:
+            print()
+            print(build_fix_packet(
+                args.domain, result.findings, provider=args.fix_packet,
+            ).to_markdown())
     return 0
 
 
@@ -329,6 +372,19 @@ def _instantly_ready(args) -> int:
     resolver = _resolver_from_args(args)
     explainer = LLMExplainer(anthropic_completer()) if args.llm else TemplateExplainer()
     try:
+        if getattr(args, "all_workspaces", False):
+            agency = run_all_workspaces_readiness(
+                client,
+                resolver,
+                explainer,
+                ctd_hosts=list(args.ctd_host or ()),
+                include_rich_signals=True,
+            )
+            if args.json:
+                print(json.dumps(agency.to_dict(), indent=2))
+            else:
+                print(render_agency_workspaces_markdown(agency))
+            return 0
         report = run_workspace_readiness(
             client,
             resolver,
@@ -352,9 +408,44 @@ def _instantly_ready(args) -> int:
 
     if args.json:
         print(json.dumps(report.to_dict(), indent=2))
+    elif getattr(args, "agency_export", False):
+        print(render_agency_report(report))
     else:
         print(render_readiness_markdown(report))
     return 0
+
+
+def _pre_launch_gate(args) -> int:
+    try:
+        client = InstantlyClient()
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    resolver = _resolver_from_args(args)
+    try:
+        report = run_workspace_readiness(
+            client,
+            resolver,
+            TemplateExplainer(),
+            ctd_hosts=list(args.ctd_host or ()),
+            include_rich_signals=True,
+        )
+        gate = build_pre_launch_gate(report, domain_filter=args.domain)
+    except InstantlyError as exc:
+        print(
+            f"Instantly API request failed (HTTP {exc.status}). "
+            "No pre-launch gate was produced.",
+            file=sys.stderr,
+        )
+        return 2
+    except ResolverError as exc:
+        print(f"Could not complete DNS checks during gate: {exc}", file=sys.stderr)
+        return 2
+    if args.json:
+        print(json.dumps(gate, indent=2))
+    else:
+        print(gate["markdown"])
+    return 0 if gate.get("allowed_to_activate") else 3
 
 
 if __name__ == "__main__":

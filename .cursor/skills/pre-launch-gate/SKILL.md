@@ -16,30 +16,28 @@ See `docs/INSTANTLY_CONNECT.md`.
 
 ## Steps
 
-1. **Setup Doctor readiness** (preferred single call):
+1. **Preferred:** MCP tool `pre_launch_gate` (optional `domain`, `ctd_hosts`).
+   Or CLI: `python -m setup_doctor --pre-launch-gate --json`
 
-   - MCP tool `instantly_ready` (optional `ctd_hosts`)
-   - Or CLI: `python -m setup_doctor --instantly-ready --json`
-
-2. If you only have one domain, also acceptable:
-
+2. Fallbacks if gate tool unavailable:
+   - MCP `instantly_ready` / CLI `--instantly-ready --json`
    - MCP `diagnose` with `include_instantly: true`
-   - CLI: `python -m setup_doctor DOMAIN --with-instantly --json`
 
 3. Optionally pull Instantly MCP account/vitals for operator context. Quote Instantly
-   tool output; do not invent scores.
+   tool output; do not invent scores. If Instantly Deliverability Agent recommends
+   pause, **quote it** — Setup Doctor explains DNS depth and does **not** auto-pause.
 
 4. **Present in this order:**
-   - Setup Doctor `findings` (ids, severity, fix) — Findings first
-   - Instantly warmup/placement mismatches and vitals disagree notes
+   - `launch_verdict` / `allowed_to_activate` / `summary_spoken`
+   - Setup Doctor `blocking_finding_ids` and findings — Findings first
+   - Instantly mismatches / vitals disagreements
    - Anything `unknown` / `not_checked` — say so plainly
 
-5. **Gate:**
-   - If any Finding severity is `critical` or `high` → **do not** call Instantly
-     `activate_campaign` (or equivalent). Tell the user to fix DNS first.
-   - If Instantly data is missing → verdict is incomplete / unknown — **not** ready.
-   - Only when Findings are clear of auth blockers and Instantly shows no mismatch
-     should you say launch looks clear — still leave activate to the human/Instantly agent.
+5. **Gate (hard rules):**
+   - `allowed_to_activate` is true **only** when `launch_verdict == ready`
+   - Critical Findings ⇒ blocked — **do not** call Instantly `activate_campaign`
+   - Missing Instantly data ⇒ unknown — **not** ready
+   - Leave activate to the human / Instantly MCP
 
 ## Do not
 

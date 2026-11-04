@@ -66,6 +66,14 @@ Each scripted model behavior is run against every fixture that has findings (24 
 Instantly rewrite never invents Findings; missing Instantly data stays unknown.
 
 
+## 2c. Pre-launch gate honesty
+
+- Critical Findings block activate: **True**
+- Honest gate accepted: **True**
+- Invented allow rejected: **True**
+- Spoken summary present: **True**
+
+
 ## 3. Schema contract
 
 - schema_version: `1.0` (expected `1.0`)

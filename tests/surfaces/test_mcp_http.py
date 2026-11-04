@@ -91,5 +91,10 @@ def test_instantly_header_context_used_by_tool(monkeypatch, caplog):
         reset_request_instantly_context(tokens)
 
 
-def test_tools_registry_unchanged_names():
-    assert set(TOOLS) == {"diagnose", "compare_instantly", "instantly_ready"}
+def test_tools_registry_includes_pre_launch_gate():
+    assert set(TOOLS) == {
+        "diagnose",
+        "compare_instantly",
+        "instantly_ready",
+        "pre_launch_gate",
+    }

@@ -87,20 +87,38 @@ class InstantlyClient:
         transport: Transport | None = None,
         sleep: Callable[[float], None] = time.sleep,
         max_retries: int = 5,
+        as_workspace: str | None = None,
     ):
         self._api_key = api_key if api_key is not None else api_key_from_env()
         self._base = (base_url or base_url_from_env()).rstrip("/")
         self._transport = transport or _stdlib_transport
         self._sleep = sleep
         self._max_retries = max_retries
+        # Agency workspace-group: call Instantly "as" a sub-workspace.
+        # https://developer.instantly.ai/guides/workspace-group
+        self._as_workspace = (as_workspace or "").strip() or None
+
+    def with_workspace(self, workspace_id: str | None) -> InstantlyClient:
+        """Return a client that sends x-as-workspace for sub-workspace calls."""
+        return InstantlyClient(
+            api_key=self._api_key,
+            base_url=self._base,
+            transport=self._transport,
+            sleep=self._sleep,
+            max_retries=self._max_retries,
+            as_workspace=workspace_id,
+        )
 
     def _headers(self) -> dict[str, str]:
-        return {
+        headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Accept": "application/json",
             "Content-Type": "application/json",
             "User-Agent": "setup-doctor/0.1",
         }
+        if self._as_workspace:
+            headers["x-as-workspace"] = self._as_workspace
+        return headers
 
     def request(self, method: str, path: str, *, params: dict[str, Any] | None = None,
                 json_body: Any | None = None) -> Any:
@@ -298,6 +316,46 @@ class InstantlyClient:
         data = self.request("GET", f"/campaigns/{campaign_id}/sending-status")
         return data if isinstance(data, dict) else {"campaign_id": campaign_id, "raw": data}
 
+    def get_current_workspace(self) -> dict[str, Any]:
+        """GET /workspaces/current — scopes: workspaces:read | …"""
+        data = self.request("GET", "/workspaces/current")
+        return data if isinstance(data, dict) else {"raw": data}
+
+    def list_workspace_group_members(self, *, limit: int = 100) -> list[dict[str, Any]]:
+        """Paginate GET /workspace-group-members (admin workspace → sub-workspaces).
+
+        Requires agency workspace-group. Missing/unauthorized ⇒ InstantlyError;
+        callers should report unknown / not_checked — never invent sub-workspaces.
+        """
+        items: list[dict[str, Any]] = []
+        starting_after: str | None = None
+        while True:
+            data = self.request(
+                "GET", "/workspace-group-members",
+                params={"limit": limit, "starting_after": starting_after},
+            )
+            batch = data.get("items") if isinstance(data, dict) else data
+            if not isinstance(batch, list):
+                break
+            items.extend(batch)
+            starting_after = data.get("next_starting_after") if isinstance(data, dict) else None
+            if not starting_after or not batch:
+                break
+        return items
+
+    def sub_workspace_ids(self) -> list[str]:
+        """Extract accepted sub_workspace_id values from workspace-group members."""
+        out: list[str] = []
+        seen: set[str] = set()
+        for row in self.list_workspace_group_members():
+            if not isinstance(row, dict):
+                continue
+            wid = row.get("sub_workspace_id") or row.get("workspace_id")
+            if isinstance(wid, str) and wid.strip() and wid not in seen:
+                seen.add(wid)
+                out.append(wid.strip())
+        return out
+
 
 class RecordingTransport:
     """Map method+path → recorded (status, body) for tests. No network."""
@@ -305,6 +363,7 @@ class RecordingTransport:
     def __init__(self, routes: dict[tuple[str, str], tuple[int, Any]]):
         self.routes = routes
         self.calls: list[tuple[str, str]] = []
+        self.last_headers: dict[str, str] = {}
 
     def __call__(self, method: str, url: str, headers: dict[str, str], body: bytes | None) -> tuple[int, bytes, dict[str, str]]:
         parsed = urllib.parse.urlparse(url)
@@ -313,6 +372,7 @@ class RecordingTransport:
             path = path[len("/api/v2"):] or "/"
         key = (method.upper(), path.rstrip("/") or "/")
         self.calls.append(key)
+        self.last_headers = {k.lower(): v for k, v in headers.items()}
         # Authorization must be present; never log the secret value.
         if "authorization" not in {k.lower() for k in headers}:
             return 401, b'{"message":"Missing Authorization header"}', {}

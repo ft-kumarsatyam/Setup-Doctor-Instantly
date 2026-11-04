@@ -94,3 +94,21 @@ Send `X-API-Key` and optionally `X-Instantly-Api-Key` on each request.
 ## Scopes (Instantly API v2, read-only)
 
 `accounts:read`, `inbox_placement_tests:read`, `inbox_placement_analytics:read`; readiness may also need `inbox_placement_reports:read` and `ai_agents:read`.
+
+Agency multi-workspace (`--all-workspaces` / `all_workspaces: true`): admin workspace-group key with `workspaces:read` + group member list access. Setup Doctor calls Instantly with `x-as-workspace` per sub-workspace. Missing group access ⇒ `not_checked`, never invents workspaces.
+
+## Tenant Instantly key vault (hosted)
+
+```bash
+export SETUP_DOCTOR_API_KEYS=agency-key:acme
+export SETUP_DOCTOR_VAULT_KEY='long-random-master-secret'
+export SETUP_DOCTOR_VAULT_PATH=/var/lib/setup-doctor/vault.json
+
+# Store once (encrypted at rest)
+curl -X POST https://YOUR_HOST/connect/instantly \
+  -H "X-API-Key: agency-key" \
+  -H "Content-Type: application/json" \
+  -d '{"instantly_api_key":"YOUR_INSTANTLY_KEY"}'
+```
+
+Later Instantly tools use the vault for that tenant when `X-Instantly-Api-Key` is omitted. Optional Slack notify on provisioning hooks: `SETUP_DOCTOR_SLACK_WEBHOOK_URL`.

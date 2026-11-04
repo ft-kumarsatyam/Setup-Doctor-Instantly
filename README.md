@@ -61,8 +61,14 @@ Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests â‡
 python -m setup_doctor --instantly-compare
 python -m setup_doctor yourdomain.com --with-instantly --json
 python -m setup_doctor --instantly-ready --ctd-host track.example.com
+python -m setup_doctor --instantly-ready --agency-export
+python -m setup_doctor --instantly-ready --all-workspaces --json
+python -m setup_doctor --pre-launch-gate --json
+python -m setup_doctor mess.test --records examples/mess.json --fix-packet cloudflare
 python -m setup_doctor --from-instantly --json
 ```
+
+Agency / marketplace notes: [docs/MARKETPLACE.md](docs/MARKETPLACE.md). Public checker UI at `GET /` on the API.
 
 CI: `.github/workflows/ci.yml` (Python 3.11 / 3.13 â€” ruff, pytest, evals, mutants).
 
@@ -76,8 +82,9 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Schema contract: `DiagnosisResult` `schema_version=1.0` ok
 - Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
 - Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
-- Mutations: **16/16** killed
-- Tests: **153** pytest
+- Pre-launch gate: critical Findings block activate; invented `allowed_to_activate` rejected
+- Mutations: **17/17** killed
+- Tests: **174** pytest
 
 ## Limits
 

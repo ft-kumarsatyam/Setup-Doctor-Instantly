@@ -50,6 +50,9 @@ HTTP (`/instantly/compare`, `/instantly/ready`, `include_instantly` on `/diagnos
 MCP stdio + streamable HTTP (`compare_instantly`, `instantly_ready`, diagnose flag).
 Instantly key order: `X-Instantly-Api-Key` → tenant vault (optional) → env.
 Hosted dual-MCP: [INSTANTLY_CONNECT.md](INSTANTLY_CONNECT.md).
+Launch gate: `integrations/instantly/launch.py` (`launch_verdict`, `pre_launch_gate`).
+Fix packets: `explain/fix_packets.py`. Webhook: `POST /hooks/instantly`.
+Partner copy: [MARKETPLACE.md](MARKETPLACE.md).
 
 ## Tests mirror packages
 

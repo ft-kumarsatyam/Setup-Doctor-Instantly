@@ -85,6 +85,14 @@ class WorkspaceReadinessReport:
     placement_insights: list[dict[str, Any]] = field(default_factory=list)
     blacklist_reports: list[dict[str, Any]] = field(default_factory=list)
     not_checked: list[str] = field(default_factory=list)
+    # Additive launch gate fields (schema 1.0 compatible; null/empty defaults).
+    launch_verdict: str | None = None
+    launch_score: int | None = None
+    blocking_finding_ids: list[str] = field(default_factory=list)
+    instantly_mismatches: list[str] = field(default_factory=list)
+    summary_spoken: str | None = None
+    esp_packs: list[str] = field(default_factory=list)
+    esp_note: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -93,6 +101,13 @@ class WorkspaceReadinessReport:
             "placement_insights": list(self.placement_insights),
             "blacklist_reports": list(self.blacklist_reports),
             "not_checked": list(self.not_checked),
+            "launch_verdict": self.launch_verdict,
+            "launch_score": self.launch_score,
+            "blocking_finding_ids": list(self.blocking_finding_ids),
+            "instantly_mismatches": list(self.instantly_mismatches),
+            "summary_spoken": self.summary_spoken,
+            "esp_packs": list(self.esp_packs),
+            "esp_note": self.esp_note,
         }
 
 
@@ -308,10 +323,14 @@ def run_workspace_readiness(
     except InstantlyError:
         not_checked.append("vitals")
 
+    from .esp import esp_limitation_note, esp_packs_for_accounts
+
+    esp_packs = esp_packs_for_accounts(accounts)
     selectors = resolve_selectors(
-        packs=("instantly",),
+        packs=esp_packs,
         defaults=DEFAULT_DKIM_SELECTORS,
     )
+    esp_note = esp_limitation_note(esp_packs)
 
     rows: list[DomainReadiness] = []
     for domain in domains:
@@ -435,6 +454,8 @@ def run_workspace_readiness(
         placement_insights=placement_insights,
         blacklist_reports=blacklist_reports,
         not_checked=not_checked,
+        esp_packs=list(esp_packs),
+        esp_note=esp_note,
     )
     # Stash all CTD signals on deliverability_agent-adjacent: expose via to_dict extension
     if ctd_signals:
@@ -445,6 +466,9 @@ def run_workspace_readiness(
                 **report.deliverability_agent,
                 "ctd_hosts": [c.to_dict() for c in ctd_signals],
             }
+    from .launch import attach_launch_decision
+
+    attach_launch_decision(report)
     return report
 
 
@@ -457,9 +481,27 @@ def render_readiness_markdown(report: WorkspaceReadinessReport) -> str:
         "Instantly vitals never invent Findings.",
         "",
     ]
+    if report.launch_verdict:
+        lines.append(f"**Launch verdict:** `{report.launch_verdict}`")
+        if report.summary_spoken:
+            lines.append("")
+            lines.append(report.summary_spoken)
+        lines.append("")
+    if report.esp_packs:
+        lines.append(f"ESP selector packs: `{', '.join(report.esp_packs)}`")
+        if report.esp_note:
+            lines.append(f"_{report.esp_note}_")
+        lines.append("")
     if report.not_checked:
         lines.append(f"Not checked: {', '.join(report.not_checked)}")
         lines.append("")
+    agent = report.deliverability_agent
+    if isinstance(agent, dict) and (agent.get("state") or agent.get("note") or agent.get("feed")):
+        lines += [
+            "> If Instantly's AI Deliverability Agent recommends pause, quote that "
+            "recommendation; Setup Doctor explains DNS depth and does **not** auto-pause.",
+            "",
+        ]
 
     if not report.domains:
         lines += ["No sending-account domains found in the Instantly workspace.", ""]

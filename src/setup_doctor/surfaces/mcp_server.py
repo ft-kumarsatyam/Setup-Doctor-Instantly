@@ -28,6 +28,7 @@ from setup_doctor.explain import TemplateExplainer
 from setup_doctor.integrations.instantly import (
     InstantlyClient,
     InstantlyError,
+    build_pre_launch_gate,
     compare_warmup_to_placement,
     comparisons_as_dicts,
     render_readiness_markdown,
@@ -167,7 +168,36 @@ def tool_instantly_ready(arguments: dict[str, Any]) -> dict[str, Any]:
             "schema_version": SCHEMA_VERSION,
             "report": report.to_dict(),
             "markdown": render_readiness_markdown(report),
+            "launch_verdict": report.launch_verdict,
+            "summary_spoken": report.summary_spoken,
         }
+    except ValueError as exc:
+        return {"error": "config", "message": str(exc)}
+    except InstantlyError as exc:
+        return {"error": "instantly_http", "status": exc.status, "message": str(exc)}
+    except ResolverError as exc:
+        return {
+            "error": "resolver_error",
+            "message": str(exc),
+            "note": "Outage is not the same as missing records.",
+        }
+
+
+def tool_pre_launch_gate(arguments: dict[str, Any]) -> dict[str, Any]:
+    """Gate Instantly campaign activate on Setup Doctor Findings + Instantly signals."""
+    ctd_hosts = list(arguments.get("ctd_hosts") or [])
+    include_rich = bool(arguments.get("include_rich_signals", True))
+    domain = (arguments.get("domain") or "").strip() or None
+    try:
+        client = _client_from_context(arguments)
+        report = run_workspace_readiness(
+            client,
+            LiveResolver(),
+            TemplateExplainer(),
+            ctd_hosts=ctd_hosts,
+            include_rich_signals=include_rich,
+        )
+        return build_pre_launch_gate(report, domain_filter=domain)
     except ValueError as exc:
         return {"error": "config", "message": str(exc)}
     except InstantlyError as exc:
@@ -229,6 +259,23 @@ TOOLS = {
             },
         },
         "handler": tool_instantly_ready,
+    },
+    "pre_launch_gate": {
+        "description": (
+            "Pre-launch gate for Instantly: returns allowed_to_activate only when "
+            "launch_verdict is ready. Critical Findings always block. "
+            "Missing Instantly data never yields ready. Read-only — do not activate "
+            "campaigns while blocking Findings remain."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "domain": {"type": "string"},
+                "ctd_hosts": {"type": "array", "items": {"type": "string"}},
+                "include_rich_signals": {"type": "boolean"},
+            },
+        },
+        "handler": tool_pre_launch_gate,
     },
 }
 
@@ -296,6 +343,22 @@ def build_fastmcp(
         """Instantly workspace readiness with Setup Doctor Findings."""
         return json.dumps(
             tool_instantly_ready({
+                "ctd_hosts": ctd_hosts or [],
+                "include_rich_signals": include_rich_signals,
+            }),
+            indent=2,
+        )
+
+    @mcp.tool()
+    def pre_launch_gate(
+        domain: str | None = None,
+        ctd_hosts: list[str] | None = None,
+        include_rich_signals: bool = True,
+    ) -> str:
+        """Gate Instantly activate on Findings + Instantly signals (read-only)."""
+        return json.dumps(
+            tool_pre_launch_gate({
+                "domain": domain,
                 "ctd_hosts": ctd_hosts or [],
                 "include_rich_signals": include_rich_signals,
             }),
