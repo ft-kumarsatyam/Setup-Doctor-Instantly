@@ -44,9 +44,16 @@ MCP (optional: `pip install -e ".[mcp]"`):
 
 ```bash
 python -m setup_doctor.surfaces.mcp_server
+# Hosted streamable HTTP (API key via SETUP_DOCTOR_API_KEYS):
+python -m setup_doctor.surfaces.mcp_server --transport streamable-http --port 8000
+# Or mount MCP on the API: SETUP_DOCTOR_MOUNT_MCP=1 uvicorn setup_doctor.surfaces.api:app
 ```
 
-Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/eval-check`.
+Docker (API + `/mcp`): `docker compose up --build`. Instantly dual-MCP connect:
+[docs/INSTANTLY_CONNECT.md](docs/INSTANTLY_CONNECT.md). Per-request Instantly key:
+`X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
+
+Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
 
 Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals/CTD are signals — they never invent Findings:
 
@@ -70,7 +77,7 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
 - Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
 - Mutations: **16/16** killed
-- Tests: **138** pytest
+- Tests: **153** pytest
 
 ## Limits
 

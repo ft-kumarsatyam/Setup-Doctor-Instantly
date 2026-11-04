@@ -1,0 +1,18 @@
+services:
+  setup-doctor:
+    build: .
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      SETUP_DOCTOR_MOUNT_MCP: "1"
+      SETUP_DOCTOR_API_KEYS: ${SETUP_DOCTOR_API_KEYS:-}
+      INSTANTLY_API_KEY: ${INSTANTLY_API_KEY:-}
+      # Optional LLM rewrite on API (off by default)
+      SETUP_DOCTOR_API_LLM: ${SETUP_DOCTOR_API_LLM:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      SETUP_DOCTOR_MODEL: ${SETUP_DOCTOR_MODEL:-}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3

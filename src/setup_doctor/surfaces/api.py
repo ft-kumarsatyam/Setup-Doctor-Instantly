@@ -47,8 +47,14 @@ from setup_doctor.integrations.instantly import (
 from setup_doctor.integrations.reputation import check_reputation
 from setup_doctor.pipeline import diagnose_result
 from setup_doctor.surfaces.auth import ApiKeyAuth
+from setup_doctor.surfaces.instantly_ctx import (
+    HEADER_INSTANTLY_API_KEY,
+    TenantVault,
+    make_request_instantly_factory,
+)
 
 MAX_DOMAIN_LEN = 253
+MOUNT_MCP_ENV = "SETUP_DOCTOR_MOUNT_MCP"
 DNS_TIMEOUT_SEC = 8.0
 RATE_LIMIT_REQUESTS = 30
 RATE_LIMIT_WINDOW_SEC = 60.0
@@ -228,6 +234,10 @@ def _make_explainer(use_llm: bool):
         ) from exc
 
 
+def _env_flag(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in ("1", "true", "yes")
+
+
 def create_app(
     resolver_factory: ResolverFactory | None = None,
     *,
@@ -236,13 +246,25 @@ def create_app(
     dns_timeout: float = DNS_TIMEOUT_SEC,
     auth: ApiKeyAuth | None = None,
     instantly_factory: InstantlyFactory | None = None,
+    instantly_vault: TenantVault | None = None,
+    mount_mcp: bool | None = None,
 ) -> FastAPI:
-    """Build the API app. Tests inject a FixtureResolver via resolver_factory."""
+    """Build the API app. Tests inject a FixtureResolver via resolver_factory.
+
+    When ``mount_mcp`` is true (or SETUP_DOCTOR_MOUNT_MCP is set), streamable HTTP
+    MCP is mounted at ``/mcp`` using the same API-key auth and Instantly header rules.
+    """
     executor = ThreadPoolExecutor(max_workers=8, thread_name_prefix="sd-dns")
+    want_mcp = _env_flag(MOUNT_MCP_ENV) if mount_mcp is None else mount_mcp
+    mcp_holder: dict[str, Any] = {}
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
-        yield
+        if want_mcp and "session_manager" in mcp_holder:
+            async with mcp_holder["session_manager"].run():
+                yield
+        else:
+            yield
         executor.shutdown(wait=False, cancel_futures=True)
 
     app = FastAPI(
@@ -262,6 +284,7 @@ def create_app(
     app.state.executor = executor
     app.state.auth = auth if auth is not None else ApiKeyAuth()
     app.state.instantly_factory = instantly_factory or (lambda: InstantlyClient())
+    app.state.instantly_vault = instantly_vault
 
     def _require_auth(
         x_api_key: str | None,
@@ -271,6 +294,17 @@ def create_app(
             return app.state.auth.authenticate(x_api_key, authorization)
         except PermissionError as exc:
             raise HTTPException(status_code=401, detail=str(exc)) from exc
+
+    def _instantly_for_request(
+        tenant,
+        x_instantly_api_key: str | None,
+    ) -> InstantlyFactory:
+        return make_request_instantly_factory(
+            header_value=x_instantly_api_key,
+            tenant=tenant,
+            vault=app.state.instantly_vault,
+            base_factory=app.state.instantly_factory,
+        )
 
     @app.get("/healthz")
     def healthz() -> dict[str, str]:
@@ -291,8 +325,10 @@ def create_app(
                 "POST /instantly/compare": "warmup vs placement (optional domain filter)",
                 "GET /instantly/compare": "same as POST",
                 "POST /instantly/ready": "workspace readiness + vitals/CTD signals",
+                "header": f"{HEADER_INSTANTLY_API_KEY} overrides INSTANTLY_API_KEY for this request",
             },
             "auth": "X-API-Key or Authorization: Bearer when SETUP_DOCTOR_API_KEYS is set",
+            "mcp": "/mcp streamable HTTP when SETUP_DOCTOR_MOUNT_MCP=1",
         }
 
     @app.post("/diagnose", response_model=DiagnoseResponse)
@@ -302,9 +338,11 @@ def create_app(
         response: Response,
         x_api_key: str | None = Header(default=None, alias="X-API-Key"),
         authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
     ) -> DiagnoseResponse:
         started = time.monotonic()
         tenant = _require_auth(x_api_key, authorization)
+        request_instantly = _instantly_for_request(tenant, x_instantly_api_key)
         client_ip = (request.client.host if request.client else "unknown")
         rate_key = f"{tenant.tenant_id}:{client_ip}" if tenant else client_ip
 
@@ -375,7 +413,7 @@ def create_app(
                 packs,
                 body.include_reputation,
                 body.include_instantly,
-                app.state.instantly_factory,
+                request_instantly,
             )
             payload = future.result(timeout=timeout)
         except FuturesTimeout as exc:
@@ -412,7 +450,10 @@ def create_app(
             response.headers["X-Tenant"] = tenant.tenant_id
         return payload
 
-    def _instantly_compare(domain: str | None) -> dict[str, Any]:
+    def _instantly_compare(
+        domain: str | None,
+        instantly_factory: InstantlyFactory,
+    ) -> dict[str, Any]:
         filtered = None
         if domain:
             try:
@@ -420,7 +461,7 @@ def create_app(
             except ValueError as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
         try:
-            client = app.state.instantly_factory()
+            client = instantly_factory()
             reports = compare_warmup_to_placement(client, domain=filtered)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -439,32 +480,41 @@ def create_app(
         body: InstantlyCompareRequest | None = None,
         x_api_key: str | None = Header(default=None, alias="X-API-Key"),
         authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
     ) -> dict[str, Any]:
-        _require_auth(x_api_key, authorization)
+        tenant = _require_auth(x_api_key, authorization)
         body = body or InstantlyCompareRequest()
-        return _instantly_compare(body.domain)
+        return _instantly_compare(
+            body.domain,
+            _instantly_for_request(tenant, x_instantly_api_key),
+        )
 
     @app.get("/instantly/compare")
     def instantly_compare_get(
         domain: str | None = None,
         x_api_key: str | None = Header(default=None, alias="X-API-Key"),
         authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
     ) -> dict[str, Any]:
-        _require_auth(x_api_key, authorization)
-        return _instantly_compare(domain)
+        tenant = _require_auth(x_api_key, authorization)
+        return _instantly_compare(
+            domain,
+            _instantly_for_request(tenant, x_instantly_api_key),
+        )
 
     @app.post("/instantly/ready")
     def instantly_ready_endpoint(
         body: InstantlyReadyRequest | None = None,
         x_api_key: str | None = Header(default=None, alias="X-API-Key"),
         authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
     ) -> dict[str, Any]:
-        _require_auth(x_api_key, authorization)
+        tenant = _require_auth(x_api_key, authorization)
         body = body or InstantlyReadyRequest()
         explainer = _make_explainer(body.use_llm)
         resolver = app.state.resolver_factory()
         try:
-            client = app.state.instantly_factory()
+            client = _instantly_for_request(tenant, x_instantly_api_key)()
             report = run_workspace_readiness(
                 client,
                 resolver,
@@ -535,7 +585,67 @@ def create_app(
             rows=rows,
         )
 
+    if want_mcp:
+        _mount_mcp_on_app(app, mcp_holder)
+
     return app
+
+
+def _mount_mcp_on_app(app: FastAPI, mcp_holder: dict[str, Any]) -> None:
+    """Mount streamable HTTP MCP at /mcp (optional dependency)."""
+    try:
+        from mcp.server.transport_security import TransportSecuritySettings
+        from starlette.middleware.base import BaseHTTPMiddleware
+        from starlette.responses import JSONResponse
+
+        from setup_doctor.surfaces.mcp_server import (
+            build_fastmcp,
+            reset_request_instantly_context,
+            set_request_instantly_context,
+        )
+    except ImportError as exc:  # pragma: no cover
+        raise RuntimeError(
+            "MCP HTTP mount requires the mcp extra: pip install -e '.[mcp]'"
+        ) from exc
+
+    mcp = build_fastmcp(
+        streamable_http_path="/",
+        transport_security=TransportSecuritySettings(
+            enable_dns_rebinding_protection=False,
+        ),
+    )
+    # Creating the ASGI app initializes the session manager (needed for lifespan).
+    inner = mcp.streamable_http_app()
+    mcp_holder["session_manager"] = mcp.session_manager
+
+    class _McpGateMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request: Request, call_next):
+            if not request.url.path.startswith("/mcp"):
+                return await call_next(request)
+            try:
+                tenant = app.state.auth.authenticate(
+                    request.headers.get("X-API-Key"),
+                    request.headers.get("Authorization"),
+                )
+            except PermissionError as exc:
+                return JSONResponse({"detail": str(exc)}, status_code=401)
+            header_key = request.headers.get(HEADER_INSTANTLY_API_KEY)
+            factory = make_request_instantly_factory(
+                header_value=header_key,
+                tenant=tenant,
+                vault=app.state.instantly_vault,
+                base_factory=app.state.instantly_factory,
+            )
+            tokens = set_request_instantly_context(header_key, factory=factory)
+            try:
+                return await call_next(request)
+            finally:
+                reset_request_instantly_context(tokens)
+
+    app.add_middleware(_McpGateMiddleware)
+    app.mount("/mcp", inner)
+    app.state.mcp = mcp
+
 
 
 def _run_diagnose(

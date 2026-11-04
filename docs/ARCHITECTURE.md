@@ -47,7 +47,9 @@ Workspace readiness:
 Missing Instantly data ⇒ `unknown` / `not_checked`. Surfaces: CLI
 (`--with-instantly`, `--instantly-compare`, `--instantly-ready`, `--from-instantly`),
 HTTP (`/instantly/compare`, `/instantly/ready`, `include_instantly` on `/diagnose`),
-MCP (`compare_instantly`, `instantly_ready`, diagnose flag).
+MCP stdio + streamable HTTP (`compare_instantly`, `instantly_ready`, diagnose flag).
+Instantly key order: `X-Instantly-Api-Key` → tenant vault (optional) → env.
+Hosted dual-MCP: [INSTANTLY_CONNECT.md](INSTANTLY_CONNECT.md).
 
 ## Tests mirror packages
 

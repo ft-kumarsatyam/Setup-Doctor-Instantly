@@ -199,3 +199,57 @@ def test_diagnose_include_instantly_attaches_signals():
     assert signals["instantly"] is not None
     assert "instantly" not in signals["not_checked"]
     assert signals["instantly"][0]["verdict"] == "unknown"
+
+
+def test_instantly_compare_uses_header_key_over_factory(monkeypatch):
+    """X-Instantly-Api-Key must win over the app Instantly factory/env."""
+    from setup_doctor.integrations.instantly import InstantlyClient, RecordingTransport
+
+    captured: dict[str, str] = {}
+    transport = RecordingTransport({
+        ("GET", "/accounts"): (200, {"items": [], "next_starting_after": None}),
+        ("GET", "/inbox-placement-tests"): (200, {"items": [], "next_starting_after": None}),
+        ("POST", "/inbox-placement-analytics/stats-by-test-id"): (200, []),
+        ("POST", "/accounts/warmup-analytics"): (
+            200, {"aggregate_data": {}, "email_date_data": {}},
+        ),
+    })
+
+    real_client = InstantlyClient
+
+    def tracking_client(api_key=None, **kwargs):
+        if api_key is not None:
+            captured["api_key"] = api_key
+        return real_client(
+            api_key=api_key or "factory",
+            base_url="https://example.test/api/v2",
+            transport=transport,
+        )
+
+    monkeypatch.setattr(
+        "setup_doctor.surfaces.instantly_ctx.InstantlyClient",
+        tracking_client,
+    )
+
+    def factory():
+        return InstantlyClient(
+            api_key="factory-key",
+            base_url="https://example.test/api/v2",
+            transport=transport,
+        )
+
+    client = _client(CLEAN["records"], instantly_factory=factory)
+    r = client.post(
+        "/instantly/compare",
+        json={},
+        headers={"X-Instantly-Api-Key": "header-key-should-win"},
+    )
+    assert r.status_code == 200
+    assert captured.get("api_key") == "header-key-should-win"
+
+
+def test_schema_documents_instantly_header():
+    r = _client(CLEAN["records"]).get("/schema")
+    assert r.status_code == 200
+    body = r.json()
+    assert "X-Instantly-Api-Key" in body["instantly"]["header"]

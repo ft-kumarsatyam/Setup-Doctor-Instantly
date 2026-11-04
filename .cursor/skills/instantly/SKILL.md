@@ -40,3 +40,7 @@ HTTP: `GET|POST /instantly/compare`, `POST /instantly/ready`,
 When presenting: quote `verdict` and `note` from the engine. **unknown** means
 data missing — do not soften to healthy. Instantly vitals/CTD are signals only;
 they never invent Setup Doctor Findings.
+
+Pre-launch with Instantly MCP: use `/pre-launch-gate` (Findings first; do not
+activate campaigns while critical/high Findings remain). Connect pack:
+`docs/INSTANTLY_CONNECT.md`.
