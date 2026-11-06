@@ -1,15 +1,11 @@
 ---
 name: fix-plan
 description: >-
-  Re-run Setup Doctor and present only the prioritized fix plan. Use for /fix-plan.
-  Do not invent steps; use engine report/explanation only.
+  Re-run Setup Doctor and present the registrar fix packet. Use for /fix-plan.
+  Follow Fix Coach. Do not invent steps.
 disable-model-invocation: true
 ---
 
 # /fix-plan
 
-```bash
-python -m setup_doctor DOMAIN --json
-```
-
-Print the `explanation` field (or the Fix plan section of `report`). Keep finding ids in brackets. Do not add, remove, or re-order beyond what the engine returned.
+Follow the Fix Coach skill (`.cursor/skills/fix-coach/SKILL.md`) for this domain. Do not print a separate fix plan from `explanation` or the report.

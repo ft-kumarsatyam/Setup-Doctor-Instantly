@@ -55,7 +55,7 @@ MCP URL: `https://HOST/mcp` (HTTPS; trailing slash optional — no HTTP 307).
 Connect UI: `GET /connect` (same as [docs/INSTANTLY_CONNECT.md](docs/INSTANTLY_CONNECT.md)).
 Per-request Instantly key: `X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
 
-Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
+Cursor skills (in-repo): user agents `/domain-doctor`, `/fix-coach`, `/workspace-ready`, `/launch-gate` (auto-invoked). Slash-only: `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
 
 Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals are four booleans (MX/SPF/DKIM/DMARC exist); they never become Findings. `--share-demo` shows that gap offline, with no API key: vitals all pass, launch stays blocked, and a scripted model that invents a score or a finding is rejected.
 
@@ -117,7 +117,7 @@ src/setup_doctor/
   surfaces/         CLI, API, MCP, auth, bulk
 evals/              detection/, guardrails/, mutations/, shadow/, contracts/, corpus/
 tests/              mirrors packages (core|dns|checks|explain|…)
-.cursor/skills/     /diagnose, /spf, /dkim, …
+.cursor/skills/     domain-doctor, fix-coach, workspace-ready, launch-gate, …
 docs/               ARCHITECTURE.md
 examples/           offline DNS fixtures
 ```
