@@ -7,6 +7,7 @@
     python -m setup_doctor --instantly-ready
     python -m setup_doctor --bulk domains.csv
     python -m setup_doctor --from-instantly
+    python -m setup_doctor --share-demo
 """
 from __future__ import annotations
 
@@ -46,6 +47,7 @@ from setup_doctor.integrations.instantly import (
     run_workspace_readiness,
     unique_sender_domains,
 )
+from setup_doctor.integrations.instantly.share_demo import render_share_demo, run_share_demo
 from setup_doctor.integrations.reputation import check_reputation
 from setup_doctor.pipeline import diagnose_result
 from setup_doctor.surfaces.bulk import parse_domain_list, run_bulk
@@ -131,7 +133,17 @@ def main(argv: list[str] | None = None) -> int:
         metavar="FILE",
         help="diagnose many domains from a CSV or newline list",
     )
+    p.add_argument(
+        "--share-demo",
+        action="store_true",
+        help="offline Instantly gap demo: vitals all pass, launch still blocked (no API key)",
+    )
     args = p.parse_args(argv)
+
+    if args.share_demo:
+        demo = run_share_demo()
+        print(json.dumps(demo.to_dict(), indent=2) if args.json else render_share_demo(demo))
+        return 0
 
     if args.instantly_compare:
         return _instantly_compare(as_json=args.json, domain=args.domain, use_llm=args.llm)
@@ -147,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.domain:
         p.error(
-            "domain is required unless --instantly-compare, --instantly-ready, "
+            "domain is required unless --share-demo, --instantly-compare, --instantly-ready, "
             "--pre-launch-gate, --from-instantly, or --bulk is set"
         )
 

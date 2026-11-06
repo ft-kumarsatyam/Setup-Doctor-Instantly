@@ -10,6 +10,7 @@ Questions answered separately:
   5. Shadow: reported separately (skipped in CI without corpus)
   6. Public DNS corpus: frozen real records, scored on their own (not added to synthetic P/R)
   7. Rewrite pairs: grounded plans from that corpus; invented ids/records rejected
+  8. Rewrite RAG: retrieved examples are a subset of the current findings (not a finder)
 
 The guardrail leak metric is deliberately NOT computed with the verifier under
 test (that would be circular). Hallucinating fakes plant a marker string, and we
@@ -18,6 +19,7 @@ search the delivered text for it independently.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -35,11 +37,13 @@ from setup_doctor import FixtureResolver, LLMExplainer, diagnose, run_checks, ve
 from setup_doctor.checks.registry import ALL_DNS_PACKS  # noqa: E402
 from setup_doctor.core.models import Finding  # noqa: E402
 from setup_doctor.core.result import DiagnosisResult  # noqa: E402
-from setup_doctor.explain import PROMPT, verify_plan  # noqa: E402
+from setup_doctor.explain import render_prompt, verify_plan  # noqa: E402
 from setup_doctor.explain.instantly_rewrite import (  # noqa: E402
     rewrite_instantly_signals,
     verify_instantly_rewrite,
 )
+from setup_doctor.explain.rag_index import PLANS  # noqa: E402
+from setup_doctor.explain.retrieve import format_examples, retrieve_examples  # noqa: E402
 from setup_doctor.integrations.instantly.compare import AccountComparison  # noqa: E402
 from setup_doctor.integrations.instantly.launch import (  # noqa: E402
     build_pre_launch_gate,
@@ -94,7 +98,9 @@ def _severe(findings) -> bool:
 
 
 def _prompt_for(findings) -> str:
-    return PROMPT.format(findings=json.dumps([f.to_dict() for f in findings], indent=2))
+    payload = json.dumps([f.to_dict() for f in findings], indent=2)
+    block = format_examples(retrieve_examples([f.id for f in findings]))
+    return render_prompt(payload, example_block=block)
 
 
 def eval_guardrail(cases: list[dict] | None = None) -> dict:
@@ -305,10 +311,65 @@ def eval_rewrite_pairs(cases: list[dict]) -> dict:
     }
 
 
+_RECORD_RE = re.compile(r"v=(spf1|dmarc1|dkim1)", re.I)
+
+
+def shipped_finding_ids() -> set[str]:
+    text = (ROOT / "src" / "setup_doctor" / "checks" / "engine.py").read_text()
+    return set(re.findall(
+        r'Finding\(\s*"([A-Z][A-Z0-9_]+)",\s*"(?:critical|high|medium|low|info)"',
+        text,
+    ))
+
+
+def eval_rag(public_cases: list[dict]) -> dict:
+    """Example retrieval stays inside the current finding set and matches the builder."""
+    from evals.corpus.build_rag_index import build_plans
+
+    rebuilt = build_plans()
+    indexed = {finding_id for plan in PLANS for finding_id, _ in plan}
+    missing_ids = sorted(shipped_finding_ids() - indexed)
+    unsafe: list[str] = []
+    checked = 0
+    groups = (
+        (CASES, None),
+        (ADVISORY_CASES, ALL_DNS_PACKS),
+        (public_cases, None),
+    )
+    for cases, packs in groups:
+        for case in cases:
+            findings = run_checks(
+                case["domain"], FixtureResolver(case["records"]), packs=packs,
+            )
+            if not findings:
+                continue
+            checked += 1
+            query = {f.id for f in findings}
+            got = retrieve_examples([f.id for f in findings])
+            if len(got) > 2:
+                unsafe.append(f"{case['name']}: returned {len(got)} examples")
+            for plan in got:
+                ids = {finding_id for finding_id, _ in plan}
+                if not ids <= query:
+                    unsafe.append(f"{case['name']}: example ids {sorted(ids - query)} are not in the findings")
+                for _finding_id, explanation in plan:
+                    if _RECORD_RE.search(explanation):
+                        unsafe.append(f"{case['name']}: example contains a DNS record")
+    return {
+        "plans": len(PLANS),
+        "drift": rebuilt != PLANS,
+        "missing_ids": missing_ids,
+        "unsafe": unsafe,
+        "cases_checked": checked,
+        "ids_covered": len(indexed),
+        "ids_shipped": len(shipped_finding_ids()),
+    }
+
+
 def check_expectations(
     det: dict, guard: dict, adv: dict, contract: dict, instantly: dict | None = None,
     gate: dict | None = None, public: dict | None = None, public_guard: dict | None = None,
-    rewrite: dict | None = None,
+    rewrite: dict | None = None, rag: dict | None = None,
 ) -> list[str]:
     bad = []
     if det["exact_match"] != det["cases"]:
@@ -357,6 +418,13 @@ def check_expectations(
             bad.append(
                 f"rewrite pairs: missing={rewrite['missing']} extra={rewrite['extra']}"
             )
+    if rag is not None:
+        if rag["drift"]:
+            bad.append("rewrite RAG: committed index drifted from evals/corpus/build_rag_index.py")
+        if rag["missing_ids"]:
+            bad.append(f"rewrite RAG: finding ids missing from the index: {rag['missing_ids']}")
+        if rag["unsafe"]:
+            bad.append(f"rewrite RAG: unsafe examples: {rag['unsafe'][:5]}")
     return bad
 
 
@@ -394,6 +462,7 @@ def render(
     det: dict, guard: dict, adv: dict, contract: dict, shadow: dict,
     failures: list[str], instantly: dict | None = None, gate: dict | None = None,
     public: dict | None = None, public_guard: dict | None = None, rewrite: dict | None = None,
+    rag: dict | None = None,
 ) -> str:
     L = ["# Eval results", "",
          "Generated by `python evals/run_evals.py`. Section 1 fixtures are synthetic "
@@ -476,6 +545,17 @@ def render(
               "Pairs are in `evals/corpus/rewrite_pairs.jsonl`. They train the rewrite "
               "to stay inside the finding set. They do not create findings.",
               ""]
+    if rag is not None:
+        L += ["", "## 5d. Rewrite RAG (examples only, not a finder)", "",
+              "Retrieved plans must be a subset of the current findings. "
+              "This score is not added to section 1 or section 5.",
+              "",
+              f"- Plans in the index: **{rag['plans']}**",
+              f"- Finding ids covered: **{rag['ids_covered']}/{rag['ids_shipped']}**",
+              f"- Cases checked: **{rag['cases_checked']}**",
+              f"- Index matches builder: **{not rag['drift']}**",
+              f"- Unsafe examples: **{len(rag['unsafe'])}**",
+              ""]
     return "\n".join(L)
 
 
@@ -491,13 +571,14 @@ def main() -> int:
     public = _score_cases(public_cases)
     public_guard = eval_guardrail(public_cases)
     rewrite = eval_rewrite_pairs(public_cases)
+    rag = eval_rag(public_cases)
     failures = check_expectations(
-        det, guard, adv, contract, instantly, gate, public, public_guard, rewrite,
+        det, guard, adv, contract, instantly, gate, public, public_guard, rewrite, rag,
     )
     out = Path(__file__).resolve().parent
     md = render(
         det, guard, adv, contract, shadow, failures, instantly, gate,
-        public, public_guard, rewrite,
+        public, public_guard, rewrite, rag,
     )
     (out / "RESULTS.md").write_text(md)
     print(md)

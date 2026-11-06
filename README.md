@@ -57,7 +57,7 @@ Per-request Instantly key: `X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
 
 Cursor skills (in-repo): `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
 
-Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals/CTD are signals — they never invent Findings:
+Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals are four booleans (MX/SPF/DKIM/DMARC exist); they never become Findings. `--share-demo` shows that gap offline, with no API key: vitals all pass, launch stays blocked, and a scripted model that invents a score or a finding is rejected.
 
 ```bash
 python -m setup_doctor --instantly-compare
@@ -65,6 +65,7 @@ python -m setup_doctor yourdomain.com --with-instantly --json
 python -m setup_doctor --instantly-ready --ctd-host track.example.com
 python -m setup_doctor --instantly-ready --agency-export
 python -m setup_doctor --instantly-ready --all-workspaces --json
+python -m setup_doctor --share-demo
 python -m setup_doctor --pre-launch-gate --json
 python -m setup_doctor mess.test --records examples/mess.json --fix-packet cloudflare
 python -m setup_doctor --from-instantly --json
@@ -86,13 +87,15 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
 - Pre-launch gate: critical Findings block activate; invented `allowed_to_activate` rejected
 - Public DNS corpus: **40/40** frozen domains, scored on its own (not added to the synthetic precision/recall). Rewrite pairs **31/31** grounded; invented ids and records rejected
-- Mutations: **19/19** killed
-- Tests: **181** pytest
+- Rewrite RAG: **32** example plans, **22/22** finding ids, checked on **61** cases. Retrieved ids are a subset of the current findings. This is not a finder and does not change the detection scores
+- Mutations: **20/20** killed
+- Tests: **184** pytest
 
 ## Limits
 
 - Synthetic fixtures are not real-world accuracy. The public corpus is one DNS-over-HTTPS snapshot from 2026-11-05 (40 domains, default DKIM selectors only), not a zone-wide measurement.
 - A null MX (`0 .`, RFC 7505) is treated as no mail server. An empty DKIM `p=` is a revoked key, not a usable key.
+- Rewrite RAG shows the model up to two grounded example plans. It does not choose findings, and it does not raise detection precision or recall.
 - DKIM selectors can’t be listed from DNS (common selectors + `--dkim-selector` / `--esp-pack`).
 - Numeric grounding is allow-list patterns only.
 - Live DNS / real Anthropic / real Instantly account data are not assumed green in CI; Instantly mode reports missing scores/tests as **unknown**.

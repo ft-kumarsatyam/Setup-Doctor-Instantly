@@ -26,6 +26,7 @@ Surfaces must not reimplement SPF/DKIM logic. Skills/MCP call surfaces or the pu
 
 ```
 Resolver → CheckRegistry.run → Findings
+     → retrieve examples (LLM path only; ids must be a subset)
      → Explainer (optional LLM) → verify_plan → render
      → DiagnosisResult (+ optional signals)
 ```

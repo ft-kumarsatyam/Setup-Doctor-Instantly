@@ -63,6 +63,9 @@ MUTANTS = [
     ("revoked DKIM key treated as present", "src/setup_doctor/checks/engine.py",
      'if tags["p"].strip() == "":',
      'if tags["p"].strip() == "never-empty":'),
+    ("retriever keeps examples with extra finding ids", "src/setup_doctor/explain/retrieve.py",
+     "if not set(plan_ids).issubset(query):",
+     "if not set(plan_ids).issubset(query | plan_ids):"),
 ]
 
 

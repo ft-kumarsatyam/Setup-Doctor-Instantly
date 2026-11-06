@@ -7,6 +7,7 @@ from .explainer import (
     anthropic_completer,
     parse_model_plan,
     render_plan,
+    render_prompt,
     verify_grounding,
     verify_plan,
 )
@@ -39,6 +40,7 @@ __all__ = [
     "parse_instantly_rewrite",
     "playbook_snippet",
     "render_plan",
+    "render_prompt",
     "rewrite_instantly_signals",
     "verify_fix_packet",
     "verify_grounding",

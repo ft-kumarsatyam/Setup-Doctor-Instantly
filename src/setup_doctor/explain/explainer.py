@@ -14,6 +14,7 @@ import re
 from typing import Callable, Protocol
 
 from setup_doctor.core.models import Finding
+from setup_doctor.explain.retrieve import format_examples, retrieve_examples
 
 _ID_RE = re.compile(r"\[([A-Z][A-Z0-9_]+)\]")
 _CODE_RE = re.compile(r"`([^`]+)`")
@@ -69,9 +70,16 @@ Rules:
   that are not in the findings. Put DNS record text in backticks only when copying
   from a finding's fix or evidence.
 
-Findings (JSON):
+{examples}Findings (JSON):
 {findings}
 """
+
+
+def render_prompt(findings_json: str, *, example_block: str = "") -> str:
+    """Fill the explainer prompt. The findings JSON stays last so callers can parse it."""
+    if example_block and not example_block.endswith("\n"):
+        example_block += "\n"
+    return PROMPT.format(examples=example_block, findings=findings_json)
 
 
 class LLMExplainer:
@@ -87,7 +95,8 @@ class LLMExplainer:
 
     def explain(self, findings: list[Finding]) -> str:
         payload = json.dumps([f.to_dict() for f in findings], indent=2)
-        return self._complete(PROMPT.format(findings=payload))
+        block = format_examples(retrieve_examples([f.id for f in findings]))
+        return self._complete(render_prompt(payload, example_block=block))
 
 
 def anthropic_completer(model: str | None = None, max_tokens: int = 1200) -> Callable[[str], str]:

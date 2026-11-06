@@ -5,7 +5,8 @@ from evals.fakes import BEHAVIORS, PLANTED_MARKERS
 from evals.fixtures import CASES
 
 from setup_doctor import FixtureResolver, LLMExplainer, TemplateExplainer, diagnose, run_checks, verify_grounding
-from setup_doctor.explain import PROMPT, parse_model_plan, render_plan, verify_plan
+from setup_doctor.explain import parse_model_plan, render_plan, render_prompt, verify_plan
+from setup_doctor.explain.retrieve import retrieve_examples
 
 WORST = next(c for c in CASES if c["name"] == "worst_case_combo")
 CLEAN = next(c for c in CASES if c["name"] == "clean")
@@ -17,7 +18,7 @@ def findings_for(case):
 
 def _faithful_plan(fs):
     return BEHAVIORS["faithful"](
-        PROMPT.format(findings=json.dumps([f.to_dict() for f in fs], indent=2))
+        render_prompt(json.dumps([f.to_dict() for f in fs], indent=2))
     )
 
 
@@ -122,6 +123,22 @@ def test_prompt_contains_only_findings_not_raw_dns():
     payload = json.loads(seen[0].split("Findings (JSON):\n", 1)[1])
     assert {p["id"] for p in payload} == {f.id for f in findings_for(WORST)}
     assert "JSON array" in seen[0]
+    assert "Examples (tone only)" in seen[0].split("Findings (JSON):", 1)[0]
+    assert "v=spf1" not in seen[0].split("Findings (JSON):", 1)[0].lower()
+
+
+def test_retriever_keeps_only_subsets_and_prefers_the_larger_overlap():
+    plans = (
+        (("SPF_MISSING", "no spf"),),
+        (("SPF_MISSING", "no spf"), ("MX_MISSING", "no mx")),
+        (("MX_MISSING", "no mx"),),
+    )
+    only = retrieve_examples(["SPF_MISSING"], plans=plans)
+    assert only == [(("SPF_MISSING", "no spf"),)]
+    both = retrieve_examples(["SPF_MISSING", "MX_MISSING"], plans=plans)
+    assert [tuple(i for i, _ in plan) for plan in both][0] == ("SPF_MISSING", "MX_MISSING")
+    assert all({i for i, _ in plan} <= {"SPF_MISSING", "MX_MISSING"} for plan in both)
+    assert len(both) <= 2
 
 
 def test_numeric_misstatement_is_rejected():
