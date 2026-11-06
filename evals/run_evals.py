@@ -44,6 +44,18 @@ from setup_doctor.explain.instantly_rewrite import (  # noqa: E402
 )
 from setup_doctor.explain.rag_index import PLANS  # noqa: E402
 from setup_doctor.explain.retrieve import format_examples, retrieve_examples  # noqa: E402
+from setup_doctor.integrations.instantly.agent_handoff import (  # noqa: E402
+    build_agent_handoff,
+    verify_agent_handoff,
+)
+from setup_doctor.integrations.instantly.campaign_desk import (  # noqa: E402
+    run_campaign_desk,
+    verify_campaign_desk_honesty,
+)
+from setup_doctor.integrations.instantly.client import (  # noqa: E402
+    InstantlyClient,
+    RecordingTransport,
+)
 from setup_doctor.integrations.instantly.compare import AccountComparison  # noqa: E402
 from setup_doctor.integrations.instantly.launch import (  # noqa: E402
     build_pre_launch_gate,
@@ -52,6 +64,10 @@ from setup_doctor.integrations.instantly.launch import (  # noqa: E402
 from setup_doctor.integrations.instantly.readiness import (  # noqa: E402
     DomainReadiness,
     WorkspaceReadinessReport,
+)
+from setup_doctor.integrations.instantly.reply_desk import (  # noqa: E402
+    run_reply_desk,
+    verify_reply_desk_honesty,
 )
 
 
@@ -241,6 +257,109 @@ def eval_pre_launch_gate() -> dict:
     }
 
 
+def eval_desks() -> dict:
+    """Unhealthy sending status must stall. Unread mail must not look clear."""
+    client = InstantlyClient(
+        api_key="eval-key-not-secret",
+        base_url="https://example.test/api/v2",
+        transport=RecordingTransport({
+            ("GET", "/campaigns"): (200, {
+                "items": [{"id": "c1", "name": "Live", "status": 1}],
+                "next_starting_after": None,
+            }),
+            ("GET", "/campaigns/analytics"): (200, [{
+                "campaign_id": "c1",
+                "campaign_name": "Live",
+                "emails_sent_count": 10,
+                "reply_count_unique": 2,
+                "bounced_count": 1,
+            }]),
+            ("GET", "/campaigns/c1/sending-status"): (200, {
+                "diagnostics": {"status": "campaign_accounts_unhealthy"},
+                "summary": {"status": "campaign_accounts_unhealthy", "status_message": "Accounts are unhealthy."},
+            }),
+        }),
+        sleep=lambda _s: None,
+    )
+    desk = run_campaign_desk(client)
+    lied = desk.to_dict()
+    lied["verdict"] = "sending"
+    reply = run_reply_desk(InstantlyClient(
+        api_key="eval-key-not-secret",
+        base_url="https://example.test/api/v2",
+        transport=RecordingTransport({
+            ("GET", "/emails/unread/count"): (200, {"count": 4}),
+            ("GET", "/emails"): (200, {"items": [], "next_starting_after": None}),
+        }),
+        sleep=lambda _s: None,
+    ))
+    missing = run_reply_desk(InstantlyClient(
+        api_key="eval-key-not-secret",
+        base_url="https://example.test/api/v2",
+        transport=RecordingTransport({
+            ("GET", "/emails/unread/count"): (200, {}),
+            ("GET", "/emails"): (200, {"items": []}),
+        }),
+        sleep=lambda _s: None,
+    ))
+    return {
+        "unhealthy_stalls": desk.verdict == "stalled",
+        "honesty_rejects_sending": bool(verify_campaign_desk_honesty(lied)),
+        "unread_is_attention": reply.verdict == "attention",
+        "missing_count_unknown": missing.verdict == "unknown",
+        "clear_rejected": bool(verify_reply_desk_honesty({**reply.to_dict(), "verdict": "clear"})),
+        "pages_joined": _reply_pages_joined(),
+        "handoff_holds": _handoff_holds(),
+        "handoff_clear_rejected": _handoff_clear_rejected(),
+    }
+
+
+def _reply_pages_joined() -> bool:
+    """Two Instantly pages must both show up. One page is not the whole inbox."""
+    page_one = {
+        "items": [{
+            "id": "mail-a", "ue_type": 2, "lead": "a@client.test",
+            "subject": "First", "is_unread": 1, "eaccount": "rep@send.test",
+        }],
+        "next_starting_after": "cursor-2",
+    }
+    page_two = {
+        "items": [{
+            "id": "mail-b", "ue_type": 2, "lead": "b@client.test",
+            "subject": "Second", "is_unread": 1, "eaccount": "rep@send.test",
+        }],
+        "next_starting_after": None,
+    }
+    report = run_reply_desk(InstantlyClient(
+        api_key="eval-key-not-secret",
+        base_url="https://example.test/api/v2",
+        transport=RecordingTransport({
+            ("GET", "/emails/unread/count"): (200, {"count": 2}),
+            ("GET", "/emails", ""): (200, page_one),
+            ("GET", "/emails", "cursor-2"): (200, page_two),
+        }),
+        sleep=lambda _s: None,
+    ), blocked_domains={"send.test"})
+    ids = [thread.email_id for thread in report.threads]
+    blocked = all(thread.domain_blocked is True for thread in report.threads)
+    return ids == ["mail-a", "mail-b"] and blocked and report.more_threads is False
+
+
+def _handoff_holds() -> bool:
+    card = build_agent_handoff([
+        Finding("SPF_MISSING", "critical", "SPF missing", "No SPF record.", "Publish SPF."),
+    ])
+    return card["act"] == "hold" and card["allowed_to_activate"] is False
+
+
+def _handoff_clear_rejected() -> bool:
+    card = build_agent_handoff([
+        Finding("SPF_MISSING", "critical", "SPF missing", "No SPF record.", "Publish SPF."),
+    ])
+    lied = {**card, "act": "clear", "allowed_to_activate": True}
+    return bool(verify_agent_handoff(lied))
+
+
 def _guard_failures(guard: dict, prefix: str) -> list[str]:
     bad = []
     b = guard["behaviors"]
@@ -369,7 +488,7 @@ def eval_rag(public_cases: list[dict]) -> dict:
 def check_expectations(
     det: dict, guard: dict, adv: dict, contract: dict, instantly: dict | None = None,
     gate: dict | None = None, public: dict | None = None, public_guard: dict | None = None,
-    rewrite: dict | None = None, rag: dict | None = None,
+    rewrite: dict | None = None, rag: dict | None = None, desks: dict | None = None,
 ) -> list[str]:
     bad = []
     if det["exact_match"] != det["cases"]:
@@ -397,6 +516,23 @@ def check_expectations(
             bad.append("pre_launch_gate: invented allowed_to_activate must be rejected")
         if not gate.get("spoken_present"):
             bad.append("pre_launch_gate: summary_spoken required")
+    if desks:
+        if not desks.get("unhealthy_stalls"):
+            bad.append("campaign desk: unhealthy sending status must stall")
+        if not desks.get("honesty_rejects_sending"):
+            bad.append("campaign desk: sending verdict with a stalled row must be rejected")
+        if not desks.get("unread_is_attention"):
+            bad.append("reply desk: unread count above zero must be attention")
+        if not desks.get("missing_count_unknown"):
+            bad.append("reply desk: missing unread count must stay unknown")
+        if not desks.get("clear_rejected"):
+            bad.append("reply desk: clear with unread mail must be rejected")
+        if not desks.get("pages_joined"):
+            bad.append("reply desk: two pages must both be present")
+        if not desks.get("handoff_holds"):
+            bad.append("agent handoff: a critical Finding must hold")
+        if not desks.get("handoff_clear_rejected"):
+            bad.append("agent handoff: a clear act on a hold must be rejected")
     if public is not None:
         if public["exact_match"] != public["cases"]:
             bad.append(
@@ -462,7 +598,7 @@ def render(
     det: dict, guard: dict, adv: dict, contract: dict, shadow: dict,
     failures: list[str], instantly: dict | None = None, gate: dict | None = None,
     public: dict | None = None, public_guard: dict | None = None, rewrite: dict | None = None,
-    rag: dict | None = None,
+    rag: dict | None = None, desks: dict | None = None,
 ) -> str:
     L = ["# Eval results", "",
          "Generated by `python evals/run_evals.py`. Section 1 fixtures are synthetic "
@@ -506,6 +642,22 @@ def render(
             f"- Honest gate accepted: **{gate.get('honesty_accepts_real_gate')}**",
             f"- Invented allow rejected: **{gate.get('honesty_rejects_invented_allow')}**",
             f"- Spoken summary present: **{gate.get('spoken_present')}**",
+            "",
+        ]
+    if desks:
+        L += ["", "## 2d. Campaign Desk and Reply Desk", ""]
+        L += [
+            f"- Unhealthy sending status stalls: **{desks.get('unhealthy_stalls')}**",
+            f"- Sending verdict with a stalled row rejected: **{desks.get('honesty_rejects_sending')}**",
+            f"- Unread mail is attention: **{desks.get('unread_is_attention')}**",
+            f"- Missing unread count stays unknown: **{desks.get('missing_count_unknown')}**",
+            f"- Clear with unread mail rejected: **{desks.get('clear_rejected')}**",
+            f"- Two reply pages joined: **{desks.get('pages_joined')}**",
+            f"- Critical Finding holds the agent card: **{desks.get('handoff_holds')}**",
+            f"- Clear act on a hold rejected: **{desks.get('handoff_clear_rejected')}**",
+            "",
+            "Counts are copied from Instantly. No reply rate is computed. "
+            "The agent card does not pause or activate.",
             "",
         ]
     L += ["", "## 3. Schema contract", "",
@@ -565,6 +717,7 @@ def main() -> int:
     guard = eval_guardrail()
     instantly = eval_instantly_rewrite()
     gate = eval_pre_launch_gate()
+    desks = eval_desks()
     contract = eval_schema_contract()
     shadow = eval_shadow()
     public_cases = load_public_cases()
@@ -573,12 +726,12 @@ def main() -> int:
     rewrite = eval_rewrite_pairs(public_cases)
     rag = eval_rag(public_cases)
     failures = check_expectations(
-        det, guard, adv, contract, instantly, gate, public, public_guard, rewrite, rag,
+        det, guard, adv, contract, instantly, gate, public, public_guard, rewrite, rag, desks,
     )
     out = Path(__file__).resolve().parent
     md = render(
         det, guard, adv, contract, shadow, failures, instantly, gate,
-        public, public_guard, rewrite, rag,
+        public, public_guard, rewrite, rag, desks,
     )
     (out / "RESULTS.md").write_text(md)
     print(md)

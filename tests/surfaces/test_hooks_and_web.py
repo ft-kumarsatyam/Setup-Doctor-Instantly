@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from setup_doctor.dns.resolver import FixtureResolver
 from setup_doctor.surfaces.api import create_app
 from setup_doctor.surfaces.hooks import extract_domains, sign_payload, verify_signature
+from setup_doctor.surfaces.webhook_store import WebhookStore
 
 MESS = next(c for c in CASES if c["name"] == "worst_case_combo")
 
@@ -46,6 +47,33 @@ def test_webhook_requires_secret_and_signature(monkeypatch):
     assert r2.status_code == 200
     assert r2.json()["count"] >= 1
     assert r2.json()["rows"][0]["ok"] is True
+    assert r2.json()["rows"][0]["agent_handoff"]["act"] in ("hold", "review", "unknown", "clear")
+
+
+def test_webhook_result_survives_a_new_process(tmp_path, monkeypatch):
+    monkeypatch.setenv("SETUP_DOCTOR_INSTANTLY_HOOK_SECRET", "hook-secret")
+    store = WebhookStore(tmp_path / "hooks.json")
+    app = create_app(
+        resolver_factory=lambda: FixtureResolver(MESS["records"]),
+        webhook_store=store,
+    )
+    body = {"domain": MESS["domain"], "idempotency_key": "k-disk"}
+    raw = json.dumps(body).encode()
+    sig = sign_payload("hook-secret", raw)
+    posted = TestClient(app).post(
+        "/hooks/instantly",
+        content=raw,
+        headers={"X-Setup-Doctor-Signature": sig, "Content-Type": "application/json"},
+    )
+    assert posted.status_code == 200
+    restarted = create_app(
+        resolver_factory=lambda: FixtureResolver({}),
+        webhook_store=store,
+    )
+    last = TestClient(restarted).get(f"/hooks/instantly/last/{MESS['domain']}")
+    assert last.status_code == 200
+    assert last.json()["ok"] is True
+    assert last.json()["agent_handoff"]["act"] == "hold"
 
 
 def test_web_checker_serves_html():
@@ -61,6 +89,8 @@ def test_web_checker_serves_html():
     assert 'data-auth-required="0"' in r.text
     assert "Where do I get a Setup Doctor API key?" in r.text
     assert "Enter domain" in r.text
+    assert "Reply Desk" in r.text
+    assert "does not send replies" in r.text
     assert "friendlyError" in r.text
 
 

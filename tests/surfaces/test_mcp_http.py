@@ -100,6 +100,8 @@ def test_tools_registry_includes_pre_launch_gate():
         "diagnose",
         "compare_instantly",
         "instantly_ready",
+        "campaign_desk",
+        "reply_desk",
         "pre_launch_gate",
     }
 

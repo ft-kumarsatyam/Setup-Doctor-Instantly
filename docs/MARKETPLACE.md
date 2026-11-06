@@ -23,7 +23,7 @@ Name: `setup-doctor`
 URL: `https://YOUR_HOST/mcp` (HTTPS only; e.g. `https://setup-doctor-instantly.fly.dev/mcp`)  
 Auth: `X-API-Key` (require `SETUP_DOCTOR_API_KEYS` on public hosts)  
 Optional: `X-Instantly-Api-Key`  
-Tools: `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`  
+Tools: `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`, `campaign_desk`, `reply_desk`  
 Connect one-pager: `https://YOUR_HOST/connect`
 
 **OpenAPI:** expose FastAPI `/schema`, `/diagnose`, `/instantly/ready`, `/instantly/pre-launch-gate`, `/fix-packet`.

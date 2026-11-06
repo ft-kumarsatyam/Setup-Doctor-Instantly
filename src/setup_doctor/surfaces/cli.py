@@ -41,9 +41,13 @@ from setup_doctor.integrations.instantly import (
     dicts_as_comparisons,
     render_agency_report,
     render_agency_workspaces_markdown,
+    render_campaign_desk_markdown,
     render_comparison_markdown,
     render_readiness_markdown,
+    render_reply_desk_markdown,
     run_all_workspaces_readiness,
+    run_campaign_desk,
+    run_reply_desk,
     run_workspace_readiness,
     unique_sender_domains,
 )
@@ -111,6 +115,20 @@ def main(argv: list[str] | None = None) -> int:
         help="Instantly pre-launch gate (allowed_to_activate iff launch_verdict=ready)",
     )
     p.add_argument(
+        "--campaign-desk",
+        action="store_true",
+        help="why Instantly campaigns are or are not sending (read-only)",
+    )
+    p.add_argument(
+        "--reply-desk",
+        action="store_true",
+        help="Instantly unread count and latest received threads (read-only)",
+    )
+    p.add_argument(
+        "--campaign-id",
+        help="optional Instantly campaign id for --campaign-desk or --reply-desk",
+    )
+    p.add_argument(
         "--agency-export",
         action="store_true",
         help="with --instantly-ready: print white-label agency markdown",
@@ -151,6 +169,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.pre_launch_gate:
         return _pre_launch_gate(args)
 
+    if args.campaign_desk:
+        return _campaign_desk(args)
+
+    if args.reply_desk:
+        return _reply_desk(args)
+
     if args.instantly_ready:
         return _instantly_ready(args)
 
@@ -160,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.domain:
         p.error(
             "domain is required unless --share-demo, --instantly-compare, --instantly-ready, "
-            "--pre-launch-gate, --from-instantly, or --bulk is set"
+            "--pre-launch-gate, --campaign-desk, --reply-desk, --from-instantly, or --bulk is set"
         )
 
     if args.records:
@@ -458,6 +482,54 @@ def _pre_launch_gate(args) -> int:
     else:
         print(gate["markdown"])
     return 0 if gate.get("allowed_to_activate") else 3
+
+
+def _instantly_client_or_exit() -> InstantlyClient | int:
+    try:
+        return InstantlyClient()
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+
+def _campaign_desk(args) -> int:
+    client = _instantly_client_or_exit()
+    if isinstance(client, int):
+        return client
+    try:
+        report = run_campaign_desk(client, campaign_id=args.campaign_id)
+    except InstantlyError as exc:
+        print(
+            f"Instantly API request failed (HTTP {exc.status}). "
+            "No campaign desk report was produced.",
+            file=sys.stderr,
+        )
+        return 2
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2))
+    else:
+        print(render_campaign_desk_markdown(report))
+    return 0 if report.verdict in ("sending", "idle") else 3
+
+
+def _reply_desk(args) -> int:
+    client = _instantly_client_or_exit()
+    if isinstance(client, int):
+        return client
+    try:
+        report = run_reply_desk(client, campaign_id=args.campaign_id)
+    except InstantlyError as exc:
+        print(
+            f"Instantly API request failed (HTTP {exc.status}). "
+            "No reply desk report was produced.",
+            file=sys.stderr,
+        )
+        return 2
+    if args.json:
+        print(json.dumps(report.to_dict(), indent=2))
+    else:
+        print(render_reply_desk_markdown(report))
+    return 0 if report.verdict == "clear" else 3
 
 
 if __name__ == "__main__":

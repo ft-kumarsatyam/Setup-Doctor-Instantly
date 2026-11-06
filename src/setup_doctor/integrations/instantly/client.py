@@ -12,7 +12,12 @@ Endpoints and scopes (documented; no inventing):
 - GET  /inbox-placement-reports          scopes: inbox_placement_reports:read | … (requires test_id)
 - GET  /ai-agents/deliverability/state
 - GET  /ai-agents/deliverability/{id}/feed-items
+- GET  /campaigns                         scopes: campaigns:read | …
+- GET  /campaigns/{id}
+- GET  /campaigns/analytics
 - GET  /campaigns/{id}/sending-status
+- GET  /emails/unread/count             scopes: emails:read | …
+- GET  /emails                           scopes: emails:read | … (20 requests/minute)
 
 Auth: Authorization Bearer — https://developer.instantly.ai/getting-started/authorization
 Rate limits / 429: https://developer.instantly.ai/getting-started/rate-limit
@@ -311,10 +316,72 @@ class InstantlyClient:
                 break
         return items
 
+    def list_campaigns(self, *, limit: int = 100) -> list[dict[str, Any]]:
+        """Paginate GET /campaigns. Read-only."""
+        items: list[dict[str, Any]] = []
+        starting_after: str | None = None
+        while True:
+            data = self.request(
+                "GET", "/campaigns",
+                params={"limit": limit, "starting_after": starting_after},
+            )
+            batch = data.get("items") if isinstance(data, dict) else None
+            if not isinstance(batch, list):
+                break
+            items.extend(row for row in batch if isinstance(row, dict))
+            starting_after = data.get("next_starting_after") if isinstance(data, dict) else None
+            if not starting_after or not batch:
+                break
+        return items
+
+    def get_campaign(self, campaign_id: str) -> dict[str, Any]:
+        """GET /campaigns/{id}."""
+        data = self.request("GET", f"/campaigns/{campaign_id}")
+        return data if isinstance(data, dict) else {"id": campaign_id, "raw": data}
+
+    def list_campaign_analytics(self) -> list[dict[str, Any]]:
+        """GET /campaigns/analytics — one row per campaign. Documented as a JSON array."""
+        data = self.request("GET", "/campaigns/analytics")
+        if isinstance(data, list):
+            return [row for row in data if isinstance(row, dict)]
+        raise InstantlyError(200, "/campaigns/analytics", "expected a JSON array")
+
     def get_campaign_sending_status(self, campaign_id: str) -> dict[str, Any]:
         """GET /campaigns/{id}/sending-status — why a campaign may not be sending."""
         data = self.request("GET", f"/campaigns/{campaign_id}/sending-status")
         return data if isinstance(data, dict) else {"campaign_id": campaign_id, "raw": data}
+
+    def count_unread_emails(self) -> dict[str, Any]:
+        """GET /emails/unread/count — workspace unread total. Field: count."""
+        data = self.request("GET", "/emails/unread/count")
+        return data if isinstance(data, dict) else {}
+
+    def list_received_emails(
+        self,
+        *,
+        limit: int = 20,
+        campaign_id: str | None = None,
+        starting_after: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /emails — one page of received thread heads, preview only.
+
+        Rate limit on this path is 20 requests per minute. Callers page with
+        next_starting_after and must stop on a repeated cursor.
+        """
+        page = min(max(int(limit), 1), 100)
+        params: dict[str, Any] = {
+            "limit": page,
+            "email_type": "received",
+            "preview_only": "true",
+            "latest_of_thread": "true",
+            "sort_order": "desc",
+        }
+        if campaign_id:
+            params["campaign_id"] = campaign_id
+        if starting_after:
+            params["starting_after"] = starting_after
+        data = self.request("GET", "/emails", params=params)
+        return data if isinstance(data, dict) else {"items": []}
 
     def get_current_workspace(self) -> dict[str, Any]:
         """GET /workspaces/current — scopes: workspaces:read | …"""
@@ -370,7 +437,12 @@ class RecordingTransport:
         path = parsed.path
         if path.startswith("/api/v2"):
             path = path[len("/api/v2"):] or "/"
-        key = (method.upper(), path.rstrip("/") or "/")
+        path = path.rstrip("/") or "/"
+        query = urllib.parse.parse_qs(parsed.query)
+        cursor = (query.get("starting_after") or [""])[0]
+        method_name = method.upper()
+        keyed = (method_name, path, cursor)
+        key = keyed if keyed in self.routes else (method_name, path)
         self.calls.append(key)
         self.last_headers = {k.lower(): v for k, v in headers.items()}
         # Authorization must be present; never log the secret value.

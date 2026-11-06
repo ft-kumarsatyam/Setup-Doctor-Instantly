@@ -108,7 +108,13 @@ class WorkspaceReadinessReport:
             "summary_spoken": self.summary_spoken,
             "esp_packs": list(self.esp_packs),
             "esp_note": self.esp_note,
+            "agent_handoff": self.agent_handoff(),
         }
+
+    def agent_handoff(self) -> dict[str, Any]:
+        from .agent_handoff import handoff_from_readiness
+
+        return handoff_from_readiness(self)
 
 
 def _auth_finding_ids(findings: list[Finding]) -> set[str]:
@@ -494,6 +500,21 @@ def render_readiness_markdown(report: WorkspaceReadinessReport) -> str:
         lines.append("")
     if report.not_checked:
         lines.append(f"Not checked: {', '.join(report.not_checked)}")
+        lines.append("")
+    handoff = report.agent_handoff()
+    lines += [
+        "## Deliverability Agent handoff",
+        "",
+        f"**Act:** `{handoff['act']}` — allowed_to_activate={handoff['allowed_to_activate']}",
+        "",
+        handoff["summary_spoken"],
+        "",
+        handoff["instantly_agent"]["note"],
+        "",
+    ]
+    for action in handoff["actions"]:
+        lines.append(f"- `{action['action']}` {action.get('finding_id') or ''}".rstrip())
+    if handoff["actions"]:
         lines.append("")
     agent = report.deliverability_agent
     if isinstance(agent, dict) and (agent.get("state") or agent.get("note") or agent.get("feed")):

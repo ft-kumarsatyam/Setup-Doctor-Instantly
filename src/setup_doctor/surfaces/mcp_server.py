@@ -31,7 +31,11 @@ from setup_doctor.integrations.instantly import (
     build_pre_launch_gate,
     compare_warmup_to_placement,
     comparisons_as_dicts,
+    render_campaign_desk_markdown,
     render_readiness_markdown,
+    render_reply_desk_markdown,
+    run_campaign_desk,
+    run_reply_desk,
     run_workspace_readiness,
 )
 from setup_doctor.pipeline import diagnose_result
@@ -210,6 +214,36 @@ def tool_pre_launch_gate(arguments: dict[str, Any]) -> dict[str, Any]:
         }
 
 
+def tool_campaign_desk(arguments: dict[str, Any]) -> dict[str, Any]:
+    """Why Instantly campaigns are or are not sending. Read-only."""
+    campaign_id = (arguments.get("campaign_id") or "").strip() or None
+    try:
+        client = _client_from_context(arguments)
+        report = run_campaign_desk(client, campaign_id=campaign_id)
+        payload = report.to_dict()
+        payload["markdown"] = render_campaign_desk_markdown(report)
+        return payload
+    except ValueError as exc:
+        return {"error": "config", "message": str(exc)}
+    except InstantlyError as exc:
+        return {"error": "instantly_http", "status": exc.status, "message": str(exc)}
+
+
+def tool_reply_desk(arguments: dict[str, Any]) -> dict[str, Any]:
+    """Unread Unibox count and latest received threads. Read-only."""
+    campaign_id = (arguments.get("campaign_id") or "").strip() or None
+    try:
+        client = _client_from_context(arguments)
+        report = run_reply_desk(client, campaign_id=campaign_id)
+        payload = report.to_dict()
+        payload["markdown"] = render_reply_desk_markdown(report)
+        return payload
+    except ValueError as exc:
+        return {"error": "config", "message": str(exc)}
+    except InstantlyError as exc:
+        return {"error": "instantly_http", "status": exc.status, "message": str(exc)}
+
+
 TOOLS = {
     "diagnose": {
         "description": (
@@ -276,6 +310,33 @@ TOOLS = {
             },
         },
         "handler": tool_pre_launch_gate,
+    },
+    "campaign_desk": {
+        "description": (
+            "Campaign Desk: why Instantly campaigns are sending or stalled. "
+            "Uses campaign status, analytics counts, and sending-status codes. "
+            "Missing status is unknown. Read-only — does not activate or pause."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {"type": "string"},
+            },
+        },
+        "handler": tool_campaign_desk,
+    },
+    "reply_desk": {
+        "description": (
+            "Reply Desk: Instantly unread count and the latest received threads. "
+            "A missing unread count is unknown, never clear. Read-only — does not reply."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "campaign_id": {"type": "string"},
+            },
+        },
+        "handler": tool_reply_desk,
     },
 }
 
@@ -362,6 +423,22 @@ def build_fastmcp(
                 "ctd_hosts": ctd_hosts or [],
                 "include_rich_signals": include_rich_signals,
             }),
+            indent=2,
+        )
+
+    @mcp.tool()
+    def campaign_desk(campaign_id: str | None = None) -> str:
+        """Why Instantly campaigns are sending or stalled (read-only)."""
+        return json.dumps(
+            tool_campaign_desk({"campaign_id": campaign_id} if campaign_id else {}),
+            indent=2,
+        )
+
+    @mcp.tool()
+    def reply_desk(campaign_id: str | None = None) -> str:
+        """Instantly unread count and latest received threads (read-only)."""
+        return json.dumps(
+            tool_reply_desk({"campaign_id": campaign_id} if campaign_id else {}),
             indent=2,
         )
 

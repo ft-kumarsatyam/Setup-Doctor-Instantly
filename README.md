@@ -55,7 +55,7 @@ MCP URL: `https://HOST/mcp` (HTTPS; trailing slash optional — no HTTP 307).
 Connect UI: `GET /connect` (same as [docs/INSTANTLY_CONNECT.md](docs/INSTANTLY_CONNECT.md)).
 Per-request Instantly key: `X-Instantly-Api-Key` (else `INSTANTLY_API_KEY`).
 
-Cursor skills (in-repo): user agents `/domain-doctor`, `/fix-coach`, `/workspace-ready`, `/launch-gate` (auto-invoked). Slash-only: `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
+Cursor skills (in-repo): user agents `/domain-doctor`, `/fix-coach`, `/workspace-ready`, `/launch-gate`, `/campaign-desk`, `/reply-desk` (auto-invoked). Slash-only: `/setup-doctor`, `/diagnose`, `/spf`, `/dkim`, `/dmarc`, `/mx`, `/fix-plan`, `/instantly`, `/pre-launch-gate`, `/eval-check`.
 
 Instantly (read-only API v2, needs `INSTANTLY_API_KEY`). Missing scores/tests ⇒ **unknown**, never healthy. Instantly vitals are four booleans (MX/SPF/DKIM/DMARC exist); they never become Findings. `--share-demo` shows that gap offline, with no API key: vitals all pass, launch stays blocked, and a scripted model that invents a score or a finding is rejected.
 
@@ -67,6 +67,8 @@ python -m setup_doctor --instantly-ready --agency-export
 python -m setup_doctor --instantly-ready --all-workspaces --json
 python -m setup_doctor --share-demo
 python -m setup_doctor --pre-launch-gate --json
+python -m setup_doctor --campaign-desk --json
+python -m setup_doctor --reply-desk --json
 python -m setup_doctor mess.test --records examples/mess.json --fix-packet cloudflare
 python -m setup_doctor --from-instantly --json
 ```
@@ -86,10 +88,13 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
 - Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
 - Pre-launch gate: critical Findings block activate; invented `allowed_to_activate` rejected
+- Campaign Desk: an unhealthy sending-status code stalls the workspace; a sending verdict on a stalled row is rejected
+- Reply Desk: unread count above zero is attention; a missing count stays unknown; two Unibox pages are joined
+- Deliverability Agent handoff: a critical Finding holds activation; a clear act on that hold is rejected
 - Public DNS corpus: **40/40** frozen domains, scored on its own (not added to the synthetic precision/recall). Rewrite pairs **31/31** grounded; invented ids and records rejected
 - Rewrite RAG: **32** example plans, **22/22** finding ids, checked on **61** cases. Retrieved ids are a subset of the current findings. This is not a finder and does not change the detection scores
-- Mutations: **20/20** killed
-- Tests: **184** pytest
+- Mutations: **24/24** killed
+- Tests: **194** pytest
 
 ## Limits
 
@@ -100,7 +105,9 @@ From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS
 - Numeric grounding is allow-list patterns only.
 - Live DNS / real Anthropic / real Instantly account data are not assumed green in CI; Instantly mode reports missing scores/tests as **unknown**.
 - Reputation adapters default to **not checked** (never fabricated clean).
-- Instantly write APIs (pause accounts, enable warmup, create campaigns) are out of scope.
+- Instantly write APIs (pause accounts, enable warmup, create campaigns) are out of scope. The Deliverability Agent card and the webhook handoff are instructions only.
+- Reply Desk reads at most five Unibox pages (20 threads each). A repeated cursor or a sixth page is `more_threads`, not a claim that the inbox was fully read. `domain_blocked` is set only for a sending domain the caller already named.
+- `POST /hooks/instantly` stores the DNS result and the agent card in `SETUP_DOCTOR_WEBHOOK_STORE` (default: a file under the system temp directory). That file is what survives a process restart.
 
 ## Layout
 

@@ -74,6 +74,20 @@ Instantly rewrite never invents Findings; missing Instantly data stays unknown.
 - Spoken summary present: **True**
 
 
+## 2d. Campaign Desk and Reply Desk
+
+- Unhealthy sending status stalls: **True**
+- Sending verdict with a stalled row rejected: **True**
+- Unread mail is attention: **True**
+- Missing unread count stays unknown: **True**
+- Clear with unread mail rejected: **True**
+- Two reply pages joined: **True**
+- Critical Finding holds the agent card: **True**
+- Clear act on a hold rejected: **True**
+
+Counts are copied from Instantly. No reply rate is computed. The agent card does not pause or activate.
+
+
 ## 3. Schema contract
 
 - schema_version: `1.0` (expected `1.0`)
@@ -129,3 +143,14 @@ Each scripted model behavior is run against every case that has findings (31 of 
 - Invented DNS record rejected: **31**
 
 Pairs are in `evals/corpus/rewrite_pairs.jsonl`. They train the rewrite to stay inside the finding set. They do not create findings.
+
+
+## 5d. Rewrite RAG (examples only, not a finder)
+
+Retrieved plans must be a subset of the current findings. This score is not added to section 1 or section 5.
+
+- Plans in the index: **32**
+- Finding ids covered: **22/22**
+- Cases checked: **61**
+- Index matches builder: **True**
+- Unsafe examples: **0**

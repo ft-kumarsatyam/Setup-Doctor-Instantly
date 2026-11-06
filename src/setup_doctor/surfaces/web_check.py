@@ -364,6 +364,7 @@ WEB_CHECK_HTML = """<!DOCTYPE html>
         <label><input type="checkbox" id="advisory" /> Advisory DNS packs</label>
       </div>
       <p class="hint">Same engine as Instantly dual-MCP <code>pre_launch_gate</code> — Findings first, then signals.</p>
+      <p class="hint">Reply Desk loads under the result when an Instantly API key is set. Setup Doctor does not send replies. The Deliverability Agent card is instructions only.</p>
       <details class="advanced" id="advanced">
         <summary>Advanced — API keys</summary>
         <div class="advanced-grid">
@@ -627,6 +628,53 @@ WEB_CHECK_HTML = """<!DOCTYPE html>
       };
     }
 
+    function renderAgent(handoff) {
+      if (!handoff || !handoff.act) return "";
+      const actions = (handoff.actions || []).map((row) =>
+        `<li><code>${escapeHtml(row.action || "")}</code> ${escapeHtml(row.finding_id || "")}</li>`
+      ).join("");
+      const note = (handoff.instantly_agent && handoff.instantly_agent.note) || handoff.note || "";
+      return `<div class="next-steps"><h3>Deliverability Agent</h3>
+        <p><strong>${escapeHtml(handoff.act)}</strong> — ${escapeHtml(handoff.summary_spoken || "")}</p>
+        ${actions ? `<ul>${actions}</ul>` : ""}
+        <p>${escapeHtml(note)}</p></div>`;
+    }
+
+    function renderThreads(data) {
+      const threads = data.threads || [];
+      const rows = threads.map((thread) => {
+        const blocked = thread.domain_blocked === true ? " · sending domain blocked" : "";
+        return `<li><strong>${escapeHtml(thread.lead || "unknown lead")}</strong> — ${escapeHtml(thread.subject || "(no subject)")}${blocked}</li>`;
+      }).join("");
+      return `<div class="next-steps"><h3>Reply Desk</h3>
+        <p>${escapeHtml(data.summary_spoken || "")}</p>
+        ${rows ? `<ul>${rows}</ul>` : "<p>No received threads on the pages read.</p>"}
+        <p>Read-only. Setup Doctor does not send replies.</p></div>`;
+    }
+
+    function loadReplyDesk(headers, instantlyKey, blockedDomains) {
+      const slot = document.getElementById("reply-desk");
+      if (!slot) return;
+      if (!instantlyKey) {
+        slot.innerHTML = `<p class="hint">Reply Desk needs an Instantly API key under Advanced. Unread mail stays unknown until then.</p>`;
+        return;
+      }
+      slot.innerHTML = `<p class="hint">Loading unread replies…</p>`;
+      fetch("/instantly/reply-desk", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ blocked_domains: blockedDomains || [] }),
+      }).then((r) => r.json().then((data) => ({ ok: r.ok, data }))).then(({ ok, data }) => {
+        if (!ok) {
+          slot.innerHTML = `<p class="hint">Reply Desk could not be read. Unread mail stays unknown.</p>`;
+          return;
+        }
+        slot.innerHTML = renderThreads(data);
+      }).catch(() => {
+        slot.innerHTML = `<p class="hint">Reply Desk could not be read. Unread mail stays unknown.</p>`;
+      });
+    }
+
     function renderSignals(signals) {
       if (!signals || !signals.instantly) return "";
       const rows = signals.instantly;
@@ -738,6 +786,7 @@ WEB_CHECK_HTML = """<!DOCTYPE html>
         }
         const findings = data.findings || [];
         const v = verdictFromFindings(findings);
+        const handoff = data.agent_handoff;
         const steps = (v.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join("");
         out.innerHTML = `<div class="result">
           <div class="verdict">
@@ -747,12 +796,16 @@ WEB_CHECK_HTML = """<!DOCTYPE html>
             <p class="meta-line">${escapeHtml(data.domain || domain)} · schema ${escapeHtml(data.schema_version || "1.0")} · ${findings.length} finding(s)</p>
           </div>
           ${renderFindings(findings)}
+          ${renderAgent(handoff)}
           ${renderSignals(data.signals)}
+          <div id="reply-desk"></div>
           ${steps ? `<div class="next-steps"><h3>Next steps</h3><ol>${steps}</ol></div>` : ""}
           ${renderActions(v.actions)}
           ${data.report ? `<details class="report"><summary>Full report</summary><pre class="report-body">${escapeHtml(data.report)}</pre></details>` : ""}
         </div>`;
         wireResultActions(out);
+        const blocking = findings.some((f) => f.severity === "critical" || f.severity === "high");
+        loadReplyDesk(headers, ik, blocking ? [domain] : []);
         out.querySelector(".result")?.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (err) {
         out.innerHTML = renderErrorCard(friendlyError(0, String(err)));

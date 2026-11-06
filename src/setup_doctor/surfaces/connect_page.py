@@ -121,7 +121,7 @@ CONNECT_PAGE_HTML = """<!DOCTYPE html>
       <div class="box doctor">
         <p class="k">Setup Doctor MCP</p>
         <h2 id="mcp-url-label">/mcp</h2>
-        <p><code>diagnose</code>, <code>instantly_ready</code>, <code>pre_launch_gate</code>. Blocks activate when DNS Findings are critical.</p>
+        <p><code>diagnose</code>, <code>instantly_ready</code>, <code>pre_launch_gate</code>, <code>campaign_desk</code>, <code>reply_desk</code>. DNS blocks activate. Campaign Desk explains a stall. Reply Desk lists unread mail.</p>
       </div>
     </div>
 
@@ -135,7 +135,7 @@ CONNECT_PAGE_HTML = """<!DOCTYPE html>
       <li>Web check: <a href="/">/</a></li>
       <li>Health: <a href="/healthz">/healthz</a></li>
       <li>MCP (streamable HTTP): <code id="mcp-url">/mcp</code> — use this exact HTTPS URL (no bare HTTP; trailing slash optional)</li>
-      <li>API: <code>POST /diagnose</code>, <code>POST /instantly/ready</code>, <code>POST /instantly/pre-launch-gate</code></li>
+      <li>API: <code>POST /diagnose</code>, <code>POST /instantly/ready</code>, <code>POST /instantly/pre-launch-gate</code>, <code>POST /instantly/campaign-desk</code>, <code>POST /instantly/reply-desk</code></li>
     </ul>
 
     <h3>2. Where do the API keys come from?</h3>

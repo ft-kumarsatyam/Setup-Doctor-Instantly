@@ -16,9 +16,11 @@ aggregate counts (status, findings count, duration, cache hit).
 """
 from __future__ import annotations
 
+import datetime as dt
 import ipaddress
 import os
 import re
+import tempfile
 import threading
 import time
 from collections import deque
@@ -26,6 +28,7 @@ from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FuturesTimeout
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable
 
 from fastapi import FastAPI, Header, HTTPException, Request, Response
@@ -49,12 +52,17 @@ from setup_doctor.integrations.instantly import (
     InstantlyClient,
     InstantlyError,
     agency_report_payload,
+    build_agent_handoff,
     build_pre_launch_gate,
     compare_warmup_to_placement,
     comparisons_as_dicts,
     render_agency_workspaces_markdown,
+    render_campaign_desk_markdown,
     render_readiness_markdown,
+    render_reply_desk_markdown,
     run_all_workspaces_readiness,
+    run_campaign_desk,
+    run_reply_desk,
     run_workspace_readiness,
 )
 from setup_doctor.integrations.reputation import check_reputation
@@ -71,6 +79,7 @@ from setup_doctor.surfaces.instantly_ctx import (
 from setup_doctor.surfaces.notify import notify_slack
 from setup_doctor.surfaces.vault import EncryptedTenantVault, default_vault_from_env
 from setup_doctor.surfaces.web_check import render_web_check_html
+from setup_doctor.surfaces.webhook_store import WebhookStore
 
 MAX_DOMAIN_LEN = 253
 MOUNT_MCP_ENV = "SETUP_DOCTOR_MOUNT_MCP"
@@ -120,6 +129,7 @@ class DiagnoseResponse(BaseModel):
     cached: bool = False
     fix_packet: dict[str, Any] | None = None
     domain_age: dict[str, Any] | None = None
+    agent_handoff: dict[str, Any] | None = None
 
 
 class InstantlyCompareRequest(BaseModel):
@@ -140,6 +150,15 @@ class PreLaunchGateRequest(BaseModel):
     domain: str | None = Field(default=None, max_length=MAX_DOMAIN_LEN + 32)
     ctd_hosts: list[str] = Field(default_factory=list)
     include_rich_signals: bool = True
+
+
+class CampaignDeskRequest(BaseModel):
+    campaign_id: str | None = Field(default=None, max_length=80)
+
+
+class ReplyDeskRequest(BaseModel):
+    campaign_id: str | None = Field(default=None, max_length=80)
+    blocked_domains: list[str] = Field(default_factory=list)
 
 
 class FixPacketRequest(BaseModel):
@@ -307,6 +326,7 @@ def create_app(
     instantly_factory: InstantlyFactory | None = None,
     instantly_vault: TenantVault | None = None,
     mount_mcp: bool | None = None,
+    webhook_store: WebhookStore | None = None,
 ) -> FastAPI:
     """Build the API app. Tests inject a FixtureResolver via resolver_factory.
 
@@ -351,6 +371,14 @@ def create_app(
         app.state.instantly_vault = vault_obj.as_lookup() if vault_obj else None
     app.state.vault = vault_obj
     app.state.webhook_results: dict[str, Any] = {}
+    if webhook_store is not None:
+        app.state.webhook_store = webhook_store
+    else:
+        configured = os.environ.get("SETUP_DOCTOR_WEBHOOK_STORE", "").strip()
+        store_path = Path(configured) if configured else (
+            Path(tempfile.gettempdir()) / "setup-doctor" / "webhook_results.json"
+        )
+        app.state.webhook_store = WebhookStore(store_path)
     app.state.webhook_secret = os.environ.get("SETUP_DOCTOR_INSTANTLY_HOOK_SECRET", "").strip()
 
     def _require_auth(
@@ -397,6 +425,8 @@ def create_app(
             "auth": "X-API-Key or Authorization: Bearer when SETUP_DOCTOR_API_KEYS is set",
             "mcp": "/mcp streamable HTTP when SETUP_DOCTOR_MOUNT_MCP=1 (use https://HOST/mcp)",
             "pre_launch_gate": "POST /instantly/pre-launch-gate — allowed_to_activate iff launch_verdict=ready",
+            "campaign_desk": "POST /instantly/campaign-desk — sending status and analytics, read-only",
+            "reply_desk": "POST /instantly/reply-desk — unread count and received threads, read-only",
             "fix_packets": f"providers: {', '.join(FIX_PACKET_PROVIDERS)}",
             "web": "GET / — public checker UI (same /diagnose engine)",
             "connect_docs": "GET /connect — Instantly dual-MCP one-pager",
@@ -739,6 +769,55 @@ def create_app(
                 detail=f"Instantly API request failed (HTTP {exc.status}).",
             ) from exc
 
+    @app.post("/instantly/campaign-desk")
+    def campaign_desk_endpoint(
+        body: CampaignDeskRequest | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        body = body or CampaignDeskRequest()
+        try:
+            client = _instantly_for_request(tenant, x_instantly_api_key)()
+            report = run_campaign_desk(client, campaign_id=body.campaign_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except InstantlyError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}).",
+            ) from exc
+        payload = report.to_dict()
+        payload["markdown"] = render_campaign_desk_markdown(report)
+        return payload
+
+    @app.post("/instantly/reply-desk")
+    def reply_desk_endpoint(
+        body: ReplyDeskRequest | None = None,
+        x_api_key: str | None = Header(default=None, alias="X-API-Key"),
+        authorization: str | None = Header(default=None),
+        x_instantly_api_key: str | None = Header(default=None, alias=HEADER_INSTANTLY_API_KEY),
+    ) -> dict[str, Any]:
+        tenant = _require_auth(x_api_key, authorization)
+        body = body or ReplyDeskRequest()
+        try:
+            client = _instantly_for_request(tenant, x_instantly_api_key)()
+            blocked = {item.strip() for item in body.blocked_domains if item.strip()}
+            report = run_reply_desk(
+                client, campaign_id=body.campaign_id, blocked_domains=blocked or None,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except InstantlyError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Instantly API request failed (HTTP {exc.status}).",
+            ) from exc
+        payload = report.to_dict()
+        payload["markdown"] = render_reply_desk_markdown(report)
+        return payload
+
     @app.post("/fix-packet")
     def fix_packet_endpoint(
         body: FixPacketRequest,
@@ -814,15 +893,27 @@ def create_app(
                 result = diagnose_result(
                     domain, resolver, explainer, DEFAULT_DKIM_SELECTORS, packs=DEFAULT_PACKS,
                 )
-                row = {"domain": domain, "ok": True, "result": result.to_dict()}
+                handoff = build_agent_handoff(result.findings)
+                row = {
+                    "domain": domain,
+                    "ok": True,
+                    "result": result.to_dict(),
+                    "agent_handoff": handoff,
+                    "stored_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+                }
                 app.state.webhook_results[domain] = row
+                app.state.webhook_store.put(domain, row)
                 rows.append(row)
             except ResolverError:
-                rows.append({
+                err = {
                     "domain": domain,
                     "ok": False,
                     "error": "resolver error (not absence)",
-                })
+                    "stored_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+                }
+                app.state.webhook_results[domain] = err
+                app.state.webhook_store.put(domain, err)
+                rows.append(err)
             except ValueError as exc:
                 rows.append({"domain": domain, "ok": False, "error": str(exc)})
         ok_n = sum(1 for r in rows if r.get("ok"))
@@ -836,7 +927,10 @@ def create_app(
             "count": len(rows),
             "rows": rows,
             "slack": slack,
-            "note": "Findings from Setup Doctor only; Instantly failure does not invent DNS.",
+            "note": (
+                "Findings from Setup Doctor only. The agent handoff is instructions, "
+                "not an activate or pause. Stored results survive process restart."
+            ),
         }
 
     @app.get("/hooks/instantly/last/{domain}")
@@ -850,7 +944,7 @@ def create_app(
             host = validate_hostname(domain)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-        row = app.state.webhook_results.get(host)
+        row = app.state.webhook_store.get(host) or app.state.webhook_results.get(host)
         if not row:
             raise HTTPException(status_code=404, detail="No stored webhook result")
         return row
@@ -1051,6 +1145,16 @@ def _run_diagnose(
     domain_age = None
     if include_domain_age:
         domain_age = lookup_domain_age(domain).to_dict()
+    mismatches = [
+        row.get("email")
+        for row in (instantly or [])
+        if isinstance(row, dict) and row.get("verdict") == "mismatch"
+    ]
+    handoff = build_agent_handoff(
+        result.findings,
+        instantly_checked=bool(include_instantly and instantly is not None),
+        mismatches=[str(item) for item in mismatches if item],
+    )
     return DiagnoseResponse(
         schema_version=result.schema_version,
         domain=result.domain,
@@ -1064,6 +1168,7 @@ def _run_diagnose(
         cached=False,
         fix_packet=fix_packet,
         domain_age=domain_age,
+        agent_handoff=handoff,
     )
 
 

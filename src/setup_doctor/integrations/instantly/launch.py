@@ -229,6 +229,7 @@ def build_pre_launch_gate(
         "summary_spoken": decision.summary_spoken,
         "markdown": md,
         "report": filtered.to_dict(),
+        "agent_handoff": filtered.agent_handoff(),
     }
 
 

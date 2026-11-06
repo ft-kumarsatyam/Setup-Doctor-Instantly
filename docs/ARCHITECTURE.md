@@ -43,6 +43,15 @@ InstantlyClient (read-only API v2)
 Workspace readiness:
   Instantly accounts → unique domains → diagnose (+ esp-pack instantly)
   → correlate vitals agree|disagree|unknown vs Findings
+
+Campaign Desk (`campaign_desk.py`): list campaigns, analytics counts, sending-status.
+Reply Desk (`reply_desk.py`): unread count and up to five pages of received threads.
+`domain_blocked` is true only when the caller names that sending domain; otherwise null.
+Deliverability Agent handoff (`agent_handoff.py`): an action card (`hold` / `review` /
+`clear` / `unknown`) built from Findings plus whether Instantly has a default agent.
+The card does not pause or activate. Missing agent state stays null.
+Both desks are read-only. Missing Instantly fields stay unknown. MCP tools:
+`campaign_desk`, `reply_desk`. CLI: `--campaign-desk`, `--reply-desk`.
 ```
 
 Missing Instantly data ⇒ `unknown` / `not_checked`. Surfaces: CLI
@@ -53,7 +62,10 @@ Instantly key order: `X-Instantly-Api-Key` → tenant vault (optional) → env.
 Hosted dual-MCP: [INSTANTLY_CONNECT.md](INSTANTLY_CONNECT.md) (also live at `GET /connect`).
 MCP mount rewrites `/mcp`→`/mcp/` in-process and forces HTTPS Location headers behind Fly (`force_https` + `ProxyHeadersMiddleware`).
 Launch gate: `integrations/instantly/launch.py` (`launch_verdict`, `pre_launch_gate`).
-Fix packets: `explain/fix_packets.py`. Webhook: `POST /hooks/instantly`.
+Fix packets: `explain/fix_packets.py`. Webhook: `POST /hooks/instantly` diagnoses DNS,
+attaches the agent handoff, and writes the row to `SETUP_DOCTOR_WEBHOOK_STORE`
+(default under the system temp directory). `GET /hooks/instantly/last/{domain}`
+reads that file after a process restart.
 Partner copy: [MARKETPLACE.md](MARKETPLACE.md).
 
 ## Tests mirror packages

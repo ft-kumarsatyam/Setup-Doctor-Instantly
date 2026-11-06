@@ -22,8 +22,10 @@ These load on their own when the question matches. Follow that skill; do not inv
 | Fix Coach | Registrar steps (Cloudflare, Namecheap, GoDaddy, Google Domains) |
 | Workspace Ready | Instantly sender domains, agency handoff, all workspaces |
 | Launch Gate | May this campaign activate? |
+| Campaign Desk | Why is an Instantly campaign stalled or sending? |
+| Reply Desk | Who replied, and what is still unread? |
 
-Warmup versus placement compare stays on `/instantly`.
+Warmup versus placement compare stays on `/instantly`. Why a campaign is or is not sending is Campaign Desk. Unread replies are Reply Desk.
 
 ## Slash commands
 
@@ -37,12 +39,14 @@ Warmup versus placement compare stays on `/instantly`.
 /fix-plan <domain>            # Fix Coach
 /instantly                    # warmup vs placement only
 /pre-launch-gate              # Launch Gate
+/campaign-desk                # Campaign Desk
+/reply-desk                   # Reply Desk
 /eval-check                   # maintainers: pytest + evals + mutants
 ```
 
 ## Rules
 
-1. Shell out to `python -m setup_doctor` or MCP tools `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`.
+1. Shell out to `python -m setup_doctor` or MCP tools `diagnose`, `compare_instantly`, `instantly_ready`, `pre_launch_gate`, `campaign_desk`, `reply_desk`.
 2. Do not re-implement SPF/DKIM logic in chat.
 3. DNS outage ≠ absence — if the CLI exits 2 / resolver error, say so. Launch Gate exit code 3 means blocked, not a crash.
 4. DKIM selectors cannot be listed from DNS; never claim DKIM is missing without saying selectors were tried.
