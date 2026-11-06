@@ -67,6 +67,8 @@ def test_api_key_auth_optional_and_required():
         gated.authenticate(None)
     tenant = gated.authenticate("secret")
     assert tenant is not None and tenant.tenant_id == "acme"
+    # Full env-style paste `key:tenant` should also authenticate.
+    assert gated.authenticate("secret:acme").tenant_id == "acme"
     assert load_api_keys("a:t1,b") == {"a": "t1", "b": "default"}
 
 

@@ -1,0 +1,279 @@
+[
+  {
+    "domain": "amazon.com",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF ending -all (4 lookups). DMARC p=quarantine with rua. MX present. No DKIM TXT on the nine default selectors."
+  },
+  {
+    "domain": "apache.org",
+    "expected": [],
+    "note": "One SPF ending -all. DMARC p=quarantine with rua. MX present. selector mail is a 2048-bit RSA key."
+  },
+  {
+    "domain": "apple.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=quarantine with rua. MX present. First usable default selector is selector1 at 1024 bits."
+  },
+  {
+    "domain": "bbc.co.uk",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_STRICT_ALIGNMENT"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with adkim=s and aspf=s and rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "cdc.gov",
+    "expected": [],
+    "note": "One SPF ending -all at exactly 10 lookups (boundary, not over) and 1 void. DMARC p=reject with rua. MX present. selector1 is 2048-bit."
+  },
+  {
+    "domain": "cisa.gov",
+    "expected": [],
+    "note": "One SPF ending -all. DMARC p=reject with rua. MX present. selector1 is 2048-bit."
+  },
+  {
+    "domain": "cloudflare.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending -all (7 lookups, 1 void). DMARC p=reject with rua. MX present. First usable default selector is k1 at 1024 bits."
+  },
+  {
+    "domain": "debian.org",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "One SPF ending ~all. DMARC p=none with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "eff.org",
+    "expected": [
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "One SPF ending -all. DMARC p=none with rua. MX present. selector1 is 2048-bit."
+  },
+  {
+    "domain": "example.com",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_NO_REPORTING",
+      "DMARC_STRICT_ALIGNMENT",
+      "MX_MISSING"
+    ],
+    "note": "SPF is v=spf1 -all. DMARC p=reject with adkim=s and aspf=s and no rua. RFC 7505 null MX (0 .). Every default DKIM selector is v=DKIM1; p= (revoked)."
+  },
+  {
+    "domain": "example.org",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_NO_REPORTING",
+      "DMARC_STRICT_ALIGNMENT",
+      "MX_MISSING"
+    ],
+    "note": "Same shape as example.com: SPF -all, strict DMARC with no rua, null MX, and only revoked DKIM keys."
+  },
+  {
+    "domain": "fastmail.com",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "One SPF ending ~all. DMARC p=none with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "github.com",
+    "expected": [],
+    "note": "One SPF ending ~all at exactly 10 lookups and 1 void (boundary). DMARC p=quarantine with rua. MX present. selector google is 2048-bit."
+  },
+  {
+    "domain": "google.com",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF ending ~all (include:_spf.google.com). DMARC p=reject with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "gsa.gov",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. First usable default selector is google at 1024 bits."
+  },
+  {
+    "domain": "iana.org",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "SPF is redirect=icann.org and has no all term; redirect must not be SPF_NO_ALL. DMARC p=none with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "ietf.org",
+    "expected": [
+      "DKIM_WEAK_KEY",
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "One SPF ending ~all. DMARC p=none with rua. MX present. selector mail is 1024-bit."
+  },
+  {
+    "domain": "instantly.ai",
+    "expected": [],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector google is 2048-bit."
+  },
+  {
+    "domain": "internet.nl",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "irs.gov",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF of ip4/ip6 ending -all (0 lookups). DMARC p=reject with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "kernel.org",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=quarantine with rua. MX present. selector default is 1024-bit."
+  },
+  {
+    "domain": "mailgun.com",
+    "expected": [],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector google is 2048-bit."
+  },
+  {
+    "domain": "microsoft.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending -all. DMARC p=reject with rua. MX present. selector2 is 1024-bit."
+  },
+  {
+    "domain": "mozilla.org",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all (7 lookups, 1 void). DMARC p=reject with rua. MX present. selector google is 1024-bit."
+  },
+  {
+    "domain": "nasa.gov",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending -all. DMARC p=reject with rua. MX present. selector1 is 1024-bit."
+  },
+  {
+    "domain": "nic.cz",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector default is 1024-bit."
+  },
+  {
+    "domain": "nih.gov",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector1 is 1024-bit."
+  },
+  {
+    "domain": "nytimes.com",
+    "expected": [],
+    "note": "One SPF ending ~all (5 lookups, 1 void). DMARC p=reject with rua. MX present. selector google is 2048-bit."
+  },
+  {
+    "domain": "proton.me",
+    "expected": [
+      "DKIM_NOT_FOUND",
+      "DMARC_NO_REPORTING",
+      "DMARC_STRICT_ALIGNMENT"
+    ],
+    "note": "One SPF ending ~all. DMARC p=quarantine with adkim=s and aspf=s and no rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "python.org",
+    "expected": [
+      "DKIM_WEAK_KEY",
+      "DMARC_POLICY_NONE"
+    ],
+    "note": "One SPF ending ~all. DMARC p=none with rua. sp=none is not DMARC_SP_NONE because p= is already none. selector google is 1024-bit."
+  },
+  {
+    "domain": "salesforce.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all with exactly 2 void lookups (boundary, not over). DMARC p=reject with rua. MX present. selector google is 1024-bit."
+  },
+  {
+    "domain": "sendgrid.com",
+    "expected": [],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector s1 is 2048-bit."
+  },
+  {
+    "domain": "shopify.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector google is 1024-bit."
+  },
+  {
+    "domain": "state.gov",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending -all. DMARC p=reject with rua. MX present. selector1 is 1024-bit."
+  },
+  {
+    "domain": "stripe.com",
+    "expected": [
+      "DKIM_WEAK_KEY"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector google is 1024-bit."
+  },
+  {
+    "domain": "w3.org",
+    "expected": [],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. selector s1 is 2048-bit."
+  },
+  {
+    "domain": "whitehouse.gov",
+    "expected": [
+      "MX_MISSING"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. selector1 is 2048-bit. No MX answer at the apex."
+  },
+  {
+    "domain": "who.int",
+    "expected": [
+      "DKIM_WEAK_KEY",
+      "SPF_TOO_MANY_LOOKUPS"
+    ],
+    "note": "One SPF ending -all that resolves to 17 lookups (over 10) and 1 void (not over 2). DMARC p=reject with rua. MX present. selector1 is 1024-bit."
+  },
+  {
+    "domain": "wikipedia.org",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF ending ~all. DMARC p=reject with rua. MX present. No DKIM on the default selectors."
+  },
+  {
+    "domain": "zoho.com",
+    "expected": [
+      "DKIM_NOT_FOUND"
+    ],
+    "note": "One SPF ending -all. DMARC p=reject with rua. MX present. No DKIM on the default selectors."
+  }
+]

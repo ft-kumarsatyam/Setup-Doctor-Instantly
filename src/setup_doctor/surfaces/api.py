@@ -61,13 +61,13 @@ from setup_doctor.integrations.reputation import check_reputation
 from setup_doctor.integrations.whois_age import lookup_domain_age
 from setup_doctor.pipeline import diagnose_result
 from setup_doctor.surfaces.auth import ApiKeyAuth
+from setup_doctor.surfaces.connect_page import CONNECT_PAGE_HTML
 from setup_doctor.surfaces.hooks import extract_domains, parse_json_body, verify_signature
 from setup_doctor.surfaces.instantly_ctx import (
     HEADER_INSTANTLY_API_KEY,
     TenantVault,
     make_request_instantly_factory,
 )
-from setup_doctor.surfaces.connect_page import CONNECT_PAGE_HTML
 from setup_doctor.surfaces.notify import notify_slack
 from setup_doctor.surfaces.vault import EncryptedTenantVault, default_vault_from_env
 from setup_doctor.surfaces.web_check import render_web_check_html

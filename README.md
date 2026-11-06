@@ -78,19 +78,21 @@ CI: `.github/workflows/ci.yml` (Python 3.11 / 3.13 — ruff, pytest, evals, muta
 
 From `python evals/run_evals.py` / `evals/mutation_check.py` (see `evals/RESULTS.md`):
 
-- Detection: **31/31** labeled fixtures (precision/recall 1.000)
+- Detection: **34/34** labeled fixtures (precision/recall 1.000)
 - Advisory detection: **4/4** BIMI / MTA-STS / TLS-RPT fixtures
 - Guardrail: faithful accepted; invented ids/records, bad JSON, dupes, empty/errors rejected; numeric misstatements rejected when exercised
 - Schema contract: `DiagnosisResult` `schema_version=1.0` ok
 - Shadow: skipped in CI without `evals/shadow/shadow_cases.json` (never merged into synthetic P/R)
 - Instantly rewrite guardrail: invented scores/verdicts fall back; faithful rewrite accepted
 - Pre-launch gate: critical Findings block activate; invented `allowed_to_activate` rejected
-- Mutations: **17/17** killed
-- Tests: **174** pytest
+- Public DNS corpus: **40/40** frozen domains, scored on its own (not added to the synthetic precision/recall). Rewrite pairs **31/31** grounded; invented ids and records rejected
+- Mutations: **19/19** killed
+- Tests: **181** pytest
 
 ## Limits
 
-- Fixtures are synthetic — not real-world accuracy.
+- Synthetic fixtures are not real-world accuracy. The public corpus is one DNS-over-HTTPS snapshot from 2026-11-05 (40 domains, default DKIM selectors only), not a zone-wide measurement.
+- A null MX (`0 .`, RFC 7505) is treated as no mail server. An empty DKIM `p=` is a revoked key, not a usable key.
 - DKIM selectors can’t be listed from DNS (common selectors + `--dkim-selector` / `--esp-pack`).
 - Numeric grounding is allow-list patterns only.
 - Live DNS / real Anthropic / real Instantly account data are not assumed green in CI; Instantly mode reports missing scores/tests as **unknown**.
@@ -110,7 +112,7 @@ src/setup_doctor/
   pipeline/         diagnose graph
   integrations/     Instantly, reputation
   surfaces/         CLI, API, MCP, auth, bulk
-evals/              detection/, guardrails/, mutations/, shadow/, contracts/
+evals/              detection/, guardrails/, mutations/, shadow/, contracts/, corpus/
 tests/              mirrors packages (core|dns|checks|explain|…)
 .cursor/skills/     /diagnose, /spf, /dkim, …
 docs/               ARCHITECTURE.md

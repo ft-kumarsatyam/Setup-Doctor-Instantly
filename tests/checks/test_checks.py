@@ -61,6 +61,15 @@ def test_dkim_weak_key_finding_is_actionable():
     assert "2048" in f.fix
 
 
+def test_null_mx_and_revoked_dkim_match_labeled_fixtures():
+    null_mx = next(c for c in CASES if c["name"] == "mx_null")
+    assert [f.id for f in run_checks(null_mx["domain"], FixtureResolver(null_mx["records"]))] == ["MX_MISSING"]
+    revoked = next(c for c in CASES if c["name"] == "dkim_revoked_empty_p")
+    assert [f.id for f in run_checks(revoked["domain"], FixtureResolver(revoked["records"]))] == ["DKIM_NOT_FOUND"]
+    later = next(c for c in CASES if c["name"] == "dkim_revoked_then_strong")
+    assert run_checks(later["domain"], FixtureResolver(later["records"])) == []
+
+
 def test_dmarc_sp_none_and_strict_alignment_findings():
     sp = next(c for c in CASES if c["name"] == "dmarc_sp_none_under_reject")
     ids = [f.id for f in run_checks(sp["domain"], FixtureResolver(sp["records"]))]

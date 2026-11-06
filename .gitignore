@@ -13,3 +13,4 @@ venv/
 .env
 .env.*
 evals/results.json
+evals/corpus/_raw_snapshot.json

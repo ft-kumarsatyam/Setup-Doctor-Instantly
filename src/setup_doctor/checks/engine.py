@@ -176,6 +176,10 @@ def check_dkim(domain: str, resolver: Resolver, selectors: tuple[str, ...]) -> l
             # RFC 8301 §3.2: Signers SHOULD use RSA keys of at least 2048 bits.
             k = tags.get("k", "rsa").lower()
             if k == "rsa" and "p" in tags:
+                # RFC 6376: an empty p= revokes the key. It is not a usable key,
+                # so keep looking at the remaining selectors.
+                if tags["p"].strip() == "":
+                    continue
                 bits = dkim_rsa_key_bits(tags["p"])
                 if bits is not None and bits < 2048:
                     return [Finding(
@@ -306,7 +310,9 @@ def check_dmarc(domain: str, resolver: Resolver) -> list[Finding]:
 
 
 def check_mx(domain: str, resolver: Resolver) -> list[Finding]:
-    if resolver.mx(domain):
+    # RFC 7505 null MX is a single dot. After the trailing dot is stripped the
+    # exchange is empty, and that name does not accept mail.
+    if any(h.strip().rstrip(".") for h in resolver.mx(domain)):
         return []
     return [Finding(
         "MX_MISSING", "medium",

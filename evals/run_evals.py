@@ -8,6 +8,8 @@ Questions answered separately:
   3. Guardrail: when the LLM misbehaves, does bad text ever reach the user?
   4. Schema contract: DiagnosisResult shape stable
   5. Shadow: reported separately (skipped in CI without corpus)
+  6. Public DNS corpus: frozen real records, scored on their own (not added to synthetic P/R)
+  7. Rewrite pairs: grounded plans from that corpus; invented ids/records rejected
 
 The guardrail leak metric is deliberately NOT computed with the verifier under
 test (that would be circular). Hallucinating fakes plant a marker string, and we
@@ -25,6 +27,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from evals.contracts.schema_contract import eval_schema_contract  # noqa: E402
+from evals.corpus.load import load_public_cases  # noqa: E402
 from evals.detection.fixtures import ADVISORY_CASES, CASES  # noqa: E402
 from evals.guardrails.fakes import BEHAVIORS, PLANTED_MARKERS, faithful  # noqa: E402
 from evals.shadow.run_shadow import eval_shadow  # noqa: E402
@@ -32,7 +35,7 @@ from setup_doctor import FixtureResolver, LLMExplainer, diagnose, run_checks, ve
 from setup_doctor.checks.registry import ALL_DNS_PACKS  # noqa: E402
 from setup_doctor.core.models import Finding  # noqa: E402
 from setup_doctor.core.result import DiagnosisResult  # noqa: E402
-from setup_doctor.explain import PROMPT  # noqa: E402
+from setup_doctor.explain import PROMPT, verify_plan  # noqa: E402
 from setup_doctor.explain.instantly_rewrite import (  # noqa: E402
     rewrite_instantly_signals,
     verify_instantly_rewrite,
@@ -94,12 +97,13 @@ def _prompt_for(findings) -> str:
     return PROMPT.format(findings=json.dumps([f.to_dict() for f in findings], indent=2))
 
 
-def eval_guardrail() -> dict:
+def eval_guardrail(cases: list[dict] | None = None) -> dict:
+    cases = CASES if cases is None else cases
     rows = {}
     for name, fn in BEHAVIORS.items():
         r = Counter()
         marker = PLANTED_MARKERS.get(name)
-        for c in CASES:
+        for c in cases:
             resolver = FixtureResolver(c["records"])
             findings = run_checks(c["domain"], resolver)
             if not findings:
@@ -231,9 +235,80 @@ def eval_pre_launch_gate() -> dict:
     }
 
 
+def _guard_failures(guard: dict, prefix: str) -> list[str]:
+    bad = []
+    b = guard["behaviors"]
+    n = b["faithful"]["with_findings"]
+    if b["faithful"].get("accepted", 0) != n:
+        bad.append(f"{prefix}: faithful drafts should all be accepted")
+    for name in (
+        "hallucinated_finding", "hallucinated_record", "malformed_json",
+        "duplicate_ids", "raises", "empty",
+    ):
+        if b[name].get("fell_back", 0) != n:
+            bad.append(f"{prefix}: {name}: every draft should be rejected")
+    if b["drops_severe_finding"].get("fell_back", 0) != b["drops_severe_finding"]["with_severe"]:
+        bad.append(f"{prefix}: drops_severe_finding: should be rejected exactly when a critical/high finding exists")
+    if b["misstates_numbers"].get("fell_back", 0) != b["misstates_numbers"].get("exercised", 0):
+        bad.append(f"{prefix}: misstates_numbers: should be rejected exactly when a number was changed")
+    for name, row in b.items():
+        if row.get("planted_hallucinations_delivered", 0):
+            bad.append(f"{prefix}: {name}: planted hallucination reached the user")
+        if row.get("delivered_failing_verifier", 0):
+            bad.append(f"{prefix}: {name}: delivered text fails verification")
+    return bad
+
+
+def eval_rewrite_pairs(cases: list[dict]) -> dict:
+    """Teacher plans must be grounded. A planted id or record on the same plan must not be."""
+    path = Path(__file__).resolve().parent / "corpus" / "rewrite_pairs.jsonl"
+    lines = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    pairs_by = {row["domain"]: row for row in lines}
+    with_findings = accepted = id_rejected = record_rejected = 0
+    missing: list[str] = []
+    seen: set[str] = set()
+    for c in cases:
+        findings = run_checks(c["domain"], FixtureResolver(c["records"]))
+        if not findings:
+            if c["domain"] in pairs_by:
+                missing.append(f"{c['domain']} has a pair but no findings")
+            continue
+        with_findings += 1
+        seen.add(c["domain"])
+        row = pairs_by.get(c["domain"])
+        if row is None:
+            missing.append(c["domain"])
+            continue
+        plan = row["plan"]
+        ids_ok = sorted(it["id"] for it in plan) == sorted(f.id for f in findings)
+        if ids_ok and verify_plan(plan, findings) == []:
+            accepted += 1
+        invented = list(plan) + [{
+            "id": "SPF_DOMAIN_SPOOFED",
+            "explanation": "Your domain is being spoofed right now.",
+        }]
+        if any("unknown finding id" in v for v in verify_plan(invented, findings)):
+            id_rejected += 1
+        altered = [{"id": it["id"], "explanation": it["explanation"]} for it in plan]
+        altered[0]["explanation"] += " Also publish `v=spf1 include:totally-made-up.test -all`."
+        if any("not grounded" in v for v in verify_plan(altered, findings)):
+            record_rejected += 1
+    extra = sorted(set(pairs_by) - seen)
+    return {
+        "pairs": len(lines),
+        "with_findings": with_findings,
+        "teacher_accepted": accepted,
+        "invented_id_rejected": id_rejected,
+        "invented_record_rejected": record_rejected,
+        "missing": missing,
+        "extra": extra,
+    }
+
+
 def check_expectations(
     det: dict, guard: dict, adv: dict, contract: dict, instantly: dict | None = None,
-    gate: dict | None = None,
+    gate: dict | None = None, public: dict | None = None, public_guard: dict | None = None,
+    rewrite: dict | None = None,
 ) -> list[str]:
     bad = []
     if det["exact_match"] != det["cases"]:
@@ -242,25 +317,7 @@ def check_expectations(
         bad.append(f"advisory detection: {adv['cases'] - adv['exact_match']} case(s) mismatched")
     if not contract.get("ok"):
         bad.append(f"schema contract failed: {contract}")
-    b = guard["behaviors"]
-    n = b["faithful"]["with_findings"]
-    if b["faithful"].get("accepted", 0) != n:
-        bad.append("faithful drafts should all be accepted")
-    for name in (
-        "hallucinated_finding", "hallucinated_record", "malformed_json",
-        "duplicate_ids", "raises", "empty",
-    ):
-        if b[name].get("fell_back", 0) != n:
-            bad.append(f"{name}: every draft should be rejected")
-    if b["drops_severe_finding"].get("fell_back", 0) != b["drops_severe_finding"]["with_severe"]:
-        bad.append("drops_severe_finding: should be rejected exactly when a critical/high finding exists")
-    if b["misstates_numbers"].get("fell_back", 0) != b["misstates_numbers"].get("exercised", 0):
-        bad.append("misstates_numbers: should be rejected exactly when a number was changed")
-    for name, row in b.items():
-        if row.get("planted_hallucinations_delivered", 0):
-            bad.append(f"{name}: planted hallucination reached the user")
-        if row.get("delivered_failing_verifier", 0):
-            bad.append(f"{name}: delivered text fails verification")
+    bad += _guard_failures(guard, "guardrail")
     if instantly:
         if not instantly.get("invented_falls_back"):
             bad.append("instantly rewrite: invented scores must fall back to template")
@@ -279,17 +336,70 @@ def check_expectations(
             bad.append("pre_launch_gate: invented allowed_to_activate must be rejected")
         if not gate.get("spoken_present"):
             bad.append("pre_launch_gate: summary_spoken required")
+    if public is not None:
+        if public["exact_match"] != public["cases"]:
+            bad.append(
+                f"public corpus: {public['cases'] - public['exact_match']} case(s) mismatched"
+            )
+            for miss in public["misses"]:
+                bad.append(
+                    f"public corpus: {miss['case']} expected {miss['expected']} got {miss['got']}"
+                )
+    if public_guard is not None:
+        bad += _guard_failures(public_guard, "public guardrail")
+    if rewrite is not None:
+        n = rewrite["with_findings"]
+        if rewrite["teacher_accepted"] != n:
+            bad.append("rewrite pairs: every teacher plan must be grounded")
+        if rewrite["invented_id_rejected"] != n or rewrite["invented_record_rejected"] != n:
+            bad.append("rewrite pairs: invented id or record must be rejected")
+        if rewrite["missing"] or rewrite["extra"]:
+            bad.append(
+                f"rewrite pairs: missing={rewrite['missing']} extra={rewrite['extra']}"
+            )
     return bad
+
+
+def _guard_table(guard: dict, case_count: int) -> list[str]:
+    expect = {
+        "faithful": "accept all",
+        "hallucinated_finding": "reject all",
+        "hallucinated_record": "reject all",
+        "drops_severe_finding": "reject iff a critical/high finding exists",
+        "misstates_numbers": "reject when number changed",
+        "malformed_json": "reject all",
+        "duplicate_ids": "reject all",
+        "raises": "reject all",
+        "empty": "reject all",
+    }
+    n = guard["behaviors"]["faithful"]["with_findings"]
+    lines = [
+        "Each scripted model behavior is run against every case that has findings "
+        f"({n} of {case_count}). "
+        "'Exercised' counts cases where the fake's output actually differed from a faithful one.",
+        "",
+        "| Model behavior | Exercised | Accepted | Rejected -> fallback | Planted hallucinations delivered | Expected |",
+        "|---|---|---|---|---|---|",
+    ]
+    for name, r in guard["behaviors"].items():
+        planted = r.get("planted_hallucinations_delivered", 0) if name in PLANTED_MARKERS else "n/a"
+        lines.append(
+            f"| `{name}` | {r.get('exercised', 0)} | {r.get('accepted', 0)} | "
+            f"{r.get('fell_back', 0)} | {planted} | {expect[name]} |"
+        )
+    return lines
 
 
 def render(
     det: dict, guard: dict, adv: dict, contract: dict, shadow: dict,
     failures: list[str], instantly: dict | None = None, gate: dict | None = None,
+    public: dict | None = None, public_guard: dict | None = None, rewrite: dict | None = None,
 ) -> str:
     L = ["# Eval results", "",
-         "Generated by `python evals/run_evals.py`. Fixtures are synthetic "
-         "(see `evals/detection/fixtures.py`), so detection numbers show correctness "
-         "and regression safety, not real-world accuracy.", "",
+         "Generated by `python evals/run_evals.py`. Section 1 fixtures are synthetic "
+         "(see `evals/detection/fixtures.py`), so those numbers show correctness "
+         "and regression safety, not real-world accuracy. Section 5 is a frozen "
+         "public-DNS snapshot and is not added to section 1.", "",
          f"**Status: {'PASS' if not failures else 'FAIL'}**"]
     L += [f"- {f}" for f in failures]
     L += ["", "## 1. Detection (deterministic checks vs planted ground truth)", "",
@@ -302,26 +412,8 @@ def render(
     L += ["", "## 1b. Advisory detection (BIMI / MTA-STS / TLS-RPT)", "",
           f"- Cases: **{adv['cases']}**; exact match: **{adv['exact_match']}/{adv['cases']}**",
           f"- Precision: **{adv['precision']:.3f}**, recall: **{adv['recall']:.3f}**", ""]
-    L += ["", "## 2. Guardrail", "",
-          "Each scripted model behavior is run against every fixture that has findings "
-          f"({guard['behaviors']['faithful']['with_findings']} of {det['cases']}). "
-          "'Exercised' counts cases where the fake's output actually differed from a faithful one.", "",
-          "| Model behavior | Exercised | Accepted | Rejected -> fallback | Planted hallucinations delivered | Expected |",
-          "|---|---|---|---|---|---|"]
-    expect = {
-        "faithful": "accept all",
-        "hallucinated_finding": "reject all",
-        "hallucinated_record": "reject all",
-        "drops_severe_finding": "reject iff a critical/high finding exists",
-        "misstates_numbers": "reject when number changed",
-        "malformed_json": "reject all",
-        "duplicate_ids": "reject all",
-        "raises": "reject all",
-        "empty": "reject all",
-    }
-    for name, r in guard["behaviors"].items():
-        L.append(f"| `{name}` | {r.get('exercised', 0)} | {r.get('accepted', 0)} | {r.get('fell_back', 0)} | "
-                 f"{r.get('planted_hallucinations_delivered', 0) if name in PLANTED_MARKERS else 'n/a'} | {expect[name]} |")
+    L += ["", "## 2. Guardrail", ""]
+    L += _guard_table(guard, det["cases"])
     ms = guard["behaviors"]["misstates_numbers"]
     L += ["", f"`misstates_numbers` alters a lookup count while citing real ids and records. "
           f"It changed the text in {ms.get('exercised', 0)} fixtures; the verifier rejected "
@@ -354,6 +446,36 @@ def render(
     L += ["", "## 4. Shadow corpus (not production accuracy)", "",
           f"- status: **{shadow.get('status')}** · cases: {shadow.get('cases', 0)}",
           f"- {shadow.get('note', '')}", ""]
+    if public is not None:
+        L += ["", "## 5. Public DNS corpus (not added to section 1)", "",
+              "Frozen records in `evals/corpus/public_dns.json`, labels in `evals/corpus/labels.json`. "
+              "A DKIM miss means the nine default selectors, not every selector on the internet.",
+              "",
+              f"- Cases: **{public['cases']}**; exact finding-set match: **{public['exact_match']}/{public['cases']}**",
+              f"- Precision: **{public['precision']:.3f}**, recall: **{public['recall']:.3f}** "
+              f"(TP {public['tp']}, FP {public['fp']}, FN {public['fn']})", ""]
+        L += ["| Finding id | TP | FP | FN |", "|---|---|---|---|"]
+        for k, v in public["per_id"].items():
+            L.append(f"| `{k}` | {v.get('tp', 0)} | {v.get('fp', 0)} | {v.get('fn', 0)} |")
+        if public["misses"]:
+            L += ["", "Mismatches:"]
+            for miss in public["misses"]:
+                L.append(f"- `{miss['case']}` expected {miss['expected']} got {miss['got']}")
+        L.append("")
+    if public_guard is not None and public is not None:
+        L += ["", "## 5b. Public-corpus guardrail", ""]
+        L += _guard_table(public_guard, public["cases"])
+        L.append("")
+    if rewrite is not None:
+        L += ["", "## 5c. Rewrite pairs (grounded teacher plans)", "",
+              f"- Pairs: **{rewrite['pairs']}** (domains with findings: {rewrite['with_findings']})",
+              f"- Teacher plans accepted: **{rewrite['teacher_accepted']}**",
+              f"- Invented finding id rejected: **{rewrite['invented_id_rejected']}**",
+              f"- Invented DNS record rejected: **{rewrite['invented_record_rejected']}**",
+              "",
+              "Pairs are in `evals/corpus/rewrite_pairs.jsonl`. They train the rewrite "
+              "to stay inside the finding set. They do not create findings.",
+              ""]
     return "\n".join(L)
 
 
@@ -365,9 +487,18 @@ def main() -> int:
     gate = eval_pre_launch_gate()
     contract = eval_schema_contract()
     shadow = eval_shadow()
-    failures = check_expectations(det, guard, adv, contract, instantly, gate)
+    public_cases = load_public_cases()
+    public = _score_cases(public_cases)
+    public_guard = eval_guardrail(public_cases)
+    rewrite = eval_rewrite_pairs(public_cases)
+    failures = check_expectations(
+        det, guard, adv, contract, instantly, gate, public, public_guard, rewrite,
+    )
     out = Path(__file__).resolve().parent
-    md = render(det, guard, adv, contract, shadow, failures, instantly, gate)
+    md = render(
+        det, guard, adv, contract, shadow, failures, instantly, gate,
+        public, public_guard, rewrite,
+    )
     (out / "RESULTS.md").write_text(md)
     print(md)
     return 1 if failures else 0

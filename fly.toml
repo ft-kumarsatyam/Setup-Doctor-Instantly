@@ -10,7 +10,7 @@
 # MCP URL for Cursor/Claude: https://setup-doctor-instantly.fly.dev/mcp
 
 app = "setup-doctor-instantly"
-primary_region = "iad"
+primary_region = "ams"
 
 [build]
   dockerfile = "Dockerfile"

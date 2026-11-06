@@ -146,7 +146,21 @@ case("dmarc_partial_pct", "dmarcpct.test",
 
 case("mx_missing", "nomx.test", make("nomx.test", mx=[]), ["MX_MISSING"])
 
+case("mx_null", "nullmx.test", make("nullmx.test", mx=["."]), ["MX_MISSING"],
+     "RFC 7505 null MX (exchange '.') means the domain does not accept mail")
+
 case("dkim_missing", "nodkim.test", make("nodkim.test", dkim=[]), ["DKIM_NOT_FOUND"])
+
+case("dkim_revoked_empty_p", "revoked.test",
+     make("revoked.test", dkim=["v=DKIM1; p="]),
+     ["DKIM_NOT_FOUND"],
+     "RFC 6376: empty p= revokes the key and must not count as DKIM present")
+
+case("dkim_revoked_then_strong", "revokedok.test",
+     make("revokedok.test", dkim=["v=DKIM1; p="],
+          extra={"selector1._domainkey.revokedok.test": {"TXT": [GOOD_DKIM]}}),
+     [],
+     "a revoked key on an earlier selector must not hide a later 2048-bit key")
 
 case("dkim_weak_1024", "weakdkim.test", make("weakdkim.test", dkim=[WEAK_DKIM]),
      ["DKIM_WEAK_KEY"], "RFC 8301 SHOULD >=2048; 1024-bit must be flagged")

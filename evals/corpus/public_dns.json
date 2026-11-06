@@ -1,0 +1,3220 @@
+{
+  "source": "Public DNS-over-HTTPS snapshot",
+  "fetched_on": "2026-11-05",
+  "resolver": "https://cloudflare-dns.com/dns-query with https://dns.google/resolve as fallback",
+  "note": "Frozen records for offline evals. Labels live in labels.json. Not merged into synthetic precision/recall.",
+  "cases": [
+    {
+      "domain": "amazon.com",
+      "records": {
+        "amazon.com": {
+          "TXT": [
+            "00DcX000002xu6h=1TBcX00000000Xt",
+            "DomainVerification=6BSORJ4NP9YO8U8EZFZDKIJVIL6TCYG69G7CXADQ8QOV3K8883K86XT2J9EX5R0J",
+            "MS=4B600B22799EB2CAC0D8FF0A3A3CAECA5EE2BF3A",
+            "TS1760027",
+            "ZOOM_verify_6OUC1znUonKMCoyMMGyFfX",
+            "ZOOM_verify_ARI4AiKALCcjulAUZNwR8S",
+            "apple-domain-verification=4wbNaeWvAH0pU1yi",
+            "apple-domain-verification=_j3fIZD8uuYetbG64YKTEpz-8mwyvYrLRqM5CoVZVTk",
+            "apple-domain-verification=dVkKZnu17XS0EN2X",
+            "atlassian-domain-verification=ZT4AapXgobCpXIWoNcd7gtMjZyOUdr4EDFMnFUWrqqqgdaQVbDvoGpRaIwj/tgPH",
+            "autodesk-domain-verification=dmryiygGOGBJFJFVo5Bl",
+            "bluebeam-verification=042eaxvbk65qgh5qom1ajtm4eyuo1k",
+            "box-domain-verification=ffea95cd0e0d61c302198367155b07e74fd534fa1d867662dc9bf9969b6f535d",
+            "brevo-code:9be7f7c39958d253a31de6593fa831bc",
+            "canva-site-verification=Hksh9WEUPWP13_SEU1mPMA",
+            "canva-site-verification=WhUvTbfe6tUQWmIXnQifGA",
+            "cisco-ci-domain-verification=1b256bd11daa486ba2fa405d2d5de70f75feb6757dd8993ca8de685a7dfea1df",
+            "dell-technologies-domain-verification=amazon.com_2dc4b285-482d-4948-bf92-16e698f2cab9_1738858526",
+            "docker-verification=1779f74e-699a-4d8b-acdc-ce242d73559f",
+            "facebook-domain-verification=d9u57u52gylohx845ogo1axzpywpmq",
+            "google-site-verification=14WGW2MdNMxchG8PlinF7LgqqE0OwwHqOq0HKhb7rDQ",
+            "google-site-verification=D0RwRb_QApkpApKTFaFlRwbm_yrkey0uokKw0wQUIdk",
+            "google-site-verification=G_-mXb0ZYjjGkQVGjpOOB2deSOaVdxVj4i4vozJTREs",
+            "google-site-verification=NV91qEfNgqDZOPzwlhXE-KtDUfCBSNgAsdxaFebyh80",
+            "heygen-verification=yn27jhxlnvzhf9s77oog93ykvh61e2cb",
+            "kahoot-domain-verification=0a79e1c18457eed9572b28cd75792e4bbd220bc69b62d707c1f88e53956348d6",
+            "liveramp-site-verification=jZJKgMEQ_1mdjMhKj02iqNACZ-NJHRWhCEQdQ_OuCMo",
+            "lucidlink-verification=QG752KJ3CMZAZTZ3ERMX1AXMCG",
+            "neat-pulse-domain-verification-QgvLWLN=f37f2998-0bb3-493b-a3aa-c4ff8f3dce08",
+            "pardot326621=b26a7b44d7c73d119ef9dfd1a24d93c77d583ac50ba4ecedd899a9134734403b",
+            "pendo-domain-verification=ecbe1a51-954d-4202-ab86-d15e04b96769",
+            "pstk-verification-a938892542ffacd51af9339e4755dc1a",
+            "sending_domain1003771=199bc63a54ace5d8d5c5d08286af86d7049b4afacb5ef7decd6b22cf9e8d5efb",
+            "sending_domain1003771=f1303d8ee3b86e39db2703b11feb83e1e8b712a9ffc64c3d56505192e5b3bf4f",
+            "sending_domain1014172=003846595520e80ec84e8cc47c07e3a71afb855fc743bb92cdec93f88c7a4029",
+            "sending_domain197572=555e96ed2e576ced81c89f7001740cb72f9c66aeb136d0d05734aad625766bc1",
+            "sending_domain229492=341509a116ea4311fcb2e489303bf09a139b10ce9b90e5029d2677055cb4dc89",
+            "sending_domain229492=7cde83fbc5246557c64d9d9ba79f0d11f7ba9eb6127f60451a9aa6f8dead4381",
+            "sending_domain608861=81b0d52095dae60d604e7cbea5e58e1d842f7d950d6673a43feae339b664ca31",
+            "sending_domain608861=d33a88e8540c33a1217138cf8a25879734bd35673bb7cfbd639f95c550b33ec4",
+            "sending_domain949422=1fa3e2bc8017cffb9de6a77aa0daa0ccb4e756a5851fb421d72482abf6d4216c",
+            "sending_domain949422=43d714838567583460e7720e6049505edb8e25c1ef4321419d41bc5255db7ba5",
+            "sending_domain949422=99a7b44052aefc4dec2abf56189160824664d2fdac00ca962f4455be62b51d56",
+            "sinch-domain-verification=5f56dade-0a7e-40c4-9158-91cac2686de2",
+            "spf2.0/pra include:spf1.amazon.com include:spf2.amazon.com include:amazonses.com -all",
+            "stripe-verification=1D421397AAEC571CCBD9F25DDC90F00EDEBC3E74F4047270EC9A13B784579E34",
+            "stripe-verification=26EFABF97D624D7F4F3C062366A04C4B1399841F23F275DD81E58D00A981979C",
+            "stripe-verification=35A865E5A20C09CD0288F87ACA29DE73FF8A704D21F7310A5AAFF4CB63062E81",
+            "stripe-verification=45f746e3b195198f419af3f685fdf217532ce552b4b47070b3caefe325559a67",
+            "stripe-verification=65883709F0B36AB2B73FFC870338AE9F817315DDBB1CAB28910F074F4A8DE1EC",
+            "stripe-verification=6a5d107aa37465eac2101bb1c725b02072689a4fa7bd38b455970baac4979a17",
+            "stripe-verification=76924B623B7105057C67D4F5EAE19F65EE8BD92635581BCACA2CCACA4D38FE1B",
+            "stripe-verification=79C640ED20153B836A623F16A3DCF65E2072948FB80C42D19300514DADF94EC5",
+            "stripe-verification=8E217BE0FF12B50596BD78EEA3F81E62C6C7A2AC78FBD46DAD95B7D21BA2F8BF",
+            "stripe-verification=B0AD8DC1918B8A717E5B6A29C2E04594A9872AB05F8DA24CB762BBA0A0487BC6",
+            "stripe-verification=C7ABA7B41F5AC26E3C397015A34CD46ACD2130DC8DAAFA7F59AAEFEDBC3FA517",
+            "stripe-verification=a27edc0da55836ea6bb7eac592bf2ca8e246eb652608d54493119df7df005afc",
+            "stripe-verification=a5c01aa4d732f4b93154d67983d77982ef1a2db73fecfd4bcd64e224d3ab4075",
+            "uber-domain-verification=01e9f567-7b84-45dd-9326-53992a028b40",
+            "uber-domain-verification=0ddb4c64-175c-4e7a-8a7a-f552034222e8",
+            "uber-domain-verification=5f5cc242-4dbe-4871-b726-bbbe085ff053",
+            "uber-domain-verification=72ffdffb-d431-452c-932e-cd1030d1eb46",
+            "uber-domain-verification=7a35217f-6956-41a0-be5c-a28ea2646964",
+            "v=spf1 include:spf1.amazon.com include:spf2.amazon.com include:amazonses.com -all",
+            "vizcom-domain-verification-Otrns5=NtkDXOBddZZnm9ETuwyrltTdl",
+            "wrike-verification=MzI3NzM2ODo2NDk5MjE4NjQ2MWJmOTEwMGMxM2MzNzJmNWJlY2U5ZDU4MmVlNzQ2NWU4MTY5OWJjMjlmYjQ4Mjc5M2JiMzky"
+          ],
+          "MX": [
+            "amazon-smtp.amazon.com"
+          ],
+          "A": [
+            "98.87.170.71",
+            "98.87.170.74",
+            "98.82.161.185"
+          ]
+        },
+        "_dmarc.amazon.com": {
+          "TXT": [
+            "v=DMARC1;p=quarantine;pct=100;rua=mailto:report@dmarc.amazon.com;ruf=mailto:report@dmarc.amazon.com"
+          ]
+        },
+        "spf1.amazon.com": {
+          "TXT": [
+            "spf2.0/pra ip4:207.171.160.0/19 ip4:87.238.80.0/21 ip4:72.21.192.0/19 ip4:194.154.193.192/27 ip4:194.7.41.152/28 ip4:212.123.28.40/32 ip4:203.81.17.0/24 ip4:178.236.10.128/26 ip4:52.94.124.0/28 ip4:99.78.197.208/28 ip4:52.119.213.144/28 -all",
+            "v=spf1 ip4:207.171.160.0/19 ip4:87.238.80.0/21 ip4:72.21.192.0/19 ip4:194.154.193.192/27 ip4:194.7.41.152/28 ip4:212.123.28.40/32 ip4:203.81.17.0/24 ip4:178.236.10.128/26 ip4:52.94.124.0/28 ip4:99.78.197.208/28 ip4:52.119.213.144/28 -all"
+          ]
+        },
+        "spf2.amazon.com": {
+          "TXT": [
+            "spf2.0/pra ip4:176.32.105.0/24 ip4:176.32.127.0/24 ip4:106.50.16.0/28 ip4:205.251.233.32/32 ip4:205.251.233.36/32 ip4:72.21.217.142/32 ip4:52.95.48.152/29 ip4:52.95.49.88/29 include:spf3.amazon.com -all",
+            "v=spf1 ip4:176.32.105.0/24 ip4:176.32.127.0/24 ip4:106.50.16.0/28 ip4:205.251.233.32/32 ip4:205.251.233.36/32 ip4:72.21.217.142/32 ip4:52.95.48.152/29 ip4:52.95.49.88/29 include:spf3.amazon.com -all"
+          ]
+        },
+        "spf3.amazon.com": {
+          "TXT": [
+            "spf2.0/pra ip4:18.156.205.64 ip4:3.65.3.180 ip4:3.72.182.33 ip4:3.74.81.189 ip4:63.176.194.123 ip4:18.197.217.180 ip4:3.75.33.185 ip4:35.158.23.94 ip4:3.64.237.68 ip4:63.178.143.178 ip4:52.28.197.132 ip4:52.57.120.243 ip4:63.178.132.221 ip4:18.199.210.3 ip4:18.158.153.154 ip4:44.245.243.92 ip4:44.246.1.125 ip4:44.246.68.102 ip4:44.246.77.92 ip4:52.13.214.179 ip4:52.26.1.71 ip4:52.34.181.151 ip4:52.42.203.116 ip4:35.155.198.111 ip4:52.12.53.23 ip4:52.35.192.45 ip4:35.162.73.231 ip4:34.218.115.239 ip4:35.83.148.184 ip4:50.112.246.219 ip4:107.22.191.150 ip4:13.216.54.180 ip4:13.216.7.111 ip4:18.207.52.234 ip4:3.211.80.218 ip4:3.216.221.67 ip4:3.221.209.22 ip4:34.193.58.168 ip4:34.198.94.229 ip4:34.197.254.9 ip4:54.211.126.101 ip4:34.197.10.50 ip4:34.198.218.121 ip4:50.16.246.183 ip4:44.210.169.44 -all",
+            "v=spf1 ip4:18.156.205.64 ip4:3.65.3.180 ip4:3.72.182.33 ip4:3.74.81.189 ip4:63.176.194.123 ip4:18.197.217.180 ip4:3.75.33.185 ip4:35.158.23.94 ip4:3.64.237.68 ip4:63.178.143.178 ip4:52.28.197.132 ip4:52.57.120.243 ip4:63.178.132.221 ip4:18.199.210.3 ip4:18.158.153.154 ip4:44.245.243.92 ip4:44.246.1.125 ip4:44.246.68.102 ip4:44.246.77.92 ip4:52.13.214.179 ip4:52.26.1.71 ip4:52.34.181.151 ip4:52.42.203.116 ip4:35.155.198.111 ip4:52.12.53.23 ip4:52.35.192.45 ip4:35.162.73.231 ip4:34.218.115.239 ip4:35.83.148.184 ip4:50.112.246.219 ip4:107.22.191.150 ip4:13.216.54.180 ip4:13.216.7.111 ip4:18.207.52.234 ip4:3.211.80.218 ip4:3.216.221.67 ip4:3.221.209.22 ip4:34.193.58.168 ip4:34.198.94.229 ip4:34.197.254.9 ip4:54.211.126.101 ip4:34.197.10.50 ip4:34.198.218.121 ip4:50.16.246.183 ip4:44.210.169.44 -all"
+          ]
+        },
+        "amazonses.com": {
+          "TXT": [
+            "google-site-verification=aOJq8aXEtCO23r176f6iOTGt-RVuPv81XPtBuIzRTx0",
+            "mailru-verification: 71ab435de908d6ed",
+            "v=spf1 ip4:199.255.192.0/22 ip4:199.127.232.0/22 ip4:54.240.0.0/18 ip4:69.169.224.0/20 ip4:23.249.208.0/20 ip4:23.251.224.0/19 ip4:76.223.176.0/20 ip4:54.240.64.0/18 ip4:76.223.128.0/19 ip4:216.221.160.0/19 ip4:206.55.144.0/20 ip4:24.110.64.0/18 ip4:98.77.0.0/16 -all",
+            "yahoo-verification-key=OL6T0cZm2ykeymVyCj7mnvnTL3zAtLwrRXGAgBFtvFw="
+          ],
+          "MX": [
+            "feedback-smtp.us-east-1.amazonses.com"
+          ],
+          "A": [
+            "13.225.103.112",
+            "13.225.103.87",
+            "13.225.103.6",
+            "13.225.103.99"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "apache.org",
+      "records": {
+        "apache.org": {
+          "TXT": [
+            "MS=E03FCF4BFDA6010D863CDB04B4F156E4C480ACA5",
+            "_globalsign-domain-verification=VPemhDee0EKRXi0IPzeSUrn849jHevrjIaTeDYOTZ4",
+            "atlassian-domain-verification=ymLFB7Wz8ScIJsja5lQgqHkFZGayJH7z0M3DAUwmeTFBvxJWz7rs9OqateFxBIb4",
+            "google-site-verification=y9Wki74vQ-HO4aXrJ-TzmPvLf8itBqrQTPjyAHktuMo",
+            "gradle-verification=L6JP9L6FV7OI2DLLG5N9515VA3Q6Q",
+            "spf2.0/pra ?all",
+            "v=spf1 include:_spf.apache.org -all"
+          ],
+          "MX": [
+            "mx1-ec2-va.apache.org",
+            "mx1-he-de.apache.org",
+            "mx2-ec2-de.apache.org",
+            "mx2-ec2-ie.apache.org",
+            "mx2-ec2-or.apache.org",
+            "mx2-ec2-sy.apache.org"
+          ],
+          "A": [
+            "151.101.2.132"
+          ]
+        },
+        "_dmarc.apache.org": {
+          "TXT": [
+            "v=DMARC1; p=quarantine; rua=mailto:dmarc@apache.org"
+          ]
+        },
+        "mail._domainkey.apache.org": {
+          "TXT": [
+            "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9KWILqaQfXGAOB5vcMZUD/z4XESbcbyQF1+7gKhya73gpwLOZkDgziWepJ4qW7MbbctKdQyvKmkWODGWvVyMDtkbxFm+CO/TDcnRxjs7JlW1qcxtz+J8ocxi9DVbh9cYjfa8LT/kNI/Pl0xu/ncvLKv59lm2l6/CBuXoiX4PERNa7UnddezecAxa+lhg0y8oNemnrmoJYP8s6zTdplqPERvvmC6RaABw27VXMYQIuvuTwLIg9ZxY7l5Ditw0uZyZQH2nfchePj0GLfYL2JF0dfjBr/gbVR7As6sV6rE6ySzQwhFzz12Q0ZvsScyjlm6Ajb+MhybHBAc4LYA6hKTAWwIDAQAB"
+          ]
+        },
+        "_spf.apache.org": {
+          "TXT": [
+            "v=spf1 ip4:54.194.229.19 ip4:13.53.55.203 ip4:13.239.148.9 ip4:44.241.252.67 ip4:95.216.194.37 ip4:3.227.148.255 ip4:3.208.44.58 ip4:116.203.246.181 ip6:2a01:4f8:c2c:e8b::/64 ip6:2a01:4f9:c010:567c::1 include:spf.mandrillapp.com -all"
+          ]
+        },
+        "spf.mandrillapp.com": {
+          "TXT": [
+            "v=spf1 ip4:198.2.128.0/24 ip4:198.2.132.0/22 ip4:198.2.136.0/23 ip4:198.2.145.0/24 ip4:198.2.186.0/23 ip4:205.201.131.0/24 ip4:205.201.134.128/25 ip4:205.201.136.0/23 ip4:205.201.139.0/24 ip4:198.2.177.0/24 ip4:198.2.178.0/23 ip4:198.2.180.0/24 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "apple.com",
+      "records": {
+        "apple.com": {
+          "TXT": [
+            "77a4a6de-da14-449c-83c4-85366e0f55f9",
+            "apple-domain-verification=X5Jt76bn3Dnmgzjj",
+            "cerner-client-id=22dd1d8a-5e8b-4e1e-80ef-39bcdfd42798",
+            "cerner-client-id=ce3abf18-ee87-43b9-9927-9eb24b4bac4a",
+            "ValidationTokenValue=77a4a6de-da14-449c-83c4-85366e0f55f9",
+            "miro-verification=2494d255c4c50b1e521650a0659cbf3fa08b0072",
+            "facebook-domain-verification=n6cqjfucq6plswmtfbwnbbeu1qiq3v",
+            "v=spf1 include:_spf.apple.com include:_spf-txn.apple.com ~all",
+            "adobe-idp-site-verification=6bd5e74c-a3a0-4781-b2e1-e95399b5e11c",
+            "webexdomainverification.8C462=b728ec3f-dfc9-42f9-92cb-9ba8853cbee8",
+            "yahoo-verification-key=Ay+djyw0qWQgXKWGA/jstjYryTMrKb+PBXI5l8u5/jw=",
+            "google-site-verification=8M6XjQCzydT62jk8HY3VXPAG-nKDllTRV-JpA3-Ktyw",
+            "google-site-verification=L5kkMdiFI8npvb6KlHui84fJaCw5G64DWhaDRIAT4_c",
+            "google-site-verification=zBSq1mG5ssu2If-C17UAz_MzSZDcx03MVxmeDwMNc5w",
+            "Dynatrace-site-verification=7d881a7c-c13f-4146-9d27-2731459e2509__iqls0105tagglcsaul0m16ibrf",
+            "cisco-ci-domain-verification=6f3bfb849796a518061f8e8c4356f687a138502d86db742791685059176547dd",
+            "atlassian-domain-verification=mLabq99iaT8kquJechF6l31FAYoNUe3WB7tLpLFUiUYVJCse9SKq83hOJzFkwqrh",
+            "atlassian-domain-verification=qZD4TfnCAoAjCFQgafhoKQpOs9tviekNK4wYE4a5eK3XoRP06hXAvEp8SLU0v7fI",
+            "json:eyJ3aHkiOiJUaGlzIGlzIHRvIHRydW5jYXRlIFVEUCByZXNwb25zZXMgZm9yIFRYVCBxdWVyaWVzIHRvIGFwcGxlLmNvbSIsInBhZGRpbmciOiJpZW4wYWVHaGF0aG9oNmhhaHZpZWphaTNlYXkwYWh2YWhjaGFocXVhZWxlZTBZdWw0cGhpZXRoMHNvNXZpZXllZWNvaDRpZThzaGVlcGllVDNwYWVjaGVpVjZqb2h3aWVwaG82In0K",
+            "json:eyJ3aHkiOiJUaGlzIGlzIHRvIHRydW5jYXRlIFVEUCByZXNwb25zZXMgZm9yIFRYVCBxdWVyaWVzIHRvIGFwcGxlLmNvbSIsInBhZGRpbmciOiJxdWFoMGVpamFhNGVlajh0aWVkYWlnaG9jZWljaGFlOGVUb3ppZTVmdTVhaFRoMldlaU00aWsyaHVxdThpZXBoaWVxdW9oc2hlaXBhZWdoOUthZWw3b2NoaWVuZ2llem9lc2g1In0K",
+            "_khcec23xgc5b2lb981hup1csjb4cdnz",
+            "_eht2v8yfz1agpq7o4zdkkz3k0k86fyr",
+            "lucidlink-verification=SCDW9V44GJHAVXKFS6ZY6EZ2YR"
+          ],
+          "MX": [
+            "mx-in.g.apple.com",
+            "mx-in-ma.apple.com",
+            "mx-in-rn.apple.com",
+            "mx-in-sg.apple.com",
+            "mx-in-hfd.apple.com",
+            "mx-in-vib.apple.com"
+          ],
+          "A": [
+            "17.253.144.10"
+          ]
+        },
+        "_dmarc.apple.com": {
+          "TXT": [
+            "v=DMARC1; p=quarantine; sp=reject; rua=mailto:d@rua.agari.com; ruf=mailto:d@ruf.agari.com;"
+          ]
+        },
+        "selector1._domainkey.apple.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGh555cVTGrCFyGsKqZyAehAhyNLVzwSCNdtgBSol5e/KboxA6edyqdfl1EL279hNdHM9UWcXcgk/HhKPQdmgzMTA927ZXxrsHxMHjVl7Bid78qOIebr75prj3jxuH8KrZfNe14l/dh6TJZt/SkEncmhbVx/tNy9lrHkN5T7LXjQIDAQAB; n=1024,1483209771,1498848171"
+          ]
+        },
+        "selector2._domainkey.apple.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCw9ZicGGW3gn0iKQfcnOsMVy+uLl+YMFonHmEslnpniYxIZ8z0Fn5nY2Gx/m69EHq05WQ8zQ0hRP8d/B0lrPIm6O3c2hiO1sQrJUnwH3jo0/asN6kRFXjTiU/PdlmWhyLdYSv80zNlKpq7qWnsvtlTfJhatEJATM1gZOtspjqLzQIDAQAB; n=1024,1483209771,1"
+          ]
+        },
+        "_spf.apple.com": {
+          "TXT": [
+            "v=spf1 ip4:17.151.62.66 ip4:17.151.62.67 ip4:17.151.62.68 ip4:17.171.2.60 ip4:17.171.2.68 ip4:17.171.2.72 ip4:17.179.253.33 ip4:17.179.253.34 ip4:17.179.253.38 ip4:17.179.253.39 ip4:17.179.253.43 ip4:17.179.253.44 ip4:17.179.253.48 ip4:17.179.253.49 ip4:17.179.253.22/31 ip4:17.179.253.24/31 ip4:17.32.222.22/31 ip4:17.32.222.24/31 ip4:17.72.136.23 ip4:17.72.136.24/31 ip4:17.132.96.0/31 ip4:17.132.100.0/31 ip4:17.132.108.0/29 ip4:17.23.4.16/29 ~all"
+          ]
+        },
+        "_spf-txn.apple.com": {
+          "TXT": [
+            "v=spf1 ip4:17.151.1.0/24 ip4:17.171.37.0/24 ip4:17.111.110.0/23 ip4:17.23.6.0/24 ip4:17.132.110.0/24 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "bbc.co.uk",
+      "records": {
+        "bbc.co.uk": {
+          "TXT": [
+            "v=spf1 ip4:212.58.224.0/19 ip4:132.185.0.0/16 +include:spf.sis.bbc.co.uk +include:spf.messagelabs.com ~all",
+            "docusign=50f10407-e3e4-4f6a-aae4-712d4eb31329",
+            "docusign=a10ad7b6-cf7e-472d-8157-23061f5b5116",
+            "AqhruG504x81J/Xfsr7HTj4H/GbgcSiCDh6vzEb+x2RvclAu9VyYzaxkjgsnVnzT5P3qGwbGYXOE/FeVU5SUog==",
+            "google-site-verification=Rhy5gpa1LeMjUY6gxrds3K4bhB_SUv-fYU9D3kpeAc8",
+            "google-site-verification=g4yTjpPOOs0WodzDuZ19ElG4j-r0Ipc1FW8fsUTmGVo",
+            "dropbox-domain-verification=l5djk65wpy3z",
+            "adobe-idp-site-verification=9b850a4a56e3fac19aea1e0ac5db302e5cefab444cd73519dce1c72ccd4db058",
+            "google-site-verification=RaiMXJBIiFvqXHd43kv_ekzmXT2l8ibq5Xy0mulndvU",
+            "atlassian-domain-verification=SQsgJ5h/FqwMTXuSG/G4Nd1Gx6uX2keREOsZSa22D5XT46EsEuyaic8Aej4cR4Tr",
+            "Huddle",
+            "J0kgGm0XqA3/6pLD4DHeC5x/dAduzT809P1Iwx/PRCYvVS32rv75RIHKC2aVz47dJxKhPlxGf3h3KXiL6+dyXw==",
+            "apple-domain-verification=jFFO0rdS9IrxgWUR",
+            "msfpkey=3e29l8m08bqxp19k63t73fj5b",
+            "docker-verification=aab67462-78f7-4ade-a86b-358645923430",
+            "slack-domain-verification=wMCDUxtzgNFdmaVVeB6w6mDT8srz7ZIWqzV31zPu",
+            "asv=0f1cb0a74a95764aafe8161309533029",
+            "access-domain-verification=d2445ac4134b4b6322bf8d546458c73e00100ee3eca47fa1a8646350ea2c18bb",
+            "mongodb-site-verification=XEpCXFkFHrAUlb6oIEIe3hJz6NjerLhU",
+            "_globalsign-domain-verification=bbBoRRQK3gh_LKZJdXpLFcvTT3vy-5obci6r8esay_",
+            "yahoo-verification-key=+1K3fj4MM7tT8erFBTbBdDwhSGqBf37fO60f7R7MHbE=",
+            "jamf-site-verification=4q3gnFlazt-0uiCXTEJsgw"
+          ],
+          "MX": [
+            "cluster1.eu.messagelabs.com",
+            "cluster1a.eu.messagelabs.com"
+          ],
+          "A": [
+            "151.101.0.81",
+            "151.101.64.81",
+            "151.101.128.81",
+            "151.101.192.81"
+          ]
+        },
+        "_dmarc.bbc.co.uk": {
+          "TXT": [
+            "v=DMARC1;p=reject;aspf=s;adkim=s;pct=100;fo=0;ri=86400; rua=mailto:dmarc_agg@vali.email;"
+          ]
+        },
+        "spf.sis.bbc.co.uk": {
+          "TXT": [
+            "v=spf1  -all"
+          ]
+        },
+        "spf.messagelabs.com": {
+          "TXT": [
+            "v=spf1 include:nets1.spf.messagelabs.com include:nets2.spf.messagelabs.com ~all"
+          ]
+        },
+        "nets1.spf.messagelabs.com": {
+          "TXT": [
+            "v=spf1 ip4:85.158.136.0/21 ip4:193.109.254.0/23 ip4:194.106.220.0/23 ip4:195.245.230.0/23 ip4:95.131.104.0/21 ip4:46.226.48.0/21"
+          ]
+        },
+        "nets2.spf.messagelabs.com": {
+          "TXT": [
+            "v=spf1 ip4:216.82.240.0/20 ip4:67.219.240.0/20 ip4:117.120.16.0/21 ip4:103.9.96.0/22 ip4:35.228.216.85 ip4:146.148.116.76 ip4:34.141.160.224 ip4:34.70.158.162 ip4:34.74.74.140 ip4:34.83.159.189"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "cdc.gov",
+      "records": {
+        "cdc.gov": {
+          "TXT": [
+            "MS=ms84056562",
+            "_bthbaxy8p6mr5c0o5r7pit3d25lgztb",
+            "_ddb344bjip99et71u5cidtx1t53ezdl",
+            "_mhpeli9n9zj3rasw6wfiuch30t2sjlw",
+            "_v0e31vq52ru6qgumyh95pylxoe5kmby",
+            "ZOOM_verify_yEK5MgTwT72nP5URz-eoaA",
+            "4FF7-1931-E8C2-912B-94CF-BCB0-806A-7442",
+            "apple-domain-verification=VOKePKhT9MhX9zmq",
+            "google-gws-recovery-domain-verification=42225222",
+            "amazonses:OhxI8Nxovqf1xBmhK5S9kNk7vo9XV4GmGe6LVc+ji80=",
+            "openai-domain-verification=dv-hbgCCuVm9CpZSVXjvFPfivD5",
+            "geneious.com:domain-verification=DP8tae0qCr-FH6KGRvMwWA",
+            "identrust_validate=B/Pm/IvNx8tLDDFRsJXBs+oweQGmx08QZ6xK0IvBQn3R",
+            "268BC041572123F15C5566E5F3D88675FABCC028427B501AE228CA9BB31630D5",
+            "dtm-domain-verification=KQ1rIgUP8GpiV9mSmysS40YKtHjVrI0VF938cuCAWXQ",
+            "google-site-verification=GkbnFA_aF3RXaZOC3deEsrGqs0fmTXyys2hbIn1nVcM",
+            "google-site-verification=nZIK8Rc0sw4MxlgnsYseSBTdcyDXeLFR6P5FIAbgSEM",
+            "google-site-verification=qZbBdujV5kZQv_pCqV2wpfSU25odH35HQukm5ACyLNs",
+            "atlassian-sending-domain-verification=977cbfcd-c314-42dc-9d86-32e2abca00ac",
+            "atlassian-sending-domain-verification=a39e7003-10de-46b1-8afb-86ef7509f246",
+            "atlassian-sending-domain-verification=f2ef9649-6a78-47f6-9990-44a295ae5b5a",
+            "v4ixju/hXVFXszYswwinkbStpHoDb361lQekI6rkjQ2DV4HHKdN/FJPvMAO88x1rTaRwf29UYwPAq6LqldNWZQ==",
+            "adobe-idp-site-verification=4089552e88740d878b0400d184ab01c0b7391e6dc85796732000450e3476fc93",
+            "atlassian-domain-verification=i5oCgfh8OkdKw7Yv2CCKvAdKMW8kYpNVO1A7fcUkBdAy7IzdP/M8D9NoirnaVqZC",
+            "atlassian-domain-verification=qjHCJ33pyZHmggxdcFDtGiegrc/iLSyVUIG0LAu1g7XW1JnMdaY8G8pbMUY1Z4hm",
+            "v=spf1 ip4:51.5.72.0/24 ip4:172.81.81.38 ip4:51.4.72.0/24 ip4:51.5.80.0/27 ip4:51.4.80.0/27 ip4:172.81.81.50 ip4:172.81.82.50 ip4:63.123.152.4 ip4:40.92.0.0/15 ip4:172.81.82.79 ip4:172.81.80.64 ip4:172.81.81.39 ip4:172.81.82.87 ip4:172.81.82.88 ip4:155.95.96.50 ip4:155.95.86.50 ip4:23.90.98.102 ip4:124.17.27.36 ip4:149.72.0.0/16 ip4:198.21.0.0/21 ip4:50.31.32.0/19 ip4:167.89.0.0/17 ip4:68.232.140.57 ip4:68.232.140.79 include:_s0.cdc.gov -all"
+          ],
+          "MX": [
+            "alt3.us.etp.fireeyegov.com",
+            "alt1.us.etp.fireeyegov.com",
+            "primary.us.etp.fireeyegov.com",
+            "alt2.us.etp.fireeyegov.com"
+          ],
+          "A": [
+            "23.46.207.200",
+            "23.46.207.226"
+          ]
+        },
+        "_dmarc.cdc.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; fo=1; ri=3600; rua=mailto:8idhoybh@ag.us.dmarcian.com,mailto:reports@dmarc.cyber.dhs.gov; ruf=mailto:8idhoybh@fr.us.dmarcian.com;"
+          ]
+        },
+        "selector1._domainkey.cdc.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxc86u7V3s8hHRBCjAlB162wGauXlxdG2jTTrb/cZ+Mhxi72S6MImgcjQ7TohgGB+7IF5UHN2xVL3IJyaNcAN7zFfsMhImt3TbS3MrDlkATLvVavOKsxmKGCh/jUJFUSYsalATaC8tdVtkC64j2XWOUhmTJsc4CUxeuiKNuAH2XUDflMpc2W4cTKkA5htlmyU+++Vn+gPxYZM2e0UQ3zGBME6ut2JxWnkYzVGBlIzj6g7WE6aHiStlpM67gpHdBXQcXIaC/V45qF3v462VfXxODx+ubRgN+NhxrvsMotcimlQG94qIUWPnRA/VJm8WHd5Mz1De+Q1YrNmGOX0U/BFmQIDAQAB;"
+          ]
+        },
+        "selector2._domainkey.cdc.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnJL4BSJA70HCqbylDHlr4nF5CgRNxH0+msoqrj93cqXRaXyCxPfjA+Qn1xqMH8ZjO4wczL5sDQiVV1l6Gntd02G1k/GXd/r5xlk3rV5LCcL/Vh3UVoBpQgapHHdoAc9a9K8MO+qudPGOfG4hu+xXNk3wWpUExQBMp19BsbFuS8OnH+tlZSQot0Rp5fRpkajsZId8rVh/TisSMlfZMTfeaberp9ORQiQaonVdrDLQusq468wpA7+vPtrCgcm/CCCLdUEN/fr3eRuTKkgqUFW0jpE5DylmylAR5HKCHnhOf9TnAUeGeKzdaNyNK0Qh24Ns+cPm4/gQyC+eliHpD7H/XQIDAQAB;"
+          ]
+        },
+        "k1._domainkey.cdc.gov": {
+          "TXT": [
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbNrX2cY/GUKIFx2G/1I00ftdAj713WP9AQ1xir85i89sA2guU0ta4UX1Xzm06XIU6iBP41VwmPwBGRNofhBVR+e6WHUoNyIR4Bn84LVcfZE20rmDeXQblIupNWBqLXM1Q+VieI/eZu/7k9/vOkLSaQQdml4Cv8lb3PcnluMVIhQIDAQAB;"
+          ]
+        },
+        "s1._domainkey.cdc.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoAVO6Ux4I/Ic0nBnpV7gAZ70LkHKXNTjgtq/RW4olVsnn3n6RSZqQIyze8IcsNf4T96fbo16slB1X0NtkPoNEbhdhVyrp7ZJybyHbRe2xzsmQ6Q+9GtplbM/IAibS8LxpS0fiVCylTaGaqfN7Wprf4JOJPmOEwhn7yejtrzbOqxu1rqIgifELjjDcHJ1a+ULSncNeHvQHOZrf3lezTYZCanwErxF2ulNvfg+7cUckhcvn5OOcyELgcq15QPZZlY4+60n5QvFQn3UW1oIuCGkzl3Hs0wo9yAkk2fSPi1GZpCDRlY3J9jHyVUEMwMLbN35Uaefd1SsuLsVrCAnlmim1QIDAQAB"
+          ]
+        },
+        "s2._domainkey.cdc.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxeNI6N5nqfW+p6ldo5QN6YQ1Kss54nBp2AD0+7WcQ/tsw47fj5fdixT/olsN4ZA+lGx0fTqyhJ1zOyXEiiv1mD8y/b6G7Vr0YY3vj3IVitAPZANp3oaQfJj/KkCM1/PVXHVusgKKfQY5d7PEbK11pWdiUXBNyQJwK3RvlRkiDvQIDAQAB"
+          ]
+        },
+        "_s0.cdc.gov": {
+          "TXT": [
+            "v=spf1 ip4:104.47.0.0/17 ip4:52.100.0.0/14 ip4:40.107.0.0/16 ip4:208.90.58.101 ip4:54.240.0.0/18 ip4:198.246.0.0/16 ip4:15.200.33.0/24 ip4:168.245.0.0/17 ip4:208.117.57.153 ip4:67.219.246.194 ip4:54.240.64.0/19 ip4:54.240.96.0/19 ip4:52.82.172.0/22 ip4:216.71.146.157 ip4:68.232.135.234 ip4:68.232.135.235 ip4:128.121.42.0/24 ip4:198.37.144.0/20 ip4:158.72.152.0/24 ip4:158.70.152.0/24 ip4:69.169.224.0/20 include:_s1.cdc.gov -all"
+          ]
+        },
+        "_s1.cdc.gov": {
+          "TXT": [
+            "v=spf1 ip4:23.249.208.0/20 ip4:155.248.28.0/25 ip4:23.251.224.0/19 ip4:76.223.176.0/20 ip4:155.248.12.0/25 ip4:158.111.54.0/25 ip4:208.117.48.0/20 ip4:199.255.192.0/22 ip4:155.248.116.0/25 ip4:155.248.112.0/25 ip4:216.58.191.96/27 ip4:216.58.191.64/27 ip4:20.47.149.138/32 ip4:192.254.112.0/20 ip4:199.127.232.0/22 ip4:223.165.120.0/23 ip4:223.165.118.0/23 ip4:223.165.115.0/24 ip4:223.165.113.0/24 ip4:155.248.120.0/25 include:_s2.cdc.gov -all"
+          ]
+        },
+        "_s2.cdc.gov": {
+          "TXT": [
+            "v=spf1 ip4:3.32.94.73 ip4:152.5.254.109 ip4:158.72.139.19 ip4:216.58.191.0/24 ip6:2a01:111:f403::/48 ip6:2a01:111:f400::/48 ip4:158.111.190.128/25 ip6:2a01:4180:4051:0400::/64 ip6:2a01:4180:4051:0800::/64 ip6:2a01:4180:4050:0400::/64 ip6:2a01:4180:4050:0800::/64 include:_spf.salesforce.com include:cloud_us-gov-east-1_glb_2.appiancloud.com include:rp.email.oci.oraclegovcloud.com include:spf-eu.exlibrisgroup.com include:_spf.fireeyegov.com -all"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        },
+        "cloud_us-gov-east-1_glb_2.appiancloud.com": {
+          "TXT": [
+            "v=spf1 include:us-gov-east-1.spf.outbound-mail.appian-gov-customer.com ip4:18.253.77.245 ip4:18.253.78.157 ip4:18.253.179.224 ~all"
+          ],
+          "MX": [
+            "mail-us-gov-east-1.mail.appiancloud.com"
+          ]
+        },
+        "us-gov-east-1.spf.outbound-mail.appian-gov-customer.com": {
+          "TXT": [
+            "v=spf1 ip4:182.30.71.165 ip4:18.254.211.222 ~all"
+          ]
+        },
+        "rp.email.oci.oraclegovcloud.com": {
+          "TXT": [
+            "v=spf1 ip4:155.248.12.0/25 ip4:155.248.112.0/25 ip4:155.248.116.0/25 ip4:155.248.120.0/25 ip4:155.248.28.0/25 -all"
+          ]
+        },
+        "spf-eu.exlibrisgroup.com": {
+          "TXT": [
+            "v=spf1 ip4:95.172.90.143 ip4:95.172.90.156 ip4:216.147.218.8/30 -all"
+          ]
+        },
+        "_spf.fireeyegov.com": {
+          "TXT": [
+            "v=spf1 ip4:15.200.33.0/24 ip4:15.200.32.0/24 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "cisa.gov",
+      "records": {
+        "cisa.gov": {
+          "TXT": [
+            "MS=ms36056523",
+            "MS=ms41452370",
+            "MS=ms53160703",
+            "pL0QIhJMs23KMmvUBrrneOoXtAFoIQ",
+            "_9vww26511eydsytzuhsqlonuwahjiva",
+            "_e01yoinuk3n6xrtnc8q3m9bdjyihdd7",
+            "_rr8gice4wv589e4uxop5zqhh6gbqh32",
+            "_tufdw17aa2wht723upz8w56htpvpgkw",
+            "f188eb27-a746-4aa8-b160-eb68b0aab05d",
+            "openai-domain-verification=dv-9sool2N0pERxBxulfzX1UsNx",
+            "google-site-verification=BNRBfY90BM54Mf_pgL4Eg07IkwbGvq5nsdZCOYadDlM",
+            "google-site-verification=wsLVyeZYgv0NLikdmfm2m3XPP-986Ylo8XxUkrjIOvA",
+            "censys-domain-verification=kSZxqevdrY_nf9ogHWhuUq2O39C9Lkj-pSfnrCzSOVxO",
+            "censys-domain-verification=oCKV9OzJ1EtsMPZGDfdkccVF2WRuGqmhhozTHjaNAsvH",
+            "adobe-idp-site-verification=edfd88b4c2bdf65395c78b55da3580466eefa9aa874d5bcfb853692813e80515",
+            "atlassian-domain-verification=6giaC2mSFTvNOIaXO5fDn6FluCJU7Pqp7jLmCm7A7AeajrX9wswfX7dDFbBG3nzk",
+            "v=spf1 include:spf.dhs.gov include:spf.protection.outlook.com include:spf-00376703.gpphosted.com -all"
+          ],
+          "MX": [
+            "mxa-00376703.gslb.gpphosted.com",
+            "mxb-00376703.gslb.gpphosted.com"
+          ],
+          "A": [
+            "23.199.119.213"
+          ]
+        },
+        "_dmarc.cisa.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; rua=mailto:DMARC@hq.dhs.gov, mailto:reports@dmarc.cyber.dhs.gov"
+          ]
+        },
+        "selector1._domainkey.cisa.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv32BRAJaAOsxAp31ZqQwd7RYfbYowvb3F7lq8WQEyasI6w7Gm0bxPW57TFM04fM5flf1PYyCDSa3ckQzSQLYmMx9HiXYJYF1Dpk9PnjTarbdR9mm9fc7iBXT2pTFNJw+SRMH3NRrbkefv8GqqLdJotgCl2vWoyRlfKCANCFq5Bbq4qaztXqU/cHRurG8ZVSF7ZrhY4EBKvpzAyIisrf2g2Gky+vO4LTMrgZeNnA/OyHmWmvlUC58e06jBLSysYyh19O4MiU5eUhuT7MYTLWz6fIOl4PaT9HkmM0rH/fgcGSYc8ajCsrvxYA8LgoWR9IzYq5vYzDWLxSo/J0c+6pVWQIDAQAB;"
+          ]
+        },
+        "spf.dhs.gov": {
+          "TXT": [
+            "v=spf1 ip4:216.81.91.184 ip4:216.81.85.157 ip4:173.255.50.19 ip4:173.255.58.8 ip4:173.255.50.20 ip4:173.255.58.9 ip4:173.255.50.33 ip4:173.255.58.26 ip4:173.255.50.34 ip4:173.255.58.27 ip4:173.255.58.36 ip4:173.255.50.43 ip4:173.255.50.69 ip4:173.255.58.58 ip4:173.255.50.70 ip4:173.255.58.59 ip4:173.255.50.142 ip4:173.255.58.131 ip4:173.255.50.184 ip4:173.255.58.173 ip4:74.107.150.224/28 ip4:74.107.150.16/28 ip4:32.66.205.0/24 ip4:32.66.86.0/24 ip4:67.231.147.98 ip4:67.231.155.98 ip4:66.159.228.114 ip4:66.159.227.114 ip4:173.255.59.55 ip4:173.255.60.229 ip4:173.255.52.215 ip4:173.255.52.252 ip4:173.255.61.80 ip4:173.255.52.253 ip4:173.255.61.81 ip4:173.255.53.62 ip4:173.255.61.93 -all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "spf-00376703.gpphosted.com": {
+          "TXT": [
+            "v=spf1 ip4:67.231.147.98 ip4:67.231.155.98"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "cloudflare.com",
+      "records": {
+        "cloudflare.com": {
+          "TXT": [
+            "MS=ms70274184",
+            "_neqmkgaq1lq9it5s8qmetrhbnu121wb",
+            "_wkjc0fot0d7qrvrdt78bxkj2e2o67d2",
+            "ZOOM_verify_7LFBvOO9SIigypFG2xRlMA",
+            "asv=894f6d1f9f83bcf44e4b1bc40bc1c4aa",
+            "apple-domain-verification=DNnWJoArJobFJKhJ",
+            "status-page-domain-verification=r14frwljwbxs",
+            "jamf-site-verification=c-eUvHBbhgFxMulFSY-QJQ",
+            "canva-site-verification=oOyaVnHC-OiFoR1BPvetNA",
+            "docker-verification=c578e21c-34fb-4474-9b90-d55ee4cba10c",
+            "miro-verification=bdd7dfa0a49adfb43ad6ddfaf797633246c07356",
+            "facebook-domain-verification=h9mm6zopj6p2po54woa16m5bskm6oo",
+            "databank-domain-verification-hkehd2=fzgu4kmbZwMoW99zENgO4u8NL",
+            "onetrust-domain-verification=bd5cd08a1e9644799fdb98ed7d60c9cb",
+            "uber-domain-verification=58086039-150a-42a4-a4be-b4032921aa0f",
+            "logmein-verification-code=b3433c86-3823-4808-8a7e-58042469f654",
+            "creatopy-domain-verification=97d2ca50-9b6f-4a21-9bdb-fbb630e4cec7",
+            "google-site-verification=C7thfNeXVahkVhniiqTI1iSVnElKR_kBBtnEHkeGDlo",
+            "google-site-verification=ZdlQZLBBAPkxeFTCM1rpiB_ibtGff_JF5KllNKwDR9I",
+            "liveramp-site-verification=EhH1MqgwbndTWl1AN64hOTKz7hc1s80yUpchLbgpfY0",
+            "stripe-verification=5096d01ff2cf194285dd51cae18f24fa9c26dc928cebac3636d462b4c6925623",
+            "stripe-verification=bf1a94e6b16ace2502a4a7fff574a25c8a45291054960c883c59be39d1788db9",
+            "drift-domain-verification=f037808a26ae8b25bc13b1f1f2b4c3e0f78c03e67f24cefdd4ec520efa8e719f",
+            "cisco-ci-domain-verification=27e926884619804ef987ae4aa1c4168f6b152ada84f4c8bfc74eb2bd2912ad72",
+            "atlassian-domain-verification=WxxKyN9aLnjEsoOjUYI6T0bb5vcqmKzaIkC9Rx2QkNb751G3LL/cus8/ZDOgh8xB",
+            "_saml-domain-challenge.2dc00405-79cd-457b-b288-a119c6f0c7b7.71996d53-d178-4ba9-bef4-7f7e46edab74.cloudflare.com=1c8736fd-84b2-4197-985f-3fb2852f2457",
+            "DirectFedAuthUrl=https://cloudflare-security.cloudflareaccess.com/cdn-cgi/access/sso/saml/dba6756ad312fc13c45f705cf7f5e87f4d658be016c41f950329aa4085b3abc1",
+            "DirectFedAuthUrl=https://cloudflare-security.cloudflareaccess.com/cdn-cgi/access/sso/saml/ebec933773c69c93420d13e6776adb8c4a190f6281f9d132bcebd7dcb0967bdd",
+            "v=spf1 ip4:199.15.212.0/22 ip4:173.245.48.0/20 include:_spf.google.com include:spf1.mcsv.net include:spf.mandrillapp.com include:mail.zendesk.com include:stspg-customer.com include:_spf.salesforce.com -all"
+          ],
+          "MX": [
+            "mxa-canary.global.inbound.cf-emailsecurity.net",
+            "mxb-canary.global.inbound.cf-emailsecurity.net",
+            "mxa.global.inbound.cf-emailsecurity.net",
+            "mxb.global.inbound.cf-emailsecurity.net"
+          ],
+          "A": [
+            "104.16.133.229",
+            "104.16.132.229"
+          ]
+        },
+        "_dmarc.cloudflare.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; sp=reject; adkim=r; aspf=r; pct=100; rua=mailto:a1c47f179bc04efd8ee4dcd4d85dfc65@dmarc-reports.cloudflare.net,mailto:rua@cloudflare.com"
+          ]
+        },
+        "k1._domainkey.cloudflare.com": {
+          "TXT": [
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbNrX2cY/GUKIFx2G/1I00ftdAj713WP9AQ1xir85i89sA2guU0ta4UX1Xzm06XIU6iBP41VwmPwBGRNofhBVR+e6WHUoNyIR4Bn84LVcfZE20rmDeXQblIupNWBqLXM1Q+VieI/eZu/7k9/vOkLSaQQdml4Cv8lb3PcnluMVIhQIDAQAB;"
+          ]
+        },
+        "s1._domainkey.cloudflare.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1m74n5R+xcz+ICbNBWRIlQeHI65Hjp67+P59XSe71jItafrcJ4/5y/UvU+uNg7KNeOcEsotGo7QvLN87hqZSZqfzVyyGnQuEUXoKPdKokD6Pa5KmJSqbA5Y/f977HpikU9Xtd7Orc7ctRLK6H5QFvGwRi+oC9NRkgNB55UUnLbbkKK+LGeTw4Ghmr5gupw7iYzFXZ1qlFNqV6s9Pmgb+b7oDv+OfQxB/MJyUzQ5eWdKlJWfmW3s77J3fHFfysUbKKUBxEXPxNiMFRG1ClllZ4+AYRh1jrFpjbvZ5j43kqahKXeHDNkF+Gpptd7ufWIevAPTQDSVdKB9vyJQN6wfcQQIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "spf1.mcsv.net": {
+          "TXT": [
+            "v=spf1 ip4:205.201.128.0/20 ip4:198.2.128.0/18 ?all"
+          ]
+        },
+        "spf.mandrillapp.com": {
+          "TXT": [
+            "v=spf1 ip4:198.2.128.0/24 ip4:198.2.132.0/22 ip4:198.2.136.0/23 ip4:198.2.145.0/24 ip4:198.2.186.0/23 ip4:205.201.131.0/24 ip4:205.201.134.128/25 ip4:205.201.136.0/23 ip4:205.201.139.0/24 ip4:198.2.177.0/24 ip4:198.2.178.0/23 ip4:198.2.180.0/24 ~all"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "3.211.161.173",
+            "34.227.209.168",
+            "52.21.142.91"
+          ]
+        },
+        "stspg-customer.com": {
+          "TXT": [
+            "v=spf1 ip4:23.253.182.103 ip4:23.253.183.145 ip4:23.253.183.146 ip4:23.253.183.147 ip4:23.253.183.148 ip4:23.253.183.150 ip4:166.78.68.221 ip4:167.89.46.159 ip4:167.89.64.9 ip4:167.89.65.0 ip4:167.89.65.53 ip4:167.89.65.100 ip4:167.89.74.233 ip4:167.89.75.33 ip4:167.89.75.126 ip4:167.89.75.136 ip4:167.89.75.164 ip4:192.237.159.42 ip4:192.237.159.43 ip4:159.112.242.162 ip4:159.135.228.10 ip4:198.244.56.107 ip4:198.244.56.108 ip4:198.244.56.109 ip4:198.244.56.111 ip4:198.244.56.112 ip4:198.244.56.113 ip4:198.244.56.114 ip4:198.244.56.115 ip4:204.220.181.105 ~all"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "aspmx2.googlemail.com",
+            "aspmx3.googlemail.com",
+            "aspmx4.googlemail.com",
+            "aspmx5.googlemail.com"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "debian.org",
+      "records": {
+        "debian.org": {
+          "TXT": [
+            "v=spf1 include:_spf.debian.org ~all",
+            "google-site-verification=3u3n3jrPTlPrumIxQAl4r0utY6hrkj1_DSvdxjiTSP8",
+            "google-site-verification=ZvQZs5Pg8s0z1QdrC74DIZ1J4dPTNcQa8t6apDWXEyc"
+          ],
+          "MX": [
+            "mailly.debian.org",
+            "muffat.debian.org",
+            "mitropoulos.debian.org"
+          ],
+          "A": [
+            "151.101.2.132",
+            "151.101.66.132",
+            "151.101.130.132",
+            "151.101.194.132"
+          ]
+        },
+        "_dmarc.debian.org": {
+          "TXT": [
+            "v=DMARC1; p=none; rua=mailto:dmarc-reports@debian.org"
+          ]
+        },
+        "_spf.debian.org": {
+          "TXT": [
+            "v=spf1 include:_netblocks.spf.debian.org -all"
+          ]
+        },
+        "_netblocks.spf.debian.org": {
+          "TXT": [
+            "v=spf1 include:at.spf.debian.org include:ca.spf.debian.org include:de.spf.debian.org include:gr.spf.debian.org -all"
+          ]
+        },
+        "at.spf.debian.org": {
+          "TXT": [
+            "v=spf1 ip4:195.192.210.128/28 ip6:2a02:16a8:dc41:100::/56 -all"
+          ]
+        },
+        "ca.spf.debian.org": {
+          "TXT": [
+            "v=spf1 ip4:209.87.16.0/24 ip6:2607:f8f0:614:1::1274:0/64 -all"
+          ]
+        },
+        "de.spf.debian.org": {
+          "TXT": [
+            "v=spf1 ip4:82.195.75.64/26 ip6:2001:41b8:202::/48 -all"
+          ]
+        },
+        "gr.spf.debian.org": {
+          "TXT": [
+            "v=spf1 ip4:194.177.211.193/27 ip6:2001:0648:2ffc:0deb::/64 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "eff.org",
+      "records": {
+        "eff.org": {
+          "TXT": [
+            "google-site-verification=Xqf-4VNlMzsu7X8mmX33O3jdZcvFavWtZen9xLBZ5S4",
+            "ms-domain-verification=55064e24-4bc6-4f21-a39c-f9c0b295f3f3",
+            "v=spf1 mx ip4:173.239.79.202 include:spf1.eff.org include:spf2.eff.org include:spf.protection.outlook.com include:salsalabs.org -all"
+          ],
+          "MX": [
+            "eff-org.mail.protection.outlook.com"
+          ],
+          "A": [
+            "173.239.79.200"
+          ]
+        },
+        "_dmarc.eff.org": {
+          "TXT": [
+            "v=DMARC1; p=none; rua=mailto:dmarc_rua@eff.org; ruf=mailto:dmarc_ruf@eff.org;"
+          ]
+        },
+        "selector1._domainkey.eff.org": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtttWazSyHy//AD8mA/ufw1JtA1rMv9+makXNyubUq8tq8gZVgWAdFJPiEVHllHxrgP1WGrh5oby0KmlokqQCbr6z56Pj9gvGdJ9t3I1f6Lb8eHLVXGXFFArFnbXIQgTDmba1JlYpVOdZpw7EIT1xKwQgyHCcZGwJXxnzpX8Pa7pW+/uOvl946DzcPzifyWZ7r59sf29z52EJIA2qCSnVvIWH0OAwdg4ugTXho1H8+tmt6PiX+15C+DY52yDFmEZzMP4qzyENe5sG5HWVYhPC7MxhJbG1ounG1g1xolmGLtV+fwImNiUyyqIk+KnVR87v0gXXH9MFcryuFiu3Eoh71QIDAQAB;"
+          ]
+        },
+        "s1._domainkey.eff.org": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpleyReJ16sNvxGH8p9KJvtyFJsf7n+WvCzVyreLUGlRVj4eyrdosdW998CvgslOTfJaGKii92AdkmsUunwi0NAk13e6ognL9/C9BNjMkp87gACzo8cHSrGcZmjgkv/6vA6Y8rllGi1w6BMOkYPVdwCPnNqn+3zCcJwaXIx92YxQIDAQAB"
+          ]
+        },
+        "s2._domainkey.eff.org": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDFo2b2WMwdI3EoipzynTNt43Mv5LA/iagKmOaEqqmj5imSDdmdsveRaqu0QyD+naVvmSoKqht/YMWAmBi8RsCkWMxzYxpkXqC23d2gmuMeggdiPSPSdCOf3n4xPN3pwh3GuC5dmmzX4ffaHn92vcPheV318SO3oQuqQP2jRgotQQIDAQAB"
+          ]
+        },
+        "spf1.eff.org": {
+          "TXT": [
+            "v=spf1 ip4:50.28.103.180 ip4:50.28.103.181 ip4:67.212.170.242 ?ip4:128.199.236.247 ?ip4:38.229.72.13 ?ip4:165.117.251.93 ?ip4:38.99.228.141 ?ip4:78.47.153.197 -all"
+          ]
+        },
+        "spf2.eff.org": {
+          "TXT": [
+            "v=spf1 ?include:amazonses.com -all"
+          ]
+        },
+        "amazonses.com": {
+          "TXT": [
+            "google-site-verification=aOJq8aXEtCO23r176f6iOTGt-RVuPv81XPtBuIzRTx0",
+            "mailru-verification: 71ab435de908d6ed",
+            "v=spf1 ip4:199.255.192.0/22 ip4:199.127.232.0/22 ip4:54.240.0.0/18 ip4:69.169.224.0/20 ip4:23.249.208.0/20 ip4:23.251.224.0/19 ip4:76.223.176.0/20 ip4:54.240.64.0/18 ip4:76.223.128.0/19 ip4:216.221.160.0/19 ip4:206.55.144.0/20 ip4:24.110.64.0/18 ip4:98.77.0.0/16 -all",
+            "yahoo-verification-key=OL6T0cZm2ykeymVyCj7mnvnTL3zAtLwrRXGAgBFtvFw="
+          ],
+          "MX": [
+            "feedback-smtp.us-east-1.amazonses.com"
+          ],
+          "A": [
+            "13.225.103.99",
+            "13.225.103.87",
+            "13.225.103.6",
+            "13.225.103.112"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "salsalabs.org": {
+          "TXT": [
+            "google-site-verification=ZgW8nAfhvRaIe_J3bQRtbbjfNkGcJ7WChKu2I59N5Mo",
+            "google-site-verification=cwZQ6qCyyWaXXwTzuaUl1oyFPwi8FDHNjDvTyDLSP2Y",
+            "v=spf1 ip4:204.28.10.0/23 ip4:69.174.82.0/23 ip4:44.219.181.110 ip4:35.169.198.45 ip4:52.6.97.95 ip4:52.22.197.129 ip4:98.83.63.222 ip4:34.194.106.91 ip4:13.219.7.61 ip4:52.202.4.54 ip4:54.242.246.130 ip4:44.208.98.243 ip4:98.86.78.141 ip4:3.213.100.153 ip4:3.233.15.17 ip4:3.230.255.253 ip4:44.217.255.97 ip4:3.214.81.100 ip4:3.41.133.0/25 ip4:3.220.120.48 ip4:52.207.55.166 ip4:50.19.111.67 ip4:18.211.248.159 ip4:75.101.204.57 -all"
+          ],
+          "MX": [
+            "bounce1.salsalabs.org",
+            "bounce2.salsalabs.org"
+          ],
+          "A": [
+            "54.152.21.2"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "example.com",
+      "records": {
+        "example.com": {
+          "TXT": [
+            "v=spf1 -all",
+            "_k2n1y4vw3qtb4skdx9e7dxt97qrmmq9"
+          ],
+          "MX": [
+            "."
+          ],
+          "A": [
+            "172.66.147.243",
+            "104.20.23.154"
+          ]
+        },
+        "_dmarc.example.com": {
+          "TXT": [
+            "v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s"
+          ]
+        },
+        "google._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "selector1._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "selector2._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "default._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "k1._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "s1._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "s2._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "mail._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "dkim._domainkey.example.com": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        }
+      }
+    },
+    {
+      "domain": "example.org",
+      "records": {
+        "example.org": {
+          "TXT": [
+            "v=spf1 -all",
+            "_uyh0vgv5ukyofwj3ddwspnni01vmlyy"
+          ],
+          "MX": [
+            "."
+          ],
+          "A": [
+            "172.66.157.237",
+            "104.20.26.136"
+          ]
+        },
+        "_dmarc.example.org": {
+          "TXT": [
+            "v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s"
+          ]
+        },
+        "google._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "selector1._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "selector2._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "default._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "k1._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "s1._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "s2._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "mail._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        },
+        "dkim._domainkey.example.org": {
+          "TXT": [
+            "v=DKIM1; p="
+          ]
+        }
+      }
+    },
+    {
+      "domain": "fastmail.com",
+      "records": {
+        "fastmail.com": {
+          "TXT": [
+            "v=spf1 include:spf.messagingengine.com ~all"
+          ],
+          "MX": [
+            "in1-smtp.messagingengine.com",
+            "in2-smtp.messagingengine.com"
+          ],
+          "A": [
+            "103.168.172.65"
+          ]
+        },
+        "_dmarc.fastmail.com": {
+          "TXT": [
+            "v=DMARC1; p=none; rua=mailto:e3936a44@inbox.ondmarc.com"
+          ]
+        },
+        "spf.messagingengine.com": {
+          "TXT": [
+            "v=spf1 ip4:103.168.172.128/27 ip4:202.12.124.128/27 ip4:204.75.18.128/27 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "github.com",
+      "records": {
+        "github.com": {
+          "TXT": [
+            "00Dd0000000hHE0=1TBKg000000TN2r",
+            "MS=6BF03E6AF5CB689E315FB6199603BABF2C88D805",
+            "MS=ms44452932",
+            "MS=ms58704441",
+            "TAILSCALE-xOzoDvFUzZr5YYVCQFuD",
+            "adobe-idp-site-verification=b92c9e999aef825edc36e0a3d847d2dbad5b2fc0e05c79ddd7a16139b48ecf4b",
+            "anthropic-domain-verification-4az7qn=if8YWuRRqwLycGJDooumzHtxm",
+            "apple-domain-verification=RyQhdzTl6Z6x8ZP4",
+            "atlassian-domain-verification=jjgw98AKv2aeoYFxiL/VFaoyPkn3undEssTRuMg6C/3Fp/iqhkV4HVV7WjYlVeF8",
+            "calendly-site-verification=at0DQARi7IZvJtXQAWhMqpmIzpvoBNF7aam5VKKxP",
+            "cursor-domain-verification-gtfwmt=1rfLOtiTngX5QSxD5HvNKTvm3",
+            "docusign=087098e3-3d46-47b7-9b4e-8a23028154cd",
+            "facebook-domain-verification=39xu4jzl7roi7x0n93ldkxjiaarx50",
+            "google-site-verification=82Le34Flgtd15ojYhHlGF_6g72muSjamlMVThBOJpks",
+            "google-site-verification=UTM-3akMgubp6tQtgEuAkYNYLyYAvpTnnSrDMWoDR3o",
+            "jamf-site-verification=XtaPNIYghF_e_xRDI8CjgQ",
+            "krisp-domain-verification=ZlyiK7XLhnaoUQb2hpak1PLY7dFkl1WE",
+            "loom-site-verification=f3787154f1154b7880e720a511ea664d",
+            "miro-verification=d2e174fdb00c71e0bcf58f8e58c3da2dd80dcfa9",
+            "openai-domain-verification=dv-3nh33eQwdkotMIAzLrIDVZo1",
+            "serval-domain-verification-ydryhj=qbkiEakpwEpTvHh5fIiCqtaue",
+            "shopify-verification-code=t1YPwcmvnxZyBycaCpk1MPyWoFs72o",
+            "stripe-verification=f88ef17321660a01bab1660454192e014defa29ba7b8de9633c69d6b4912217f",
+            "v=spf1 ip4:192.30.252.0/22 include:spf.protection.outlook.com include:_netblocks.google.com include:_netblocks2.google.com include:mail.zendesk.com include:_spf.salesforce.com include:servers.mcsv.net include:mktomail.com include:sendgrid.net ip4:62.253.227.114 ip4:166.78.69.169 ip4:166.78.69.170 ip4:166.78.71.131 ~all"
+          ],
+          "MX": [
+            "github-com.mail.protection.outlook.com"
+          ],
+          "A": [
+            "20.207.73.82"
+          ]
+        },
+        "_dmarc.github.com": {
+          "TXT": [
+            "v=DMARC1; p=quarantine; sp=reject; pct=100; rua=mailto:dmarc@github.com; ruf=mailto:dmarc@github.com; fo=1"
+          ]
+        },
+        "google._domainkey.github.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj6T5sl/RwdSqGoYWaWaFbS2UAeyPrEmd0gogocmRfS441qwR8/0KB81Hw89P0l4YiFRrXYk7NVIGfyCRHAYYZUzCkGeOysI2EjgzLFhd/NEsbRzOEc/kWkK/RO6JFq/5lOn6M9AZw/ap9tds4JG9ApgNNdSpPxp9DmvpsOSgNMVflRxQFrk3kdS4RNAPKu/OPoA7dlR/A/pECryjRoYgENtDXzdnK70HgCekems6UDzxDj61cjyoKoXtEMF/QsaHEQ1Gjfv014rDJBsubk/kT5VqHkWHa/ia68Z5r228Ety/wFfQNjXTx/J7KGZ9GkZlKED659eiJcLnWcKDSiQlhwIDAQAB"
+          ]
+        },
+        "selector1._domainkey.github.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxZC/z2cK+2s1f/ktzSDSeFzkfIHrjwtGFsfKMAYvKaXjPVNzKykpbXBkX5nB7dVUTFttda7aROr2iSrIseQ27Ui+4rUZVzgFanE8RaXhYM9n5wPKNv8GtLJk7JgcsYZ7ErgID4uW2sEYyV/dnRYw6rDzOaeRKkKELTUfJI5ebLQIDAQAB;"
+          ]
+        },
+        "k1._domainkey.github.com": {
+          "TXT": [
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbNrX2cY/GUKIFx2G/1I00ftdAj713WP9AQ1xir85i89sA2guU0ta4UX1Xzm06XIU6iBP41VwmPwBGRNofhBVR+e6WHUoNyIR4Bn84LVcfZE20rmDeXQblIupNWBqLXM1Q+VieI/eZu/7k9/vOkLSaQQdml4Cv8lb3PcnluMVIhQIDAQAB;"
+          ]
+        },
+        "s1._domainkey.github.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyn3fMCVpb7ryIRKOGXhXVGYmsWUitNlSckqGHOwNFZgFadplOrD+Qzf1XQkP7MH/VB/97DsAAJGtEXW1Uq71Hjnfr/DuBN/YfjF/gU70qEFb7q1sdIiNtjFL2TkOpoW+X/bhhPNheW/fYwyFb6ZHFM6LTgXyuimWRHTOUP3VjZzhNVda79nt+2WZYbS4l8HdMgWpTNHjpVw5PtXESA9KBg/evSRk5fIaXIX5eRXW3baoV9yVzD8O29/IL/DiSk+yNvaO0EHL5c4yGuZJhGzvpiznb2IDVdemJK4Dqzdy5FTN/SGYZhAEr7MguG3Z314hMS2scgMsOMgB64uj/6+6UwIDAQAB"
+          ]
+        },
+        "s2._domainkey.github.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnNt2/H6bKs99C6DAaokPp62KN9mKaD20D1PBakkObejkJvzM6Un/fKHPeI2/qXdvFFBPQE3mxMNoe+hwBVDgMgCuZEn8J6gZYI4amITure9/ny6+GaNVRoH2m6xAtWwKINkKxMayGiehkWlRVb7D23F0U8y+VDHKQFz1bnXA5jDpcDiMXy8i2lV5vEys+qt+1WGhDKCAwamT8c3xkZz8aXMJaXYCiN2HMgHDU81+mVCk4+u6mY+a98APVfFhsQ0KCq/mVZXaXTV06QrG9M5PtBHUFW7VtwXKp+AFrAut0KW1NnwaA5IGA5sc+n9dma7bSqdfGS+ixdSmJ69NwmYSHwIDAQAB"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "_netblocks.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ~all"
+          ]
+        },
+        "_netblocks2.google.com": {
+          "TXT": [
+            "v=spf1 ip6:2001:4860:4000::/36 ip6:2404:6800:4000::/36 ip6:2607:f8b0:4000::/36 ip6:2800:3f0:4000::/36 ip6:2a00:1450:4000::/36 ip6:2c0f:fb50:4000::/36 ~all"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "34.227.209.168",
+            "3.211.161.173",
+            "52.21.142.91"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        },
+        "servers.mcsv.net": {
+          "TXT": [
+            "v=spf1 ip4:205.201.128.0/20 ip4:198.2.128.0/18 ip4:148.105.0.0/16 -all"
+          ],
+          "A": [
+            "205.201.133.57"
+          ]
+        },
+        "mktomail.com": {
+          "TXT": [
+            "MS=ms63804055",
+            "MS=ms86038015",
+            "google-site-verification=hlFqCorHDm61oaA9tEbxS2EoxvmpThp60Z3A8osUq5I",
+            "v=spf1 ip4:199.15.212.0/22 ip4:72.3.185.0/24 ip4:72.32.154.0/24 ip4:72.32.217.0/24 ip4:72.32.243.0/24 ip4:94.236.119.0/26 ip4:37.188.97.188/32 ip4:185.28.196.0/22 ip4:192.28.128.0/18 ip4:103.237.104.0/22 ip4:130.248.172.0/24 ip4:130.248.173.0/24 ~all",
+            "yahoo-verification-key=b3fByyORggzdu8uzicQakiKHtuQj7bXZxVFk5bCi1Jk="
+          ],
+          "MX": [
+            "adobe.mail.protection.outlook.com",
+            "mktomail-com.mail.protection.outlook.com"
+          ],
+          "A": [
+            "199.15.214.178"
+          ]
+        },
+        "sendgrid.net": {
+          "TXT": [
+            "5m3r13nvilmq8tgf5foh6ki1uv",
+            "6ifgg010qg6mquqt5lodun8qds",
+            "cemmvnbghpsb500d7c19e35fgm",
+            "google-site-verification=1UEf8ey-RibUjY6gnpqIZFjWNqMknmeyeHz1zTmj0DE",
+            "i52uk89q4nfe1mpgqv5qsmsj3j.",
+            "l8bqrl0r33q4joeb79q8uuj009",
+            "mailru-verification: 2e3995fa8a7d00e0",
+            "p8bnb2lp424dkl3c4io1aemiei",
+            "tdjhrpaflcikf52iqtn9rnggr9",
+            "utjqqjvmeadmlva41ectre9gd3",
+            "v=spf1 ip4:167.89.0.0/17 ip4:208.117.48.0/20 ip4:50.31.32.0/19 ip4:198.37.144.0/20 ip4:198.21.0.0/21 ip4:192.254.112.0/20 ip4:168.245.0.0/17 ip4:149.72.0.0/16 ip4:159.183.0.0/16 ip4:134.128.64.0/18 ip4:159.26.176.0/20 include:ab.sendgrid.net ~all",
+            "yahoo-verification-key=TrufSXS+dfythA5AIMbLUnkX38rjr1HR93gbqHUSY74="
+          ],
+          "MX": [
+            "mx.sendgrid.net",
+            "mx2.sendgrid.net"
+          ],
+          "A": [
+            "18.136.163.76",
+            "52.77.13.11",
+            "54.255.41.144",
+            "52.220.178.109",
+            "54.254.79.46",
+            "18.136.28.99",
+            "52.195.24.26",
+            "54.92.41.242"
+          ]
+        },
+        "ab.sendgrid.net": {
+          "TXT": [
+            "v=spf1 ip4:223.165.113.0/24 ip4:223.165.115.0/24 ip4:223.165.118.0/23 ip4:223.165.120.0/23 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "google.com",
+      "records": {
+        "google.com": {
+          "TXT": [
+            "_r4rd1pvwyrpi7sw4a3hzmw8e51yh9td",
+            "work-accounts-domain-verification=Tcj6JjIMZOw2KsSEw2Nt2rLae89tN6",
+            "v=spf1 include:_spf.google.com ~all",
+            "apple-domain-verification=30afIBcvSuDV2PLX",
+            "arcules-domain-verification=2R4t5G7nI6tRCo61lpxxbLksPYstxhGmtV75cpr8x9K",
+            "google-site-verification=TV9-DBe4R80X4v0M4U_bd_J9cpOJM0nikft0jAgjmsQ",
+            "onetrust-domain-verification=0d477fe608074e6f9c12bca7826035cc",
+            "facebook-domain-verification=22rm551cu4k0ab0bxsw536tlds4h95",
+            "Z29vZ2xl",
+            "onetrust-domain-verification=6d685f1d41a94696ad7ef771f68993e0",
+            "docusign=1b0a6754-49b1-4db5-8540-d2c12664b289",
+            "MS=E4A68B9AB2BB9670BCE15412F62916164C0B20BB",
+            "google-site-verification=wD8N7i1JTNTkezJ49swvWW48f8_9xveREV4oB-0Hf5o",
+            "cisco-ci-domain-verification=47c38bc8c4b74b7233e9053220c1bbe76bcc1cd33c7acf7acd36cd6a5332004b",
+            "globalsign-smime-dv=CDYX+XFHUw2wml6/Gb8+59BsH31KzUr6c1l2BPvqKX8=",
+            "google-site-verification=4ibFUgB-wXLQ_S7vsXVomSTVamuOXBiVAzpR5IZ87D0",
+            "docusign=05958488-4752-4ef2-95eb-aa7ba8a3bd0e"
+          ],
+          "MX": [
+            "smtp.google.com"
+          ],
+          "A": [
+            "142.250.182.238"
+          ]
+        },
+        "_dmarc.google.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:mailauth-reports@google.com"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "gsa.gov",
+      "records": {
+        "gsa.gov": {
+          "TXT": [
+            "cloudflare_dashboard_sso=21d7f3db6bde89b035d3d563ad5e260f",
+            "amazonses:WroIovKkM+OAxfzL9xYOXM46pksrcS266o23tVoM86M=",
+            "docker-verification=b87e77d3-0821-4993-87f8-2dad0f313ed3",
+            "MS=ms26706564",
+            "MS=ms74458519",
+            "amazonses:nvZjWRLWNEaQIGC6ol8XEJa7lrt7INEu2jUWId7r0J8=",
+            "google-site-verification=VcCceMeA2ZU7w_aEbQxO6sRlhMMgjjkULRiYjMO_IkY",
+            "docusign=72fc694f-0f63-46e4-b089-e0c8171c4139",
+            "webexdomainverification.7Q711=c9959908-c26f-4865-8fc7-1792b83294ab",
+            "v=spf1 include:spf_a0.gsa.gov include:spf_a1.gsa.gov include:spf_a2.gsa.gov include:spf_a3.gsa.gov ~all",
+            "d3nv1z3w6h7vef.cloudfront.net",
+            "figma-domain-verification=928358c4ec087ce90fd8ca20725399b715579500358798e47bccdd9158c52c08-1793188981",
+            "atlassian-domain-verification=mCilJyOCl8iDKRaaRyLEWIDAFdy9cbTRnpIZHoYyHGHDPfFNo1alS/h5VVt63UaW",
+            "mongodb-site-verification=CzhLKr4OAzreXpHBbawUlSmfDifmuWc1",
+            "google-site-verification=hCDz_TYLNfL0TB3q_SoYaXaHl6TlJdbXfYQyAItdDBE",
+            "docusign=6f6dab46-2129-4700-bcc2-4be235fe5aff",
+            "apple-domain-verification=amOa5lUwKVdgvUFn",
+            "smartsheet-gov-site-validation=n83lQJsr87UvaVx95hZfV7JDrREq891h",
+            "atlassian-sending-domain-verification=e954f878-7df6-4ee3-8ac9-ee19a1c2313b",
+            "google-site-verification=-Yfs3oCZ4rPr5BMX8tRANSV7anmxMrHQdjVTsXEs3hI",
+            "MS=ms26417977",
+            "cloudflare_dashboard_sso=4f12649aef8ea0e0d6f699c470b1d917",
+            "MS=ms52409976",
+            "figma-domain-verification=92ef70a8bfe22d77050cd6d3a3fb0671e21c82984fb63729f6b9498ebae94524-1727453243",
+            "amazonses:VpDldJ0Y17bUz5N4BLA9tuxzm/5CaAJjTwSrhS/1yiE=",
+            "mongodb-site-verification=EqZXwkmCFUWN8QEautFYXdCqXV6HH3Ox",
+            "_4pfesgfj8b7lm7k40p5oy1y9c8s88fa",
+            "google-site-verification=fyO5fRlizCOUL6drs0QADUV1J8JHq09DYpoUVMXu5VI",
+            "airtable-verification=e6bb1631f52c503b7a3701046ed7af9b"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "alt3.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com"
+          ],
+          "A": [
+            "23.22.13.113"
+          ]
+        },
+        "_dmarc.gsa.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; fo=1; ri=86400; rua=mailto:dmarcreports@gsa.gov, mailto:reports@dmarc.cyber.dhs.gov; ruf=mailto:dmarcfailures@gsa.gov"
+          ]
+        },
+        "google._domainkey.gsa.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCF7m8WvS+emHfY72RC2JyW5EHTXwEeEMj52xFx5qX0HVhMBQ0RP1qDNKvb4UeKcbSxV9H5OnWpGxIvnNx1lL89aC7rmlhdZ/Bqh7PfMXYLNF0SfPssKusQxmopMBxiUZGeVxBScNuCNnBH3vzNJSsHeAdxxAR+8q1nMk/H5tek2QIDAQAB"
+          ]
+        },
+        "s1._domainkey.gsa.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA10onRtcr4fuQkEGZIv4Z4PtVzt6YMERqtRmQLt/Zk4xDwtkQp1vbkaeJx2mPi578GaZILVTE90azyu3tgFo0R5T2muGU1tireJf3fJmWr/HYaNwmMsQFd0vCVmmtzvKke0szIbI+KcbPmT0Q1KdcgcJImrsLpvab6ksntinSNqjB4gXt9zebCBlVpc7pw/63pWU+qxbNNEi64WueKS7xQlqUA5BfQEWMG62AIYCjH2SaBWq1VFtc/Pf3kSd8T47alkUgRHy8XnxkosBFfG10lmpjEA9YvgXQEh6+IrhUxQmiNb6KdDlHgk5FitSSeSWzmNgXebURFg8Jwpmio9eytQIDAQAB"
+          ]
+        },
+        "s2._domainkey.gsa.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyMqoajmV2q5kI7/WoBoEo+Q1zCq8CFrtAC6a56YVYKM8ZapuSvOyk1voB0jpW7zzEbXMNO5G9vbmNtO2E2XLpqgokfDaFGjxkRqGAVAXOMXuChESm3nofv6qbl2jOQOfqbLqApv/yZ7zST1W9/3d86TtsEnnhGs03YzXaQRkm1g2C9815a8HjJEj2PZLinUeZ1o8XSq5bOeP53qlInz79e7m5zvBEhxVdorZfo2i2airtTNenebXdw8a5bDYfpx/9DoOF6JEbOw7Ug5+OxyIcXgFP1eVwS48RB5NOy2EvPX9VJ++j0tBLL5Ugoqy9tIcTLuKebVlCUaFki+6gzWIiQIDAQAB"
+          ]
+        },
+        "spf_a0.gsa.gov": {
+          "TXT": [
+            "v=spf1 include:_spf.google.com include:mail.zendesk.com ip6:2607:6540:2700:876::/124 ip6:2607:6540:2000:876::/124 ip6:2607:6540:2700:340::5 ip6:2607:6540:2000:303::5 ~all"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "52.21.142.91",
+            "34.227.209.168",
+            "3.211.161.173"
+          ]
+        },
+        "spf_a1.gsa.gov": {
+          "TXT": [
+            "v=spf1 ip4:159.142.38.196/30 ip4:159.142.160.13 ip4:159.142.166.247 ip4:96.43.152.0/23 ip4:216.128.251.155 ip4:142.0.162.104 ip4:149.96.3.26 ip4:149.96.4.26 ip4:199.91.139.26 ip4:199.91.140.100 ip4:199.91.140.102 ip4:199.91.143.26 ip4:216.12.128.83 ~all"
+          ]
+        },
+        "spf_a2.gsa.gov": {
+          "TXT": [
+            "v=spf1 ip4:216.12.128.84 ip4:216.12.128.85 ip4:216.12.143.47 ip4:149.96.192.2 ip4:149.96.193.2 ip4:35.174.29.123 ip4:54.152.66.23 ip4:52.61.131.175/28 ip4:96.127.87.89 ip4:15.200.58.137 ip4:64.132.40.118 ip4:159.142.57.224/28 ip4:15.200.32.126 ~all"
+          ]
+        },
+        "spf_a3.gsa.gov": {
+          "TXT": [
+            "v=spf1 ip4:208.235.248.20 ip4:204.95.150.228 ip4:204.95.150.229 ip4:50.58.10.183 ip4:34.224.112.141 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "iana.org",
+      "records": {
+        "iana.org": {
+          "TXT": [
+            "MS=ms22660639",
+            "v=spf1 redirect=icann.org",
+            "c9e864a6c53444038d34fe3a22513b74",
+            "ZOOM_verify_OSW2jT8DRO7PWDLYayPfa1",
+            "hibp-verify=dweb_deeci9b66kmruhrzqi0rgz1m",
+            "docusign=b2d7c7b0-4627-494b-a7aa-682ee87c265d",
+            "openai-domain-verification=dv-PthFCD7xcAsc4Af2tmFj9sui",
+            "smartsheet-site-validation=CcnvONgQ2ibuzf2zHZxgPaWUqTwt-Sjr",
+            "anthropic-domain-verification-y6snfs=iFBQ4ycOIIfJWwcVxPVrM7GjE",
+            "yahoo-verification-key=a1BzYfCAaz0f0Lu5ciZqvFkN93BwOIFipV9hvjjvqJw=",
+            "google-site-verification=6UylNQOBC9EN1ZNfySQ3g8XdRBqkGG4gifrzF9zsPD0",
+            "google-site-verification=iIqTTcUxND4wZOeVe5Ho728rH3JOSDnssYsYJ7pUtQQ"
+          ],
+          "MX": [
+            "pechora1.icann.org",
+            "pechora6.icann.org",
+            "pechora7.icann.org",
+            "pechora8.icann.org"
+          ],
+          "A": [
+            "192.0.43.8"
+          ]
+        },
+        "_dmarc.iana.org": {
+          "TXT": [
+            "v=DMARC1; p=none;fo=1; rua=mailto:tutnr7vw@ag.us.dmarcian.com; ruf=mailto:dmarc-ruf@iana.org;"
+          ]
+        },
+        "icann.org": {
+          "TXT": [
+            "3hbcot1vqg5arv8114kid9ht8i",
+            "qnqmgqkihquvl4p2032c523i0j",
+            "hibp-verify=dweb_omacgxq4jcnwyhagy8dkcp39",
+            "jamf-site-verification=ULQmCs6_3U5gNRFNpK3EQw",
+            "zoho-verification=zb07258371.zmverify.zoho.com",
+            "openai-domain-verification=dv-MDxsT9BOgVqLo5wCzRehwtG6",
+            "anthropic-domain-verification-ypsnb4=Ctf4Q8K3LJUBWZtmKlSwYtUxd",
+            "yahoo-verification-key=M/0jrPcOMm7R5iVvdWN0nM43eEIxChB44ek1AHQfxck=",
+            "google-site-verification=aOY-Hcx8bh7elpA4JF6lNqvJRG94iusCUENaibkXxxE",
+            "atlassian-domain-verification=mJbv948owArPaPuHqQq1zD12aKzhxRobB5UcwWtQygiZde9QgP/scaHPizzNziKf",
+            "parallels-domain-verification=6665083079c349dfa253aeb2f07e61113f565b5dd27b413aad065b885317a9c6",
+            "paloaltonetworks-site-verification=243a181b375b95096c7d44af65ad90f9c6d362a3debde9c52545dfacd740cfda",
+            "v=spf1 ip4:192.0.32.0/20 ip4:199.91.192.0/21 ip4:64.78.40.0/27 ip4:162.216.194.0/27 ip4:64.78.33.5/32 ip4:64.78.33.6/31 ip4:64.78.48.205/32 ip4:64.78.48.206/31 ip6:2620:0:2d0::0/48 ip6:2620:0:2830::0/48 ip6:2620:0:2ed0::0/48 include:salesforce.icann.org -all"
+          ],
+          "MX": [
+            "pechora1.icann.org",
+            "pechora6.icann.org",
+            "pechora7.icann.org",
+            "pechora8.icann.org"
+          ],
+          "A": [
+            "192.0.43.7"
+          ]
+        },
+        "salesforce.icann.org": {
+          "TXT": [
+            "v=spf1 include:_spf.salesforce.com -all"
+          ],
+          "MX": [
+            "pechora.icann.org"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "ietf.org",
+      "records": {
+        "ietf.org": {
+          "TXT": [
+            "vs58md9pf8hu6knlglfda9lk6g",
+            "ca3-5567e36d3f9947308ac2892e009840cc",
+            "google-site-verification=NQpGlv9isd8O_RHzO31C0lOw1XKfQfFoVhZbmir6Lm4",
+            "google-site-verification=mvpHmuqmM4wrWv5w3S1AAqssmhAITNo2QqPqVLrVWEo",
+            "v=spf1 ip4:166.84.6.31 ip4:166.84.7.238 ip6:2602:f977:800:f7f6::/64 ip4:166.84.7.34 ip6:2602:f977:800::e276:63ff:fe66:3400 include:_spf.google.com include:spf.hostedrt.com ~all"
+          ],
+          "MX": [
+            "mx.ietf.org"
+          ],
+          "A": [
+            "104.16.44.99",
+            "104.16.45.99"
+          ]
+        },
+        "_dmarc.ietf.org": {
+          "TXT": [
+            "v=DMARC1; p=none; rua=mailto:dmarc_agg@vali.email,mailto:dmarc-report@ietf.org"
+          ]
+        },
+        "mail._domainkey.ietf.org": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzUHYJkaZNMWB4uSaEnYPE7S4TvYk3WP90P5SeV+0YUEchKAeK+IbvrUjfWMtLd/Nvq8Gn5/V1Q+jHAW9CDyAxJeDhiL9MXPggksaXlENmU98Zcx+M8E5VAtyDv2Lztc1vJtSOYNQxeZZzcJqTWnmbTroLDsDGBhAJeMr8FFnHEQIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "spf.hostedrt.com": {
+          "TXT": [
+            "v=spf1 ip4:54.157.219.114 ip4:54.235.7.195 ip4:54.202.208.51 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "instantly.ai",
+      "records": {
+        "instantly.ai": {
+          "TXT": [
+            "MS=B45074608D259BCEC7E1118B1032A6FA841E65CD",
+            "google-site-verification=PFx5DSze-h6lofXeTJIl4OfCnNyBSdcO_kTxi7xa3Vs",
+            "google-site-verification=dE3kG_6otkt9fFw9DZBOdfOvwasKhhAWRA3V3JvoglA",
+            "google-site-verification=vDK2m7tzKwNB_uNDBkDKCkzHmF-zFrZqO4jkwh7n5as",
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDoU0GMGflNzSK0jYzAz6OAFyMcHUd+fplFCtILcZvgwd/6G8xP+c3iGr5Mx5HHHT9GehJKVEhkNSqC3CxDfumnXukSvqoRk53nJk1VwYZP6xSLNdfUJmIfssvRLGtGKqwJwT6ziXfct1cAzpcl9cpSjTXWUcTUhgFKU/XIRrppwQIDAQAB",
+            "ps-cd-verification=42165906-d8df-4479-b9d1-c3af8415813c",
+            "v=spf1 include:_spf.google.com include:245155392.spf08.hubspotemail.net ~all",
+            "zoom-domain-verification=ZOOM_verify_ea3d1607aada41d388ef2c49932164c6"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt3.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com"
+          ],
+          "A": [
+            "172.66.148.227",
+            "104.20.47.112"
+          ]
+        },
+        "_dmarc.instantly.ai": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; rua=mailto:re+vgn1qeqjgew@dmarc.postmarkapp.com; sp=reject; aspf=r;"
+          ]
+        },
+        "google._domainkey.instantly.ai": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkYtnzJ17JWlxbAqS7e/4gUcMthdbDeNdaRJ412NmLPoIU769qmTIo0fZBdCq4nma+Ctu6z31jItUDQCQu0zFjusGj0wdr/dRRbs3Zm5yCWhuuZudGg4LVqti+77HxI0eeh+OY9h1i0xqbwOyM6I04ykmVsAjP1s/iE8GO29B538fEY8jYZY+EcsB6QqfdIaYv8ekYiFsZEYP7KFnEBrbeDD4B3oOPbXFe7M9HDMybwa82wJpniswl4Xd+7MGUhtOsHI759j3N10CnDGA44WsfrL1w4FLTcwOw6fZ0/UGKLlzcj2PcmG7evPFDpPpCdDP5RmCP2HRUhXv41pAetaQhQIDAQAB"
+          ]
+        },
+        "mail._domainkey.instantly.ai": {
+          "TXT": [
+            "v=DKIM1; k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZo5ryQSzxF1OqS150ezZlsh+0j13aPks7kbiha97Irs483C4ddzD8/UpFzQDe22MugG44JHaAdAAKYGrx+h1bk+r8uovnRbU/YaNup3N3eWXjS+13slOQjF5ospremkiPEqLCeNcoxnzEvAar7JlHrix6Uou6YYCI9ZigXn8dewIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "245155392.spf08.hubspotemail.net": {
+          "TXT": [
+            "v=spf1 ip4:3.93.157.0/24 ip4:3.210.190.0/24 ip4:18.208.124.128/25 ip4:54.174.52.0/24 ip4:54.174.57.0/24 ip4:54.174.59.0/24 ip4:54.174.60.0/23 ip4:54.174.63.0/24 ip4:108.179.144.0/20 ip4:139.180.17.0/24 ip4:141.193.184.32/27 ip4:141.193.184.64/26 ip4:141.193.184.128/25 ip4:141.193.185.32/27 ip4:141.193.185.64/26 ip4:141.193.185.128/25 ip4:143.244.80.0/20 ip4:158.247.16.0/20 ip4:216.139.64.0/19 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "internet.nl",
+      "records": {
+        "internet.nl": {
+          "TXT": [
+            "v=spf1 a include:spfinc.prolocation.net ~all"
+          ],
+          "MX": [
+            "vmx01.prolocation.nl",
+            "vmx02.prolocation.nl",
+            "vmx03.prolocation.net"
+          ],
+          "A": [
+            "62.204.66.10"
+          ]
+        },
+        "_dmarc.internet.nl": {
+          "TXT": [
+            "v=DMARC1; p=reject; sp=reject; np=reject; psd=n; t=n; adkim=r; aspf=r; rua=mailto:dmarc-rua@internet.nl"
+          ]
+        },
+        "spfinc.prolocation.net": {
+          "TXT": [
+            "v=spf1 mx ip4:94.228.133.0/24 ip4:94.228.129.0/24 ip6:2a00:d00:ff:129::/64 ip6:2a00:d00:ff:133::/64 -all"
+          ],
+          "MX": [
+            "vmx01.prolocation.nl",
+            "vmx02.prolocation.nl",
+            "vmx03.prolocation.net"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "irs.gov",
+      "records": {
+        "irs.gov": {
+          "TXT": [
+            "v=spf1 ip4:152.216.0.0/20 ip6:2610:30::/32 -all",
+            "google-gws-recovery-domain-verification=77157772",
+            "kiro-site-verification=30924362-d3a8-4ebd-a33e-55d29bc6452b",
+            "google-site-verification=4azu8YP1yIVwQs7A5DYgJCe2qKmAU-1JkEW2FwKVO6Y",
+            "google-site-verification=GsJzgbUY39iE6wPNlPdZCPGWwyhYpWwxpVxaU8g-Aa4",
+            "google-site-verification=cHyHOXr3ky01z5bvunj11JD-RXgCDLGhO5pGu8fhNzM"
+          ],
+          "MX": [
+            "emgc.irs.gov",
+            "emge.irs.gov",
+            "emgw.irs.gov"
+          ],
+          "A": [
+            "152.216.11.110",
+            "152.216.7.110"
+          ]
+        },
+        "_dmarc.irs.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:dmarc-agg-feed@ofdp.irs.gov,mailto:reports@dmarc.cyber.dhs.gov; ruf=mailto:dmarc-for-feed@ofdp.irs.gov; fo=1"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "kernel.org",
+      "records": {
+        "kernel.org": {
+          "TXT": [
+            "v=spf1 include:_spf.kernel.org ~all",
+            "google-site-verification=nb4Wx5xBQM3b-a3OV2KSlPL786714Y7M6GfBtJf1opQ"
+          ],
+          "MX": [
+            "smtp1.kernel.org",
+            "smtp2.kernel.org",
+            "smtp3.kernel.org"
+          ],
+          "A": [
+            "172.105.4.254"
+          ]
+        },
+        "_dmarc.kernel.org": {
+          "TXT": [
+            "v=DMARC1; p=quarantine; rua=mailto:dmarc@kernel.org"
+          ]
+        },
+        "default._domainkey.kernel.org": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbCVavaDWYcYX16ktqY4ZiZIaYApoL4sSGBsp5mIv1X3Ocy6MvXOC8XzDCO+hXYxhpdM16GmwWSFo7IVZ14DSb2XNkfDAB0RYS67Ma1mst6xwJTrfhtnoZkKdfZB5mn1x63/KEjkHnc9vwdF/kMuWvxnbS1q0xnmdIElFJead5hQIDAQAB"
+          ]
+        },
+        "_spf.kernel.org": {
+          "TXT": [
+            "v=spf1 include:_spfip4.kernel.org include:_spfip6.kernel.org ~all"
+          ]
+        },
+        "_spfip4.kernel.org": {
+          "TXT": [
+            "v=spf1 ip4:52.25.139.140 ip4:172.105.4.254 ip4:172.234.252.31 ip4:172.234.120.38 ip4:172.105.64.184 ~all"
+          ]
+        },
+        "_spfip6.kernel.org": {
+          "TXT": [
+            "v=spf1 ip6:2600:3c04:e001:324::/64 ip6:2600:3c0a:e001:78e::/64 ip6:2600:3c09:e001:7f6::/64 ip6:2a01:7e01:e001:937::/64 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "mailgun.com",
+      "records": {
+        "mailgun.com": {
+          "TXT": [
+            "0ed1fe018a7f0a47a8f5154d6984c025c42e01c9a4",
+            "821btkfcwyb92fwsv2jdcvn96fj2kxn5",
+            "MS=ms62942047",
+            "OSSRH-79800",
+            "ZOOM_verify_wH9ecHq8Sbu_sbeSjEJVVA",
+            "_xa8frhmx1cbo7youra0kzwfglbm4omm",
+            "atlassian-domain-verification=lgoAYsfQGA+keMEgwL40ZSlBpXSqnDEYpoxd5oGPFTS/58k9yaanrepGbOmyhBzv",
+            "atlassian-domain-verification=uiLUzaYhwokN49RmyFbpkcjFqaoDKbpmGmytCXN1qA1cFHDUldSiZl2KK9KUPBoL",
+            "bugcrowd-verification=4cfd023b67ca6489057ee815ea658e87",
+            "docusign=8f7c2cb9-7015-46f8-b26b-a1c13f412427",
+            "google-site-verification=ChC3YSBR2P7viG3AtShPTVSXpAMQ_FjD1FPKbRCGg6w",
+            "google-site-verification=VhSC6BM2Rf0OpXM4PMVuVs3DoUYKHp4TurbV7neNxhE",
+            "h1-domain-verification=TZWn28VgTk9fBsSnj2SwPt3BCHNwu8yhS7ucHLarzHus1xhm",
+            "knowbe4-site-verification=2ea4e05c3e01242d5ada61ac31b49db3",
+            "mgverify=0d5f4431a73937c5d0a05fe6940f7c1cadae69994b9736359fcf321ecc8e1222",
+            "mgverify=0fc9dc57d474602a753165e2890f94083d5dbaec901c40774e5a034088d27bae",
+            "mgverify=120b7682e55b929214474bd95651f3c8cf29fc8001f2c6e5a1aa171fa7b75c4a",
+            "mgverify=186c58bed97ee8fc9d076c485ced3d54b600e351aa03e67a65f1195940289818",
+            "mgverify=c305422ef1545ff8f33cc4ede96940d748d956a7a1758661637b14c0b4dcd3a8",
+            "miro-verification=121329dbcd8a9b88b8c5eccd5a1996ad3cbcfd5b",
+            "onetrust-domain-verification=6698df98aa31414bade2ca78ad03f42b",
+            "p5mycdjzy7mtt27qprhwjcwyl72wf27s",
+            "stripe-verification=5b9f98250a449dd9796e90428874106fa8fbbb3d64360afb60bc26232a0cb787",
+            "v=spf1 include:_spf.mailgun.org include:_spf.eu.mailgun.org include:spf.protection.outlook.com include:aspmx.pardot.com include:mail.zendesk.com  ~all",
+            "wiz-domain-verification=bb12d2252b41b3b8b8eaf84c95f0bb93cfea47e40192212d52a3aec6cc492d4a"
+          ],
+          "MX": [
+            "mailgun-com.mail.protection.outlook.com"
+          ],
+          "A": [
+            "141.193.213.10",
+            "141.193.213.11"
+          ]
+        },
+        "_dmarc.mailgun.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; sp=reject; pct=100; fo=1; adkim=r; aspf=r;rua=mailto:cc4c1f3a@inbox.ondmarc.com,mailto:dmarc_rua@mailgun.net,mailto:mailgun@dmarc.mailjet.tech,mailto:w8fajs9t@ag.us.dmarcian.com;ruf=mailto:cc4c1f3a@inbox.ondmarc.com,mailto:dmarc@mailgun.net,mailto:mailgun@dmarc.mailjet.tech,mailto:w8fajs9t@fr.us.dmarcian.com"
+          ]
+        },
+        "google._domainkey.mailgun.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqxEcqZoiCk8Z+ak76QzAGELLbALJibEv6LdxauPlu74KLPUNyvhizG6LNRxHqKfb52UfS3taedJo6f8rRVbkpBEoxlz+R2ZEDv1tnUP8Ho8yRZ7kV+LoQpowmiKGp3Zc5uB2uUTPIqPK/TvM1veDHKlHUos8meLl9RzVJnajZogvwL0KbXItxUcynFJEQqxuTAaNkmfitp/S6k6E478iVw7VoeG6VlEatvymW3uZrV53xsYVVkI1jaFbI1RVhMJcmEzAKKLqlrun8g9XvpNnEbI/NLqhzwR8c1kcGROug0e3cQNLn7HzQvBfRO19iYQvIjioeSqR6moQTZ/u4QVb/wIDAQAB"
+          ]
+        },
+        "selector1._domainkey.mailgun.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7euBvFkP2k6YL2N83OCwKscoGkiIw4SZkp7QwxmHI+MLNZ4Ua4931hKwSn/x6vwFBbigowSB2Bi7eBY+o+2lq03zVA6UKtLmHbzGOlH0821CP+5azwJvD+h8BikMBpzNsl5t67colb1aIld6mTjTBB5h1ZGBT87ifpr54vq4hS/LOhyrnl757fxSfPSi81f2AoUGQ58vqR7zdHI+znvJVLyLfjkVHgy7t7DMBYuisWeWK7Wlqh3IO84vqHWVtdE0zeqU8qWTLekjyKyDPiPGuXzQLyHzyKMvnzVbuOG/3wQn6cs7IpaZFiLsIYcjXbUpfRpP9u5nLfPVKd6AIGUHiQIDAQAB;"
+          ]
+        },
+        "k1._domainkey.mailgun.com": {
+          "TXT": [
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzTloWkhKWp/ukUsblbi5qHxe3d9kK1ZpZ40RKk92LSG1CFMTOJpELTeVZqG8qBoXx6iVIE+FNSmJ0AwPP91gjeNydHbWn9f/8un2cbevOJebaFfoPN5LUh6B1Xq/Ot0zk9cXp8m/WlRlE2hAD2cdHL1yCBnjG2zkFvO6VNXCCBQIDAQAB"
+          ]
+        },
+        "_spf.mailgun.org": {
+          "TXT": [
+            "v=spf1 include:_spf1.mailgun.org include:_spf2.mailgun.org ~all"
+          ]
+        },
+        "_spf1.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:159.135.224.0/20 ip4:69.72.32.0/20 ip4:204.220.90.0/23 ip4:204.220.92.0/22 ~all"
+          ]
+        },
+        "_spf2.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:161.38.192.0/20 ip4:143.55.224.0/21 ip4:143.55.232.0/22 ip4:159.112.240.0/20 ip4:198.244.48.0/20 ip4:204.220.168.0/21 ip4:204.220.176.0/20 ~all"
+          ]
+        },
+        "_spf.eu.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:141.193.32.0/23 ip4:159.135.140.80/29 ip4:159.135.132.128/25 ip4:161.38.204.0/22 ip4:87.253.232.0/21 ip4:185.189.236.0/22 ip4:185.211.120.0/22 ip4:185.250.236.0/22 ip4:143.55.236.0/22 ip4:198.244.60.0/22 ip4:204.220.160.0/20 ~all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "aspmx.pardot.com": {
+          "TXT": [
+            "v=spf1 include:et._spf.pardot.com -all"
+          ]
+        },
+        "et._spf.pardot.com": {
+          "TXT": [
+            "v=spf1 ip4:198.245.81.0/24 ip4:136.147.176.0/24 ip4:13.111.0.0/16 ip4:136.147.182.0/24 ip4:136.147.135.0/24 ip4:199.122.123.0/24 -all"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "3.211.161.173",
+            "52.21.142.91",
+            "34.227.209.168"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "microsoft.com",
+      "records": {
+        "microsoft.com": {
+          "TXT": [
+            "d365mktkey=3uc1cf82cpv750lzk70v9bvf2",
+            "facebook-domain-verification=fwzwhbbzwmg5fzgotc2go51olc3566",
+            "google-site-verification=pjPOauSPcrfXOZS9jnPPa5axowcHGCDAl1_86dCqFpk",
+            "fg2t0gov9424p2tdcuo94goe9j",
+            "t7sebee51jrj7vm932k531hipa",
+            "google-site-verification=M--CVfn_YwsV-2FGbCp_HFaEj23BmT0cTF4l8hXgpvM",
+            "google-site-verification=GfDnTUdATPsK1230J0mXbfsYw-3A9BVMVaKSd4DcKgI",
+            "d365mktkey=SxDf1EZxLvMwx6eEZUxzjFFgHoapF8DvtWEUjwq7ZTwx",
+            "hubspot-developer-verification=OTQ5NGIwYWEtODNmZi00YWE1LTkyNmQtNDhjMDMxY2JjNDAx",
+            "d365mktkey=QDa792dLCZhvaAOOCe2Hz6WTzmTssOp1snABhxWibhMx",
+            "d365mktkey=6358r1b7e13hox60tl1uagv14",
+            "google-site-verification=uFg3wr5PWsK8lV029RoXXBBUW0_E6qf1WEWVHhetkOY",
+            "docusign=d5a3737c-c23c-4bd0-9095-d2ff621f2840",
+            "d365mktkey=j2qHWq9BHdaa3ZXZH8x64daJZxEWsFa0dxDeilxDoYYx",
+            "atlassian-domain-verification=xvoaqRfxSg3PnlVnR4xCSOlKyw1Aln0MMxRiKXnwWroFG7vI76TUC8xYb03MwMXv",
+            "workplace-domain-verification=lK0QDLk73xymCYMKUXNpfKAT8TY5Mx",
+            "google-site-verification=uhh5_jbxpcQgnb-A7gDIjlrr5Ef34lA2t2_BAveYpnk",
+            "MS=ms79629062",
+            "d365mktkey=3l6dste9txazu0Qd2zu4135PUB4E35txLxyzJxjkPbsx",
+            "d365mktkey=wbU64GRacxVEQxwcLSQnx0zisXLYzgUbfvsufIqO9ZUx",
+            "linear-domain-verification=iuq6saifcnbe",
+            "d365mktkey=ZGFU0tlXPekPusNHPo5QQQWpVf0gic0xpuKroNy3NQEx",
+            "d365mktkey=JlXV17lfZjyvWxNje1qiP390ACSKzTxo5mGqZ3V2BmYx",
+            "d365mktkey=PNcDqkW71x8VOUhcE96aGM4l5PYX1gnlRl6ieXUl5eMx",
+            "d365mktkey=Fu49WtSTeClkHtK7S14227RIVpGwwGrzEsO6RVs1I2Ax",
+            "ms-domain-verification=25524f4b-1476-489c-a086-30f4c5016ecc",
+            "ms-domain-verification=1c4e4677-e58f-4117-8d61-e5b2810388c2",
+            "mixpanel-domain-verify=5803bc4c-5bb6-4ce1-8076-753800097373",
+            "sitecore-domain-verification=1d46cb5467624e33a408d14324874088",
+            "ms-domain-verification=478640ad-6524-43d5-86c4-a914804b9e93",
+            "ms-domain-verification=561512fc-b4ba-4ac7-a946-e464c8f49f1b",
+            "_zx2p8gpzv720db2aqmozy4jhwk2nl43",
+            "airtable-verification=79a09e4a8013ff5737798ffb4ea88eee",
+            "1password-site-verification=35ZTURTFFFDC5BW7GFQKRJ77QM",
+            "d365mktkey=8fEQahTresJms7tZGxGFr94T1zDz36oCbUt1LJc99mox",
+            "d365mktkey=heYmJ57sWrwMjCgIG1xRwTREJrQokUIDtBcNfGuxoWQx",
+            "ms-domain-verification=d6545068-89f7-4432-b947-0b137e8a9fe3",
+            "hcp-domain-verification=3ce174a8b9fba88909633ab13eb1d81ce0123454745d66e500052ed84b7248a1",
+            "v=MCPv1; k=ecdsap384; p=As/XxnDWZFxFwHvRZj+HbG5/ImtAeabLkiOWu1h7wCJQFAR216E9HoYQ5Hy6o7StoQ==",
+            "v=MCPv1; k=ecdsap384; p=AoHTKEi2W8L2P8cf9CoDicIxYiuttTkwtIeFOqYCewBGoRZiiF+9/92saUkIDERGAA==",
+            "ms-domain-verification=65f91178-9dfb-41cd-929d-08d1a38ed607",
+            "v=MCPv1; k=ecdsap384; p=Asc8WWov6gsmCCzn4CSrwRuJIh5SqvaitKz/LlTW+SD54lLC52wzcnWhlTI416p2vw==",
+            "liveramp-site-verification=kxcV8fDH_FUNUZQEcAO6lwgim47f_hNLgMP4VG0PF_Q",
+            "v=MCPv1; k=ecdsap384; p=AqXeTHJ/1FCYeuvJ8dc1B+X3uHaa7m2W0s31vzL4opnrJlSaBdtbWTY8Ti5WiZnu9Q==",
+            "v=MCPv1; k=ecdsap384; p=An4mJIFLRys9h1EvjX18SJs5p1uEF5MHcs2JJLYPrI48C5Qt9FpaZEM0sQTV4JvNYw==",
+            "v=MCPv1; k=ecdsap384; p=A/Mf6IKdZzcHfBvpiVz9rkdPTIcCP5IbRDdEkeP3PgXEXF3mNjorahOwaYlMINBF5A==",
+            "v=MCPv1; k=ecdsap384; p=A8qndBCDJGtFF2+3v/IPIMmM0SaVcrJBoSue7rKob6sUeK7QGeFuWkrtvze3AiqUDA==",
+            "zoom-domain-verification=ZOOM_verify_e97a3d385acb4c47b9b924609a280524",
+            "anthropic-domain-verification-phksss=GZrrKDUR4klRLFCvxyOvqcNGE",
+            "v=MCPv1; k=ecdsap384; p=Azw9+u4M8RoH+bxJidKAZzGDmsPkzY1N4cO7rB/uC5x1RBoNfMyBlH/ott0lpo4pOQ==",
+            "dobtdihqagnr18hea8uv1h1mvq",
+            "atlassian-domain-verification=Sn5AwyIdVgkaRaJA/IKj7ZFMnWeCBnppa9bXGLuJvsakRHH4lYoBxS8g7GVlud9M",
+            "openai-domain-verification=dv-sFtCvKOlWoe31gpoSvs7cqsP",
+            "hpe-greenlake-domain-verification=495143304a3330533363357a57684f6335556f316f55654675523541464d3954",
+            "v=MCPv1; k=ecdsap384; p=A5JeyhIFWFj4/epHJwt29GRUSrFwGSwXhrhDMAUSklMhfXjI7gi/ekY/fQSWToZdCw==",
+            "v=MCPv1; k=ecdsap384; p=A/78JIxAOlNwq8f0T/l50w7zhwQFpEuB8/Jz9CafdXNX7ewOluYpS/EEcSmLgxsHXg==",
+            "docker-verification=b912d2f3-8614-4591-962b-9e07dbf7c047",
+            "_ij59qjkrntjw3gpjplj3or17mo3xxvt",
+            "google-site-verification=jwrHU99GU8HSXlRFeywLDZmVawD2DWVCebQ41shKK0M",
+            "v=spf1 include:_spf-a.microsoft.com include:_spf-b.microsoft.com include:_spf-ssg-a.msft.net include:_spf1-meo.microsoft.com -all",
+            "google-gws-recovery-domain-verification=77163048"
+          ],
+          "MX": [
+            "microsoft-com.mail.protection.outlook.com"
+          ],
+          "A": [
+            "150.171.109.131"
+          ]
+        },
+        "_dmarc.microsoft.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; rua=mailto:itex-rua@microsoft.com; ruf=mailto:itex-ruf@microsoft.com; fo=1"
+          ]
+        },
+        "selector2._domainkey.microsoft.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPkb8bu8RGWeJGk3hJrouZXIdZ+HTp/azRp8IUOHp5wKvPUAi/54PwuLscUjRk4Rh3hjIkMpKRfJJXPxWbrT7eMLric7f/S0h+qF4aqIiQqHFCDAYfMnN6V3Wbke2U5EGm0H/cAUYkaf2AtuHJ/rdY/EXaldAm00PgT9QQMez66QIDAQAB;"
+          ]
+        },
+        "_spf-a.microsoft.com": {
+          "TXT": [
+            "v=spf1 ip4:216.99.5.67 ip4:216.99.5.68 ip4:202.177.148.100 ip4:203.122.32.250 ip4:202.177.148.110 ip4:213.199.128.139 ip4:213.199.128.145 ip4:207.46.50.72 ip4:207.46.50.82 ip4:65.55.42.224/28 include:spf.protection.outlook.com ~all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "_spf-b.microsoft.com": {
+          "TXT": [
+            "v=spf1 include:_spf-mdm.microsoft.com ip4:207.46.22.35 ip4:207.46.22.98/29 ip4:217.77.141.52 ip4:217.77.141.59 ip4:203.32.4.25 ip4:23.103.224.0/19 ip4:206.191.224.0/19 ip4:65.52.80.137/32 ~all"
+          ]
+        },
+        "_spf-mdm.microsoft.com": {
+          "TXT": [
+            "v=spf1 ip4:134.170.113.0/26 ip4:131.253.30.0/24 ip4:157.56.120.128/26 ip4:134.170.174.0/24 ip4:134.170.141.64/26 ip4:134.170.143.0/24 ip4:157.58.249.3 ip4:65.55.29.77 ip4:131.253.121.0/26 -all"
+          ]
+        },
+        "_spf-ssg-a.msft.net": {
+          "TXT": [
+            "v=spf1 ip4:104.44.112.128/25 ip4:134.170.27.8 ip4:157.58.30.128/25 ip4:20.63.210.192/28 ip4:20.94.180.64/28 ip4:40.112.65.63 ip4:52.185.106.240/28 ip4:52.234.172.96/28 ip4:52.236.28.240/28 ip4:66.119.150.192/26 ~all"
+          ]
+        },
+        "_spf1-meo.microsoft.com": {
+          "TXT": [
+            "v=spf1 ip4:52.235.253.128 ip4:20.141.10.196 ip4:20.118.139.208/30 ip4:20.98.194.68/30 ip4:20.83.222.104/30 ip4:20.88.157.184/30 ip4:20.59.80.4/30 ip4:20.51.6.32/30 ip4:20.97.34.220/30 ip4:20.107.239.64/30 ip4:20.105.209.76/30 ip4:20.98.148.156/30 ip4:20.69.8.108/30 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "mozilla.org",
+      "records": {
+        "mozilla.org": {
+          "TXT": [
+            "bzbkzkxj2ws8gvtw6hpssfy7lv9kym88",
+            "zoom-domain-verification=ZOOM_verify_671ea7b9c47d4b7b8cc9441f40817e3e",
+            "MS=ms14343235",
+            "yandex-verification",
+            "v=spf1 include:%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email include:_spf.mozilla.com include:_spf.google.com include:spf.fundraiseup.com ~all",
+            "openai-domain-verification=dv-J6NgbJamHFrHSyNqlhElIX5K",
+            "anthropic-domain-verification-w5rph5=bZ2V4N0ps4oFSU6yrv4DfD6nA",
+            "rz8t7zvjv5frpfbjs3y5n6g5tkw7gt2q",
+            "google-site-verification=Brpe3hQpo9FlGIHMtK4ViKL60L0G8VM16nXopwVDoEU",
+            "google-site-verification=mU3ta-ZJga-aCNg7IlaRaGYK9sDOMagHRNGVW1FSJGE",
+            "google-site-verification=E1vBHtOW-D9IlAj-pbRM-8PrOSiPDT48lrwRlW82ysw",
+            "google-site-verification=z68pON7CWSaZu_sBqDQofmDL19OVp3krGEjaDl7cSaU",
+            "google-site-verification=S3M17z96OKfZJ2dq7mYqQDfRWsEVjy3hdxaSyB72YPc",
+            "google-site-verification=Lo_B34AJAe70BQVNF1Fo1zGGJudPmw9bLTnP2C8lV-s",
+            "ZOOM_verify_lGxIzL49Id7PipUgDgTd9K",
+            "google-site-verification=Ep3NdzNxaf8Vl48dniNneaqm7JcWUiy3GjKS0wx5zQw",
+            "_zojr3c56nq36tokzhnj9crit28tiqly"
+          ],
+          "MX": [
+            "aspmx3.googlemail.com",
+            "alt2.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "aspmx.l.google.com"
+          ],
+          "A": [
+            "35.190.14.201"
+          ]
+        },
+        "_dmarc.mozilla.org": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; adkim=r; aspf=r; rua=mailto:dmarc_agg@vali.email,mailto:dmarc@mozilla.com"
+          ]
+        },
+        "google._domainkey.mozilla.org": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeaLfcj7zdLlf8U+HmEV9SvLcrhQcwBBKzGXpazWCkdEczUCIbrx4PNfn0MDK7Pm+iwLu2CBwts+H4HKHHLR6UIzQeUw3+QoHjcRdBPrsAVT2Z3lgis0aPrR5wlv5ymlMfqXYu7N8UqKVKe5r0TO7uU+NI/tqNR20GKEYdBWtiVwIDAQAB"
+          ]
+        },
+        "%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email": {
+          "TXT": [
+            "v=spf1 -all"
+          ]
+        },
+        "_spf.mozilla.com": {
+          "TXT": [
+            "v=spf1 include:_netblocks.mozilla.com include:_netblocks3.mozilla.com ~all"
+          ]
+        },
+        "_netblocks.mozilla.com": {
+          "TXT": [
+            "v=spf1 ip4:63.245.208.0/20 ip4:203.192.141.162/32 ip4:64.213.97.194/32 ip4:64.213.68.131/32 ip4:60.234.66.18/32 ip4:89.202.203.51/32 ip4:146.82.185.165 ip4:206.15.76.125 ip6:2620:101:8000::/40 ~all"
+          ]
+        },
+        "_netblocks3.mozilla.com": {
+          "TXT": [
+            "v=spf1 ip4:173.247.198.38/32 ip4:207.126.102.129/32 ip4:206.169.237.184/32 ip4:207.218.72.65/32 ip4:118.163.10.190/32 ip4:60.234.54.74/32 ip4:206.169.237.178/32 ip4:54.240.58.224/32 ip4:54.240.58.225/32 ip4:54.240.58.226/32 ~all"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "spf.fundraiseup.com": {
+          "TXT": [
+            "202309142210142gjgf5fwokyagxwm41zux4qqpsky7k3ybnkqsbic1mlkhki0he",
+            "google-site-verification=yCMV3z3BhBaINi0V033HnfTi9xkQjpIZ4DM4ywSlwUs",
+            "v=spf1 exists:%{i}._spf.sparkpostmail.com ~all",
+            "yahoo-verification-key=3FbuT+COxdPHeqY8GDS1MS5lZ+Y4R0w0MCU5RmkGdic="
+          ],
+          "MX": [
+            "smtp.sparkpostmail.com"
+          ],
+          "A": [
+            "13.224.163.51",
+            "13.224.163.44",
+            "13.224.163.82",
+            "13.224.163.125"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "nasa.gov",
+      "records": {
+        "nasa.gov": {
+          "TXT": [
+            "MS=ms93625004",
+            "pvv8mevb6qrmqvqi8alhmreg42",
+            "uechcfoubh169akghg2214p54n",
+            "mj8729pr7k44dx62wwtx5745xr5njzkn",
+            "n39n7frbwnkhcmky2nps779y4ttn61wl",
+            "nmh1f9tgxhmfmjkshg7qh595drdfgnf1",
+            "asv=12d88629ae88f5017642bfc4981f8dd7",
+            "apple-domain-verification=qw51K0kGzRHLbN9S",
+            "docusign=4025560e-93c9-4920-bb13-849c6fc35d58",
+            "amazonses:FXFVeQnEO3Wua+aY/H4aOIH3sSwteE+7YpGrwm8kF/s=",
+            "amazonses:PvUL7T41LO87xjr+2nfgxTu11i75NeT9HzY3xYv82Ko=",
+            "openai-domain-verification=dv-CO0ENDLO7EB9V5E4JnmE6pS8",
+            "openai-domain-verification=dv-Fbq5PVntP9qLelQPUBKniDjr",
+            "smartsheet-site-validation=gnL11HAQqHlH1tQabmxKf12b5ZCNxJfx",
+            "webexdomainverification.1YPST=f98a61ea-b92e-41f2-87aa-5651b2af43b8",
+            "google-site-verification=BUxd0xTJY4ZjGohBwKDpNms-yOATz92Y54kgme4eKHs",
+            "google-site-verification=ZKpcXLqaBX3jND8Fybkvr3MaaOpC_6MRjXBYm0XNkJQ",
+            "atlassian-sending-domain-verification=4730ddf4-d24e-4a91-9612-cb14998d0e47",
+            "1HqDXPHdt8JOt02qy6FB+l3+Z1zXScqcPxlE/faXjZLS9FRbVhHCUCHQE2bWofZt2TWKPchjjma3Pqli4FULFw==",
+            "HRlHXyx8jXo+9pIaJWFVBPOLVfeI2biAj3VT1woaTFpp05D5/q6AoD5KpUgws539/d2jl8wBJiEr58OEsRVugQ==",
+            "atlassian-domain-verification=oNzRM7G9GIAL/LLP5c7sPOQiAHsHrQ1hKcU7GGZ0ADRZJFhUB/upe935/2RYq/jO",
+            "v=spf1 include:_spf-4a.nasa.gov include:_spf-4b.nasa.gov include:_spf-4c.nasa.gov include:_spf-4d.nasa.gov include:_spf-4g.nasa.gov include:_spf-4m.nasa.gov include:_spf-4x.nasa.gov include:_spf-6a.nasa.gov include:spf.protection.outlook.com -all"
+          ],
+          "MX": [
+            "nasa-gov.mail.protection.outlook.com"
+          ],
+          "A": [
+            "192.0.66.108"
+          ]
+        },
+        "_dmarc.nasa.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; fo=1; rua=mailto:dmarcmail@mail.nasa.gov,mailto:reports@dmarc.cyber.dhs.gov"
+          ]
+        },
+        "selector1._domainkey.nasa.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCQHB769Mz6bm5ZUPbTebbhs8RZeJMEcBOOSeIdCFg/DqUZHfBuJ3WdMBEYOUfiukh1xtH80QFOrk88KpucmqQVKplvOUv2Q65piZAIkf2KHdi3GbzLkLHbPzyjmMMnLw5tuMdK4HFAnf7DCdxvCTelqOZ1fUdexJf8IqLK73dOSwIDAQAB;"
+          ]
+        },
+        "_spf-4a.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:198.117.0.161 ip4:198.117.0.162 ip4:198.117.1.161 ip4:198.117.1.162 ip4:136.178.240.5 ip4:136.178.47.20 ip4:192.92.190.0/24 ip4:192.92.191.0/24 ip4:192.92.192.0/24 -all"
+          ]
+        },
+        "_spf-4b.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:128.102.12.121 ip4:128.102.12.122 ip4:130.134.81.136 ip4:128.156.250.70 ip4:128.183.245.24 ip4:128.102.12.131 ip4:128.102.12.132 ip4:128.102.12.133 ip4:128.102.3.200 ip4:128.102.22.46 ip4:128.102.12.20 ip4:143.232.190.164 -all"
+          ]
+        },
+        "_spf-4c.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:128.157.183.13 ip4:198.117.132.19 ip4:148.114.252.16 ip4:198.116.134.103 ip4:128.159.63.152 ip4:198.117.0.201 ip4:198.117.0.214 ip4:198.117.0.215 ip4:198.117.0.216 ip4:198.117.1.201 ip4:198.117.1.214 ip4:198.117.1.215 ip4:198.117.1.216 -all"
+          ]
+        },
+        "_spf-4d.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:198.117.0.151 ip4:198.117.0.152 ip4:198.117.0.153 ip4:198.117.0.154  ip4:198.117.1.151 ip4:198.117.1.152 ip4:198.117.1.153 ip4:198.117.1.154 ip4:198.117.0.202 ip4:198.117.1.202 -all"
+          ]
+        },
+        "_spf-4g.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:128.183.210.99 ip4:169.154.216.33 ip4:169.154.217.17 ip4:128.183.16.133 ip4:128.183.16.143 ip4:128.183.96.236 ip4:169.154.156.35 ip4:169.154.156.36 ip4:128.183.31.23 ip4:198.118.114.180/30 ip4:198.118.195.99 -all"
+          ]
+        },
+        "_spf-4m.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:129.165.41.104 ip4:129.165.43.104 ip4:129.165.92.46 ip4:129.165.92.62 ip4:129.165.43.118 ip4:129.165.41.118 ip4:129.165.43.119 ip4:129.165.43.120 ip4:150.144.200.16 ip4:150.144.200.48 ip4:198.118.192.20 ip4:198.118.196.16 -all"
+          ]
+        },
+        "_spf-4x.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip4:198.116.65.188 ip4:198.119.134.205 ip4:128.156.249.229 ip4:128.149.137.96 ip4:128.149.139.105 ip4:128.149.139.106 ip4:128.149.139.109 ip4:169.154.146.140 ip4:169.154.146.141 ip4:129.164.30.24 -all"
+          ]
+        },
+        "_spf-6a.nasa.gov": {
+          "TXT": [
+            "v=spf1 ip6:2001:4d0:8302:1100::151 ip6:2001:4d0:8302:1100::152 ip6:2001:4d0:8302:1100::153 ip6:2001:4d0:8302:1100::154 ip6:2001:4d0:a302:1100::151 ip6:2001:4d0:a302:1100::152 ip6:2001:4d0:a302:1100::153 ip6:2001:4d0:a302:1100::154  -all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "nic.cz",
+      "records": {
+        "nic.cz": {
+          "TXT": [
+            "MS=92011E91562E6FD18FF9C5FA1F053F90DD5B1892",
+            "v=spf1 include:_v4nets.nic.cz include:_v6nets.nic.cz include:_spf.network.cz ~all"
+          ],
+          "MX": [
+            "mail.nic.cz",
+            "mx.nic.cz"
+          ],
+          "A": [
+            "217.31.205.50"
+          ]
+        },
+        "_dmarc.nic.cz": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; rua=mailto:dmarc.reports@nic.cz; ruf=mailto:dmarc.reports@nic.cz; fo=1; aspf=r; adkim=r; rf=afrf; ri=86400; sp=reject"
+          ]
+        },
+        "default._domainkey.nic.cz": {
+          "TXT": [
+            "v=DKIM1; g=*; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJYt4yBtPHr8Sc9ife0imtyWQbL04CuBs+x63ncoJKzeZnq4dYHVMAZCuAgc2l7b7PTfHWtfIzFehQwY5eX6HcwLXyL/3O1YXHLXFyLCTTKgFn/b4Osn6dHJ9ph3N+i7VZjE+ku1hfQ33m1/8dL9CQ9/EqMnGn3CZckJddXUkcpwIDAQAB"
+          ]
+        },
+        "_v4nets.nic.cz": {
+          "TXT": [
+            "v=spf1 ip4:217.31.192.0/20 ip4:185.43.132.0/22 ip4:217.31.57.158/32 ip4:217.31.57.157/32 ip4:217.31.57.156/32 ~all"
+          ]
+        },
+        "_v6nets.nic.cz": {
+          "TXT": [
+            "v=spf1 ip6:2001:1488::/29 ip6:2001:1ab0:7e1e:d150::8:0/112 ~all"
+          ]
+        },
+        "_spf.network.cz": {
+          "TXT": [
+            "v=spf1 ip4:81.91.84.116 ip6:2001:1568:b:145::1 ip6:2001:1568:b::145 ip4:87.236.199.38 ip6:2a01:5f0:c001:108:2::1 ip4:217.31.57.209 ip6:2001:1ab0:7e1e:d150::2:100 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "nih.gov",
+      "records": {
+        "nih.gov": {
+          "TXT": [
+            "9r2uhuv5j9qptpgu2ggt9bedgh",
+            "da1dfl8ipaafpqsh40iiuubf7n",
+            "errsvkc5n4e7ra1rouc8d79kbh",
+            "f71j9q2oprakr7gtedlcau485k",
+            "gqtebtnc7mnjj8e5hmf3sdq3vk",
+            "kt4ej3geqjaj80k3ttross1f14",
+            "pbj2k0thl8k6bc1b5igtqqghls",
+            "rh426i3oiis217bktj8o4nd2m2",
+            "rqgo340ej7cot82fsehrp6l5ap",
+            "sv6eiguevqe64cojov3psnedd2",
+            "t6cijkcds8tua8rmnpvqe2d470",
+            "uub8i3goc70aj1kvl0neuhle5v",
+            "vo981nhirc12tldrkdpcthih3d",
+            "dv-ToPuPeiy2ojjpiSg4wlEEaJe",
+            "0d03wt1mlg5wy8z9pv9pv0rj21pc6137",
+            "_0i392yrtc0z5vy7dpsmgeoukvw7bysw",
+            "_ai4lciv17rnka4jdu9z7ft5dkdn6cwi",
+            "_jiomcldogudftjarbrdx4kt57mzu5xv",
+            "pknf061r79fsrzbmcpgnhygf1j8nvxy8",
+            "v7959lz5pgb250x8gzt0fkg7j4x1s6bw",
+            "x1htw52vr2t3416zs29gg8lq0zkw744c",
+            "asv=855b0f13024fcf78abf33cd1ef636c24",
+            "apple-domain-verification=2IrLd0KYEerfwrx6",
+            "apple-domain-verification=8VumNb91MILOLiQZ",
+            "apple-domain-verification=FTZHYv0nuXKqjeP8",
+            "apple-domain-verification=G25suhrGTYqwbLNS",
+            "apple-domain-verification=c8bb3gA2SNfmH0Zx",
+            "apple-domain-verification=rFyOPvcO8sUX2iHP",
+            "1qM+TU0yI2yC5SbKT6I96/NjwTb/86hET84vn0/fXWW=",
+            "YlLYOocbRZcMeei5s0g/6cFJWMNb3AljE+bns/TE/e4=",
+            "wOUurBjukuuVfNP30Zyjv13ohvbjr9KVCgIoMfKSL6U=",
+            "docusign=5a06ea48-7158-4d7c-a47f-624b9d0cebc9",
+            "docusign=850d3223-bb46-4946-986b-2410b69ed0e7",
+            "jamf-site-verification=M8F5AAUS0P9xpygyoWq8eg",
+            "jamf-site-verification=g8V3otVBbtqnjBIjIJXrFg",
+            "amazonses:6dUQp3PJw2/pPriaGheRkNX6rVRchTDJCVkzGLDtftA=",
+            "amazonses:93j7xtRaIBE5K+ERCErN+WDNFhQPQ1rY8mCD3Ut5Rqg=",
+            "amazonses:Ckm+FeqyUMSBHOvsBsDHWeb1nuGAr6AWg5crTuJh47k=",
+            "amazonses:EpIukSNkqrJBid632tohg9ghfR9ZOm2BsQKY8fKESvs=",
+            "amazonses:F99Cv1zG5C8JOyxlwPmjFx3qCOyQ7xJdwsNMHiJbEew=",
+            "amazonses:Oq2yjJ17I+Cqlgpxl9Pto0uQ7gwb0IpbhQFCHjPwuGo=",
+            "amazonses:QJZljHq4QVLochyWJlHRtF/TQ7CgNwoHHWnOK7AjCWo=",
+            "amazonses:QLi7vDgXZTFrD/2qNMkfcQtCzsetuefpN50b98lKPA0=",
+            "amazonses:Socb9IMK/O81TXqIP15y3NAyd8tyEcV6waygbWSPBi0=",
+            "amazonses:njYRGZSzGLGsQ66bZMwxwZZF4zHx9G8JWosbZeNa7Eo=",
+            "amazonses:rhL1YpdU4RL+Q7IALiZNww69f5cR1IZDcqEh9fRy6Tg=",
+            "amazonses:sFnUJ7LhEsJBsbZON/tFEgtZeGaqZiwY6vCL/+AJXak=",
+            "amazonses:vDxikFPIS0Am8dY/BlMuOFbJ2TuF64fRwUfkUGH67bY=",
+            "openai-domain-verification=dv-ToPuPeiy2ojjpiSg4wlEEaJe",
+            "graphpad.com:domain-verification=gN34VRAg6P9tjzcJQp3UzA",
+            "docker-verification=6c54ab12-d26d-44b7-978e-f60aa83a02f3",
+            "miro-verification=ce1878a9901e3785a9ee9302aaaf4b8f878ff042",
+            "mongodb-site-verification=P4xvHdvjB9koHJnGWdIuapplaUGKo9VP",
+            "mongodb-site-verification=gnP2xDWxNwIi8HvCaZxCA9DYeIIsM908",
+            "identrust_validate=n7BmXlMZM4qNvYOHyZEwIZ1EN76JW0zd+C6l4Q39y2Vw",
+            "webexdomainverification.2494X=72426cc0-664d-4a80-a6f4-113b7f648c9d",
+            "_acquiaplatform.nih.gov:YlLYOocbRZcMeei5s0g/6cFJWMNb3AljE+bns/TE/e4=",
+            "google-site-verification=8BC5Gnatu9NBfOph_lZpZyG2eDK0iPs0V8Li0RKzin8",
+            "google-site-verification=bFFD3VwenH37-hj5wbQqLUOAkLjsrX2Tp-LnN1AvpkQ",
+            "google-site-verification=zVNJw3i2goXwxAOFiO6ubfIWhKkgRnHS82Q7F6M6Gck",
+            "v=spf1 ip4:128.231.90.64/26 ip4:165.112.13.0/26 ip4:156.40.79.128/25 ip4:128.231.89.192/28 ip4:165.112.69.16/28 ip4:165.112.194.0/25  ip6:2607:f220:0404:8104::0/64 ip6:2607:f220:402:1a01::0/64  ip6:2607:f220:404:12e::/64 ip6:2607:f220:402:12e::/64 include:spf.protection.outlook.com ~all",
+            "SDRQ4Pu3aj2Qhnqm0Pu+NCsKPrfBbW56qXduqE9GxA/f5eo+/Ui6umgbTg9PW0hjeg21Q2yCpOALWHqZ91OwZQ==",
+            "adobe-sign-verification=1e4a7a1987a2efa2d94b3cdcf717ec0b5d1dcbcb8c16a5d2bc4ea7c4dbcd2210",
+            "ciscocidomainverification=1b32b084b0eb3ade21d6a521cfa1db73d2a787817950f96cf35fe67d6fa84685",
+            "adobe-idp-site-verification=5e85ea0ed34d3d2a09f830d0cfc77139471d15e20e771d90484e89895b0a9f1e",
+            "cisco-ci-domain-verification=25e2351f5ed93561cf171fbead7759b2407183ca513c2c4d7eb88be637a59b7f",
+            "cisco-ci-domain-verification=50a17b6053e0cdf1c50621c42ad27e55c2e1d58f0249a1f48b4509f30b849701",
+            "webexdomainverification.4C675B897222B136E053AB06FC0A3F65=cf14e0ca-cfec-4d2b-83ab-5971ee749040",
+            "webexdomainverification.4C675B8A8FC5B136E053AB06FC0A3F65=81f2d6dc-b5b1-4624-9e3f-278cb4163770",
+            "webexdomainverification.4C675B8AEB46B136E053AB06FC0A3F65=a9568d05-1a3d-4c2b-9f45-3b5d786db694",
+            "webexdomainverification.4C675B8AF44FB136E053AB06FC0A3F65=b1985124-e9bf-4009-a584-7dee024dc7e9",
+            "atlassian-domain-verification=5I70E3MqAbQ9rCDoKlyjMB5STNFM2xRdvGSKSghuwgN4belFRwLsmIACp85aACc/",
+            "atlassian-domain-verification=FfyaIO5BcqxasUU4Cuwp9/4Y3ujXrMEpfhyaPydm5lM6vqDALuZFv8QqJI6qUPVp",
+            "atlassian-domain-verification=VhnxT3ISJLKFyasfowo1iyVXcEqztbz/3PWOQM6LP0kG9HrAlq/21h27cbqTwdxw",
+            "atlassian-domain-verification=wdcwOCoxzIePKKuoOG918QCLMqYKy85i2g2UFoGlTcp32Eifql11S8xMtj1bxytf"
+          ],
+          "MX": [
+            "nihcesxway3.hub.nih.gov",
+            "nihcesxway4.hub.nih.gov",
+            "nihcesxway5.hub.nih.gov",
+            "nihcesxway6.hub.nih.gov",
+            "nihcesxwayst03.hub.nih.gov",
+            "nihcesxwayst04.hub.nih.gov",
+            "nihcesxwayst05.hub.nih.gov",
+            "nihcesxwayst06.hub.nih.gov"
+          ],
+          "A": [
+            "156.40.212.210"
+          ]
+        },
+        "_dmarc.nih.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:8idhoybh@ag.us.dmarcian.com,mailto:reports@dmarc.cyber.dhs.gov; ruf=mailto:8idhoybh@fr.us.dmarcian.com; fo=1;"
+          ]
+        },
+        "selector1._domainkey.nih.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCWtW6ObLLpToNfOnq2THCetpGzLKyI5CZL8NaCI7YkdXYMdwqw4ZSLvXZmOzXEmLvYJ/RPxCvi9A7ZG6aoUsD+8PRgQgJd4bAEOwfEh2mEWQPzuypRSOSDkHHmLDqfkmPBZLABprf7/SeRJuqUMdFAd8giXNnbrYUpoVgY2N/vQIDAQAB; n=1024,1456355902,1472080702"
+          ]
+        },
+        "selector2._domainkey.nih.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7i4vU5xMaZEx5X3dUxmjNurT1Fp41h3Ow5jtV0ZuJQI8noLmdC4vv1oSxyKNc8IPDBtg2azNE8oIZB96GK3CT9Z9jlVpvdit3FRvjIvs8tHLyAHruVHpdNAI9LAJstyTxlaEe2BHDqB8u2u/1x6NR4SjBEYUHmYTUlmvUWk3SE4PNkuPyeveF5rcM7gafNEssi5UkkCeHcohTGQAIknjM7/cJ1sCdiwLSOtRduCEyDrV3EX0bg6fFkYPvcy44D9ILyT+MlaWei3ss2fjnyGQpu+e7VnygIpNi6O0bJTIbBvjGNr/qE2x/qSSLYgTRjETGmbRIZI5kZNJgr9DfsZbpQIDAQAB;"
+          ]
+        },
+        "k1._domainkey.nih.gov": {
+          "TXT": [
+            "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDbNrX2cY/GUKIFx2G/1I00ftdAj713WP9AQ1xir85i89sA2guU0ta4UX1Xzm06XIU6iBP41VwmPwBGRNofhBVR+e6WHUoNyIR4Bn84LVcfZE20rmDeXQblIupNWBqLXM1Q+VieI/eZu/7k9/vOkLSaQQdml4Cv8lb3PcnluMVIhQIDAQAB;"
+          ]
+        },
+        "s1._domainkey.nih.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1w3phnpj/N9gwNuTYnsXK3CYa0M3s6x/DufZIcq6/6D01Xrrx1ufdkfh+1syiIZypJIyttGYDHi7g8zUdEcSY2/JdazCJSqfEgqK9Bkm/6Ln7+stxYcEBVSUKoQHsEbA098QY5lqsq4fdk7oUgLo2W577f+kEZ15kfTpTgOzjmZltLLdi8r+XPThIxvJ4pTE68jm+W7bQ7IpfqBGc1zg8s39hpYDXjdsBWqqHlZlaO4K34AgPT4Fv2LQHjWeziPGYsTmayoStM1GYM8MlKXFpf2nPDrApbfX8xwL3ssg85fTlpGPNhnbcUBKKfXVrQenoqzFPb0bE8TmpZHmZ/R0oQIDAQAB"
+          ]
+        },
+        "s2._domainkey.nih.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDVxDaaHaIcebI06PbzkE+Nxn1mfRnDtJY+JPSCV/+IZyzx9YJIwK7g9RoJfok3v2+xCWEC3bxX6d+5qyUmuBH+MHQrnuvFI8sHBptH4Yi9J/1dXero95fKNgwZfvZYIlJYkckuxLg6X2oJLl5W80OFF8x3CpKw9flvhp5B6Jzj6wIDAQAB"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "nytimes.com",
+      "records": {
+        "nytimes.com": {
+          "TXT": [
+            "1password-site-verification=5XOUF7UVRZC5XFXKJ7IH435GPA",
+            "253961548-4297453",
+            "MS=A1BFCA84E21B7011CA98DF9DC251CDDF90E0174B",
+            "MS=ms22827202",
+            "NV=6b9b6zcshr98ey1x",
+            "ZOOM_verify_ClSSgAI2bqqZQA66rT4Z1x",
+            "_b2ao2yybjl1klqaw0mahepejqyvwgq1",
+            "_wufmw8f1leho148v35f8zaogcyux7lx",
+            "adobe-idp-site-verification=5ce4d99c-af0a-4b76-9217-bd49d3336df0",
+            "apple-domain-verification=1BVLidj37w9zRMnU",
+            "atlassian-domain-verification=Vrn33GZgJTapfeggl1snZZ5a8HjNwfFb1K5kBxVNhp7jlMFlRZGUytV9rIHhGdR8",
+            "atlassian-sending-domain-verification=1b4b110f-a2dd-4853-8b13-de36c831aa81",
+            "cursor-domain-verification-cbqk6b=DdvvVJNHMmVswd6oRmD8GZX50",
+            "dell-technologies-domain-verification=nytimes.com_e9803e4c-210b-4501-a26b-705148cb7292_1777730473",
+            "docusign=6a4f88fd-cd2f-4917-acdb-bb2f343438a1",
+            "docusign=bd506110-db79-430e-b159-cc1d74fe1176",
+            "dropbox-domain-verification=4ld3jahx0psi",
+            "gamma-domain-verification-m0hfp8=Kn1CNDywmVQvNK2EE60GxQORI",
+            "google-site-verification=4TE2ggBoy6PktLjtZ03t32A2oEZ0VD0PY6MnTj8IL_g",
+            "google-site-verification=4qJm5sAZa1_29BTwFjqW09t7_7D4Vee3LBFQqg8xYbs",
+            "google-site-verification=NIqXa_F8IaqdPJhTtexgR0NYbzVLD_-X-uRUvyf4GyQ",
+            "google-site-verification=NSmi94k0NzvQaksUCNXeJZPYtJPSoUf52cjJsJcZFy4",
+            "google-site-verification=OJl4BugQ_esE20V0QtVc9DhqvnnxOLHnf5AmFjdLSqk",
+            "google-site-verification=ZTCMdpSKM7HwqTvGUf_00Ef008JhOnbzGgCSUGYfsro",
+            "google-site-verification=ZsySMeZ_SRbJZFu-53ptepytP7h5pxHO0qAg8Z2bKug",
+            "google-site-verification=aReMr8hkX3gxeHLKKk4tJ1s970U7QdEqUMIhMmLUfjQ",
+            "google-site-verification=dNxU4aqYrP-m9U4J4OO_hvaOfjepywv2BN8Luc-q4o8",
+            "google-site-verification=jZcmQFxPEP38yqYpmRvo0v_9hQFAdBZPUEBwTNUPUF8",
+            "google-site-verification=q5oM_szMOT79db0AJjdk_JP1xeurksaWmhbv_dd-MEM",
+            "google-site-verification=tvhSn0gaSi6CUrrc9N1pvq4tmJrzvbfJbKVWPrgg_6Q",
+            "jamf-site-verification=PIprfFrz8CBhH0TK0nNhnQ",
+            "klaviyo-site-verification=NsTtn9",
+            "klaviyo-site-verification=PkxYaQ",
+            "klaviyo-site-verification=VBhmML",
+            "lucidlink-verification=PZP4S4XGS2MW9TT3H76V0TPSY0",
+            "masv=oFbRBdtBUCoWWHaQiRJLZcKASUJZboJz",
+            "miro-verification=ee856857f05022ca58c04ab6f8e4014e564b3d6b",
+            "notion-domain-verification=4wS9fYEvnEgZg6Fc4cQ3atgsNuaj2zZIKwRP34uAGse",
+            "onetrust-domain-verification=1e62f8d767fc41a39fdf3f77025a8105",
+            "onetrust-domain-verification=dee1266d6a984549b43a1bd101957a8f",
+            "parallels-domain-verification=df31386535ac4cbe8d70cde19722e58da9831b130c3d46299f64ca5d0ed0f94d",
+            "segment-site-verification=Z6wALFPYli6z0AlPlgjZXpMVRLZ2KiRb",
+            "serval-domain-verification-bew4y4=VA1qmSGnvHaYCguEOONe1E2Nq",
+            "shade-domain-verification-wys4jv=w07FFVQR3MSW3TNoXqZAYS7O0",
+            "v=spf1 include:nytimes.com._nspf.vali.email include:%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email include:_spf.e.sparkpost.com include:amazonses.com ~all",
+            "wiz-domain-verification=f58277d3dd68296f29aace3a12b746a054eee9f6c472f21673207cfcc1991081",
+            "wrike-verification=NjYxMTMwODpmZGRiNmQ3Yjc1Yzk5NjFhMDk2OWI4MWM2NDhkZmYxNjdmOThhODQ2MDJmZmI0ZTMxNTUxOTMzZGRlMzQwZDEw"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt3.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com"
+          ],
+          "A": [
+            "151.101.1.164",
+            "151.101.193.164",
+            "151.101.129.164",
+            "151.101.65.164"
+          ]
+        },
+        "_dmarc.nytimes.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:dmarc_agg@vali.email,mailto:dmarc.report@nytimes.com"
+          ]
+        },
+        "google._domainkey.nytimes.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxPzd1FdX+tDLRwxu4INrM6izfw2Re6or0UJLy2FeoHMsyw3hphrHaLRFzH5EKjQc6hiBXFucXUIPMJEyw5V7hQfn/sNr93nge5bFbuvTO/N8U46OCkbm4SmK/TGpcnNnn62nvgN5bxo9UzW9D2z8josC97q0cA2G70lELRfR18EApuYCDj0ccfmCLyOwItCeav1yMHAIbg9z50mrTTL2lHh6J4iQcOIj5cdz8VQwnUnBCOOuGUteOd1JNR0yEx8UchBqcntQe4ktag7I4xCwxrXhmleCJeT0+9DDpuROICna0CqO2QMWqjdp8qeYdM/RW3rQx3uhprSTIUWeMM2LWwIDAQAB"
+          ]
+        },
+        "s2._domainkey.nytimes.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgq4WY8wH4aXqOltolkyjnUGMTJ1T6k9YscUFOesyEs68aiMRz0Kg594jiqfi6p2MVD8bbVyPEEGypzvdCcF2dX1Yv2v082ntk9UYi1Hf9GAL83R7tfirm1XHc9c1hsAq0twzfOzDPZ/bLIgfMxHHPY5+Lbt0HJHhmMSr7T8EyEQIDAQAB"
+          ]
+        },
+        "nytimes.com._nspf.vali.email": {
+          "TXT": [
+            "v=spf1 -all"
+          ]
+        },
+        "%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email": {
+          "TXT": [
+            "v=spf1 -all"
+          ]
+        },
+        "_spf.e.sparkpost.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.sparkpostmail.com ~all"
+          ]
+        },
+        "amazonses.com": {
+          "TXT": [
+            "google-site-verification=aOJq8aXEtCO23r176f6iOTGt-RVuPv81XPtBuIzRTx0",
+            "mailru-verification: 71ab435de908d6ed",
+            "v=spf1 ip4:199.255.192.0/22 ip4:199.127.232.0/22 ip4:54.240.0.0/18 ip4:69.169.224.0/20 ip4:23.249.208.0/20 ip4:23.251.224.0/19 ip4:76.223.176.0/20 ip4:54.240.64.0/18 ip4:76.223.128.0/19 ip4:216.221.160.0/19 ip4:206.55.144.0/20 ip4:24.110.64.0/18 ip4:98.77.0.0/16 -all",
+            "yahoo-verification-key=OL6T0cZm2ykeymVyCj7mnvnTL3zAtLwrRXGAgBFtvFw="
+          ],
+          "MX": [
+            "feedback-smtp.us-east-1.amazonses.com"
+          ],
+          "A": [
+            "13.225.103.87",
+            "13.225.103.6",
+            "13.225.103.99",
+            "13.225.103.112"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "proton.me",
+      "records": {
+        "proton.me": {
+          "TXT": [
+            "yandex-verification: 95a7888a0f987e6a",
+            "v=spf1 include:_spf.protonmail.ch ~all",
+            "linkedin-site-verification=01e79150-bf68-4e0c-ad04-822dc1015b3b",
+            "protonmail-verification=5262a92f988e64f1be1362138befdf1e19d6a4c1",
+            "google-site-verification=2FGIDo-Gf-lWE6t_gWd9gpPTehHD85hbNiEujPVgysc",
+            "google-site-verification=4UIZgETX8lGnv0WwpeJJbszo9daKOdXXYBKCA2XLf94",
+            "google-site-verification=MUjtKY-4uQAjE92Z2-s1nm9m4mvdqY2z6HCvi_Bj4so",
+            "google-site-verification=QviHfE1VQ57-tDmDLxM6BQH1mdgvdQ_0QsIvCht2IaU",
+            "google-site-verification=_ayl1WqWIag2WkIbK4sNg_x3NCT5nYOl_DgtFPTYKeg",
+            "zoom-domain-verification=ZOOM_verify_5990c1fbb09d4c6aba062cded6cbdf06"
+          ],
+          "MX": [
+            "mail.protonmail.ch",
+            "mailsec.protonmail.ch"
+          ],
+          "A": [
+            "185.70.42.45"
+          ]
+        },
+        "_dmarc.proton.me": {
+          "TXT": [
+            "v=DMARC1; p=quarantine; fo=1; aspf=s; adkim=s;"
+          ]
+        },
+        "_spf.protonmail.ch": {
+          "TXT": [
+            "v=spf1 ip4:185.70.40.0/24 ip4:185.70.41.0/24 ip4:185.70.43.0/24 ip4:79.135.106.0/24 ip4:79.135.107.0/24 ip4:109.224.244.0/24 include:_spf2.protonmail.ch ~all"
+          ]
+        },
+        "_spf2.protonmail.ch": {
+          "TXT": [
+            "v=spf1 ip4:85.9.206.169 ip4:85.9.210.45 ip4:37.187.220.204 ip4:51.83.17.38 ip4:57.129.93.249 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "python.org",
+      "records": {
+        "python.org": {
+          "TXT": [
+            "888acb5757da46ad83b7e341ec544c64",
+            "MS=73147F1EC0843C399CF17F586EC6B8EAF8C57961",
+            "_globalsign-domain-verification=B57sRQpmte4G4w-gavZbVNmmNsMxGp5kcL19UP2599",
+            "anthropic-domain-verification-x3xt87=cFLP3aL71pAYPZLQR7JKvRhcF",
+            "google-site-verification=9852CbTRhQ51-9gCUayPbGYqJeBle_MXLb6E4AL_qQk",
+            "google-site-verification=QALZObrGl2OVG8lWUE40uVSMCAka316yADn9ZfCU5OA",
+            "google-site-verification=dqhMiMzpbkSyEhgjGKyEOMlEg2tF0MSHD7UN-MYfD-M",
+            "google-site-verification=w3b8mU3wU6cZ8uSrj3E_5f1frPejJskDpSp_nMWJ99o",
+            "libera-1298aas",
+            "openai-domain-verification=dv-VgeNijVDgW7g56UZyGIVyKNr",
+            "status-page-domain-verification=9y2klhzbxsgk",
+            "twilio-domain-verification=1c295667813cc0aaae819ed7657818f8",
+            "v=spf1 mx ip4:188.166.95.178/32 ip6:2a03:b0c0:2:d0::71:1 include:stspg-customer.com include:_spf.google.com include:mailgun.org ~all"
+          ],
+          "MX": [
+            "mail.python.org"
+          ],
+          "A": [
+            "151.101.128.223",
+            "151.101.0.223",
+            "151.101.64.223",
+            "151.101.192.223"
+          ]
+        },
+        "_dmarc.python.org": {
+          "TXT": [
+            "v=DMARC1; p=none; pct=100; rua=mailto:re+shb8ybr70a3@dmarc.postmarkapp.com; sp=none; aspf=r;"
+          ]
+        },
+        "google._domainkey.python.org": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOu1HEs6/+K8nD1TgxnDYPE0Pdsj/eLUEEZYbgBzuMGc9G/kdx5RpOhCiEAhju96049GMcWtrYz4xiRSCkHgtsUXKRpC+uMbOzHywr92QM/y7t+UyV59n9w3l73oIoOYa9TvmJ7VDoShtwd8fb2cyaiKybeXIcf6tzOS9WJsugWQIDAQAB"
+          ]
+        },
+        "stspg-customer.com": {
+          "TXT": [
+            "v=spf1 ip4:23.253.182.103 ip4:23.253.183.145 ip4:23.253.183.146 ip4:23.253.183.147 ip4:23.253.183.148 ip4:23.253.183.150 ip4:166.78.68.221 ip4:167.89.46.159 ip4:167.89.64.9 ip4:167.89.65.0 ip4:167.89.65.53 ip4:167.89.65.100 ip4:167.89.74.233 ip4:167.89.75.33 ip4:167.89.75.126 ip4:167.89.75.136 ip4:167.89.75.164 ip4:192.237.159.42 ip4:192.237.159.43 ip4:159.112.242.162 ip4:159.135.228.10 ip4:198.244.56.107 ip4:198.244.56.108 ip4:198.244.56.109 ip4:198.244.56.111 ip4:198.244.56.112 ip4:198.244.56.113 ip4:198.244.56.114 ip4:198.244.56.115 ip4:204.220.181.105 ~all"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "aspmx2.googlemail.com",
+            "aspmx3.googlemail.com",
+            "aspmx4.googlemail.com",
+            "aspmx5.googlemail.com"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "mailgun.org": {
+          "TXT": [
+            "8f7088gv5932jxw9lwwd1b6ttx2pw2ds",
+            "_8nu1z7buo055obs89jw55hkjzooc4nm",
+            "_zowlnczhs3ly3yr8wkbffswsqqbijle",
+            "bm875fk62qjqg22ls9c0hzvp69fg6v45",
+            "google-site-verification=FIGVOKZm6lQFDBJaiC2DdwvBy8TInunoGCt-1gnL4PA",
+            "v=spf1 include:_spf.mailgun.org include:_spf.eu.mailgun.org -all",
+            "yahoo-verification-key=6SqcA173NI/sqCJxeUdqWBdMhCYOvO3l8KcWWDpf0qY="
+          ],
+          "MX": [
+            "mxa.mailgun.org",
+            "mxb.mailgun.org"
+          ],
+          "A": [
+            "34.102.239.211"
+          ]
+        },
+        "_spf.mailgun.org": {
+          "TXT": [
+            "v=spf1 include:_spf1.mailgun.org include:_spf2.mailgun.org ~all"
+          ]
+        },
+        "_spf1.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:159.135.224.0/20 ip4:69.72.32.0/20 ip4:204.220.90.0/23 ip4:204.220.92.0/22 ~all"
+          ]
+        },
+        "_spf2.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:161.38.192.0/20 ip4:143.55.224.0/21 ip4:143.55.232.0/22 ip4:159.112.240.0/20 ip4:198.244.48.0/20 ip4:204.220.168.0/21 ip4:204.220.176.0/20 ~all"
+          ]
+        },
+        "_spf.eu.mailgun.org": {
+          "TXT": [
+            "v=spf1 ip4:141.193.32.0/23 ip4:159.135.140.80/29 ip4:159.135.132.128/25 ip4:161.38.204.0/22 ip4:87.253.232.0/21 ip4:185.189.236.0/22 ip4:185.211.120.0/22 ip4:185.250.236.0/22 ip4:143.55.236.0/22 ip4:198.244.60.0/22 ip4:204.220.160.0/20 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "salesforce.com",
+      "records": {
+        "salesforce.com": {
+          "TXT": [
+            "00DF0000000gZsuMAE",
+            "00DF0000000gZsumae",
+            "5/1ESlGdIH/mwCF+T9SOo3PjURgk0lqakv0VJ8er4Ss=",
+            "bfoL2cbOzLBDjg5nkNl2xsQlxPZhJ8tnn23pQsJjpaw=",
+            "q/gkc5aD1q4LsIqGZNnaWloUcU7mg85GZT6HtmD/YLw=",
+            "SFMC-cGJQFeEomoQQt-tQ3c_QXefdwzOGuj_Tjl4oWwrW",
+            "jamf-site-verification=6VMo4NqTt2upSV1B7wb8sw",
+            "canva-site-verification=_abffN3m74Bc2XZ_68lccw",
+            "cloudhealth=7fe179e6-9085-4d4a-b2cd-eeb11f0c2468",
+            "1password-site-verification=IIVOBJGQRBCNTB3RNSU7CCAFQY",
+            "docker-verification=b238c187-0eb6-4710-ac1f-0d2ed19765b5",
+            "mixpanel-domain-verify=f2151de7-1e89-41b1-8968-b7cdd8df6740",
+            "vmware-cloud-verification-edb072dd-c0ed-478e-a55f-1aa17364e617",
+            "remarkable-domain-verification=394b7d94-d630-4c40-ac32-413a38622f73",
+            "google-site-verification=AF6Xx_zcM9CpPWi0iT5dSiHH05tVgT3Gr2ERgAZ0-m0",
+            "google-site-verification=AgWPJ-RJmfrnOtIUUO5mTFDFVNb5XJPAJAUduwbF9PE",
+            "google-site-verification=D6BlHxqITDdvcLDrxA3_ltYf9P3rRxm8AKKNT3rk4W8",
+            "google-site-verification=HV79FO1Y0siBF9WSte-fAOzLI3om9c1V08sBXq2p39M",
+            "google-site-verification=OXivRKiSmufeLZHqZHxzvbEU_LFMiy4XwYtJiSS1BhQ",
+            "google-site-verification=XHgruaJj29eI7YjqDkEWZivuT0wlakIWgB2N4DRa_QM",
+            "google-site-verification=YWwSjixMcFJ1lVJe2XyMsPgFOe8E5vaW6xV-pVmxQQs",
+            "google-site-verification=h5tEfIPH1oMV9hxvFY7mWCS870JmVhm-bpbKTTg5L4A",
+            "tiktok-developers-site-verification=6SG6XJHEtcx9rqix8FICiM4RxxkC4g1L",
+            "zoom-domain-verification=ZOOM_verify_6429ec4f4e4f49e58350c473496f0f18",
+            "zoom-domain-verification=ZOOM_verify_d9d75d3013184f4ba571502ca24dfaf6",
+            "liveramp-site-verification=EIEl6MgS2nOv3dKtxxVir8tWpKE85lmKSh2s7wGwE4w",
+            "notion-domain-verification=Lh3bZWCwAyG9KMR88UmcLLXPlUj4eIud9Gp4gf85VGJ",
+            "pardot1=6eae4d5ab80fc91a64539164ab421392a58d97551b230b12152dffb7553ea905",
+            "neat-pulse-domain-verification-zDvG1kM=5074fe39-a4bb-479e-9018-9ef1878fd2f1",
+            "pardot220122=922f8d6c355d7ff72ed3e771a2eca71656d0249cfdc70a8cebb481d367d6f006",
+            "hubspot-developer-verification=YjRkOWExNDAtM2JjZS00YWQ0LWExNzItMGVkYzljMDEwM2M3",
+            "stripe-verification=7a979e02f78e0a07950be0a127275cc4866db0a196913cfceaaa8035b8dbf959",
+            "stripe-verification=92ed39e34d3d3361667499947254c2fe1e02c212ca373bf11734c1423133dcfe",
+            "stripe-verification=9ca4e73f9b5286bdcdbd5b91f97ad519544e5ee56eebb2f2dc6b48dbec579fe0",
+            "stripe-verification=B20840C7B159BD229B805ABB54423AE52404E97B4697AA9C23ECF43BA3E8BC37",
+            "sending_domain182062=ecf3eec4d6ebcf61c5f77be11dffd322fd0f57d8d10fc75c7ae07ffc21d427a7",
+            "sending_domain373542=845254d896ac5dfad0d6494e4908a8b6a5e057fdcce30d211eebadeb6b4e87cc",
+            "hcp-domain-verification=92c617d35c9102aa0d57a73ea5894ce0a593b2ec34bb05486eeb69f6ef15f7fd",
+            "wiz-domain-verification=bd7c056632587f3ed47469d69d09e588d678f394514dec498839f1932beb4461",
+            "atlassian-domain-verification=vTF7JaBo8Jpp/uhUFDPztkIr5aildFzbq9aLIcBbwK5aIdI9s8WQRGPTnKRONIiM",
+            "v=spf1 include:_spf.google.com include:_spf.salesforce.com exists:%{i}._spf.corp.salesforce.com ~all",
+            "DirectFedAuthUrl=https://salesforce.okta.com/app/salesforce_w19107268_1/exky1kgawwTUSZCb2697/sso/saml",
+            "DirectFedAuthUrl=https://salesforce.okta.com/app/salesforce_pwcidentitypro_1/exk12ojlg6rjhBkTY698/sso/saml"
+          ],
+          "MX": [
+            "mxa-00177002.gslb.pphosted.com",
+            "mxb-00177002.gslb.pphosted.com"
+          ],
+          "A": [
+            "23.1.35.132",
+            "23.1.99.130",
+            "23.1.106.133",
+            "104.109.10.129",
+            "104.109.11.129",
+            "184.25.179.132",
+            "184.31.3.130",
+            "184.31.10.133"
+          ]
+        },
+        "_dmarc.salesforce.com": {
+          "TXT": [
+            "v=DMARC1;p=reject;fo=1:d:s;pct=100;rua=mailto:dmarc_agg@vali.email,mailto:0e5a5c34@inbox.ondmarc.com;ruf=mailto:0e5a5c34@inbox.ondmarc.com"
+          ]
+        },
+        "google._domainkey.salesforce.com": {
+          "TXT": [
+            "v=DKIM1;k=rsa;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCRCUqAlY3xk1yzKshtyKnGPy2vpTDFmMUk2dU8TTHNBHTd0R4v+6Nz+XfS6JmQGpdUpHPXesF9u2MzQ/LkFWDBK3AMuJHwtxlV6ffen5U0J63zP+8NRNbmp46kWXrSR2q5d2Efp6wNUeysyiNw37504o8Ynuds/9SPAHH1EaYj+wIDAQAB"
+          ]
+        },
+        "s1._domainkey.salesforce.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxxnwZc4IneYo8cRg6PRR6pl4wxaqDxBVPRtJIMhHv29VTpmPUIMHKmwlShalUouq4ygcxNt90z3hfkUdmSfFm6sE/sdXCEdm1ufTnDcTt7RPOK16unAmdv6ruqdjqmd6ePYRlnkJtP+mVQar66FQuVFDAKsRlhhvyisd0nYt5C2IRmB14SlDZ2ebFvPEnjV12fgQcBT3Fo0L35CU1YoZQqDr0JONfYZHVMjCCQKZg4IUTTeOyriEE+gd2eukNIjLX8KQkZeNKuBv3ongV8Aac2Oq6+40VTNxre9dRaRg9Bld75lYdWiX6YqW8Afs9Tl4C6BhSThfsYuFoDOuKwMQIwIDAQAB"
+          ]
+        },
+        "s2._domainkey.salesforce.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgq4WY8wH4aXqOltolkyjnUGMTJ1T6k9YscUFOesyEs68aiMRz0Kg594jiqfi6p2MVD8bbVyPEEGypzvdCcF2dX1Yv2v082ntk9UYi1Hf9GAL83R7tfirm1XHc9c1hsAq0twzfOzDPZ/bLIgfMxHHPY5+Lbt0HJHhmMSr7T8EyEQIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "sendgrid.com",
+      "records": {
+        "sendgrid.com": {
+          "TXT": [
+            "48ed3283-0038-4458-8cb0-d2e7d0a4b860",
+            "8mqpm5f9vltr3jvue71slj2j31",
+            "MS=ms77173225",
+            "anthropic-domain-verification-gjxs4q=b0anOdwQdQOCAOZGbpSFZUrIz",
+            "dcacl5d6qbb453nflucim3hi48",
+            "efd3d1covh2tjg32cohdkjof71",
+            "facebook-domain-verification=dfv1zm6tx7ues6olt99mpc58vh49qj",
+            "facebook-domain-verification=jotjcwyly7se4q6c3xsysztxo287s9",
+            "google-site-verification=-BR0U2prX8YJz74uUQygVn22zPdt86Jc5FVd5ZX6xXo",
+            "google-site-verification=gZJHxa9fylVS3VZ3Zl8jPTZesFDJi28bh5PQJujhez8",
+            "knp3gmub9ht14m0lg24j0e5rq1",
+            "loaderio=dc99536e3eb902ffc82885541e224e7c",
+            "ms2jsau3o1f4h802lr68bsb256",
+            "n0mu5saqt0fr95cu201trbacah",
+            "postman-domain-verification=06c6947dd936dddbbfe7a7e5a71b5c984a44e5ce0cadd7a8174320c42fd2f5e2f10e18590d5fbaa5f574df473f2a841a8fc6bcb4fed1ec15254845ba5aad1ab1",
+            "status-page-domain-verification=989qbtpx3q0r",
+            "v=spf1 include:sendgrid.com._nspf.vali.email include:%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email include:stspg-customer.com ip4:167.89.60.95 ip4:50.31.36.205 ~all"
+          ],
+          "MX": [
+            "smtp.google.com"
+          ],
+          "A": [
+            "13.115.113.96",
+            "18.140.219.140",
+            "18.143.23.186",
+            "52.194.152.104",
+            "47.130.27.239",
+            "3.0.128.244",
+            "54.169.194.173",
+            "35.73.28.67"
+          ]
+        },
+        "_dmarc.sendgrid.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; sp=reject; pct=100; adkim=r; aspf=r; rua=mailto:dmarc_agg@vali.email,mailto:dmarc_rua@sendgrid.com; ruf=mailto:dmarc@sendgrid.com; fo=1; rf=afrf; ri=86400"
+          ]
+        },
+        "s1._domainkey.sendgrid.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2LaY8C3pdtdkSF6C+TTYw0bIKAHt70oFeM5IAHb0aLVY7mSWmjWmPHtV6MGbr4n35ABRKpobn40DJGLU7NmjaT54TDTLLsU2DjEFi+p6VQtHdqprrbFNXt5YmQmnYdsHQ0gSe/nyb6PwoX5q92HexVxfT4/etJ+WKnOf4rk2vZplVoeiaxT5Cxench8SzFLa9u1UrJTdFHkWuVl3aR64Up2bOfR3u9uXjkvMXwX0NdjsZeF0GXi1fqUQXg8s7VriECC2TiioWcB0AWPJoGeNfgGO7O6Oj1mdLPQQJrxqzManJrKp43yS9cO+GVXCf92hPTb93nrAWQjehoRbS/rCrQIDAQAB"
+          ]
+        },
+        "s2._domainkey.sendgrid.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQChUpCk6itlhr2WBAtmfviFFznp4W3uvrOwFost3jPzLudSHgmrj5FT36Vqq53Fx67UUlU7vknT7TEnV+ZMB1O6e+5ZGmBAvzyT04VcihgO+WwZoUEWskpd/HjtJokfhrWrlLE2P3jNC9rCXJZuZSQfY2sV+amW+lTyh9ZpuA92xQIDAQAB"
+          ]
+        },
+        "sendgrid.com._nspf.vali.email": {
+          "TXT": [
+            "v=spf1 -all"
+          ]
+        },
+        "%{i}._ip.%{h}._ehlo.%{d}._spf.vali.email": {
+          "TXT": [
+            "v=spf1 -all"
+          ]
+        },
+        "stspg-customer.com": {
+          "TXT": [
+            "v=spf1 ip4:23.253.182.103 ip4:23.253.183.145 ip4:23.253.183.146 ip4:23.253.183.147 ip4:23.253.183.148 ip4:23.253.183.150 ip4:166.78.68.221 ip4:167.89.46.159 ip4:167.89.64.9 ip4:167.89.65.0 ip4:167.89.65.53 ip4:167.89.65.100 ip4:167.89.74.233 ip4:167.89.75.33 ip4:167.89.75.126 ip4:167.89.75.136 ip4:167.89.75.164 ip4:192.237.159.42 ip4:192.237.159.43 ip4:159.112.242.162 ip4:159.135.228.10 ip4:198.244.56.107 ip4:198.244.56.108 ip4:198.244.56.109 ip4:198.244.56.111 ip4:198.244.56.112 ip4:198.244.56.113 ip4:198.244.56.114 ip4:198.244.56.115 ip4:204.220.181.105 ~all"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "aspmx2.googlemail.com",
+            "aspmx3.googlemail.com",
+            "aspmx4.googlemail.com",
+            "aspmx5.googlemail.com"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "shopify.com",
+      "records": {
+        "shopify.com": {
+          "TXT": [
+            "00078847",
+            "0lc931fl5ld2dpl15vx2flfkdwyvrrzx",
+            "MS=ms27001972",
+            "_globalsign-domain-verification=1x11a1Wg3i08rScgK7aAMUJm_fdzKxH4whkWxr1bbg",
+            "_globalsign-domain-verification=_PJNYsq_1XyZleC1yx45rb_EUgbgkaJU36yk3CK0tk",
+            "adobe-idp-site-verification=45576d365ff5492a15bc403c11382aad83403810324300fd62c5f196ce9e9063",
+            "amazonses:CxAO0EM1odef6TrFP0hDQh/2R7RoZYy8YlHYktk2Frk=",
+            "apple-domain-verification=eMDCoIZdcJThX3yQ",
+            "atlassian-domain-verification=aakXh8UjEwy75X6ck4l8jTIJDWHQ9CIunnUsE00mRgxM8IUzaJGlIt8zIINLFALR",
+            "autodesk-domain-verification=e9Nbi4FUDsS7clWU8iNj",
+            "bitrise-verification=990e159e8448fcb6-hCIxnrabFeH9",
+            "ca3-86f15a314f3342baac2abe7a8849163c",
+            "ca3-fc9272b0aba34ba6991c0a62bc1998a0",
+            "docusign=de9614db-a0fa-4060-a1fa-2c444429ed9a",
+            "drift-domain-verification=9b23e1f43b57171c988b4510e75a686bda241639096f7eaabe8ff3d72ac63476",
+            "dtm-domain-verification=LhGwRr1DLWJoF6bVodh035n_BRj4Xu8PaEZ6bvvgd2Y",
+            "facebook-domain-verification=u17rffysxyek688vqh4s02307suaza",
+            "globalsign-domain-verification=Cpw4zOAIT5WSnINjnI4gafPgxsCJlEF4Ac_70Xm93I",
+            "globalsign-domain-verification=lfM-pzwumuFWKV-wNEGq7a3KtsmRLJKsDxZzQaMjkw",
+            "google-site-verification=0nU18bxQue6doDAWZDptfd66kTIqHqW00fDhfJSd9es",
+            "google-site-verification=96L28-MtSBLeQmyYR04q9iKI_Ib5qZd0YzVL8s1_gD0",
+            "google-site-verification=Vm4475oXq82Dl_WCtZcmlaW3xrpB-6fyQXboHBjzzPY",
+            "google-site-verification=a4GkGdS7vBnkI284VSCo4bfYDNg-8OcEyjz8PR8ZhDM",
+            "google-site-verification=knwYi_vDES4v7XUl8OOtP4gu4qhwAzIBbeB2ou2jx8Y",
+            "google-site-verification=vEpSvWK6hOKDBrCrJ4uUeCliFPV0nyP9m_UCOEjJv1Q",
+            "klaviyo-site-verification=RcWeYn",
+            "klaviyo-site-verification=SA72ug",
+            "klaviyo-site-verification=SuEeFy",
+            "klaviyo-site-verification=UBeZ6P",
+            "klaviyo-site-verification=UfTdFX",
+            "klaviyo-site-verification=VbLhyy",
+            "klaviyo-site-verification=VrspSg",
+            "klaviyo-site-verification=XxDdwy",
+            "klaviyo-site-verification=Y2Hvrx",
+            "klaviyo-site-verification=YA4hNy",
+            "linear-domain-verification=3xuktyudsdny",
+            "liveramp-site-verification=N48gDNFN3IB2NKIf75Fl46_sUzjxAbY3c1mfWs5pIKM",
+            "lucidlink-verification=7VB3ACRNY28GWP54ZC3YXN7QWR",
+            "mailru-verification: a6784d11ca5a5f7b",
+            "mongodb-site-verification=vBP464dSOK9bgg6FWBthUMqVjYfqnjuY",
+            "openai-domain-verification=dv-2etxemuOx7cXQDQ5EjEWGZ9A",
+            "openai-domain-verification=dv-3UNPEg4DuUI5Ace0uw1hzLq3",
+            "openai-domain-verification=dv-SSeJm7iAiW11oexpj9ZCqdil",
+            "protonmail-verification=c7bd7e61072d9855cfcab2f08804404f639439f9",
+            "qqmail-site-verification=bc0dd9aa889c6a66d9a58b31e496873cc7ae214ca8f",
+            "rfs0f736s88q7ml97jw9qhg1yy2wmdy5",
+            "rzp-site-verification=0c152e27933f70c5c7df025be3319f65",
+            "stripe-verification=61e8fb112f5e7ac2708127ea93fd0369d6a4f768bd498fd0d928c206a6240bd7",
+            "teamviewer-sso-verification=85d99b4ff4b64f03a469d0c42c1eee61",
+            "twilio-domain-verification=ebc01f01cee0f1aea3f4c069b8865de9",
+            "v=spf1 include:_spf.google.com include:mail.zendesk.com include:sendgrid.net ~all",
+            "yahoo-verification-key=9t6XYs7YEajKycpYmHz742ZV/lm84njkfUfGUldOtZM=",
+            "zapier-domain-verification-challenge=506c545d-443f-4439-8d84-64648211b1f1"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt3.aspmx.l.google.com",
+            "alt4.aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com"
+          ],
+          "A": [
+            "23.227.38.33"
+          ]
+        },
+        "_dmarc.shopify.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; fo=1; rua=mailto:dmarc-aggregate@shopify.com;ruf=mailto:dmarc-reports@shopify.com"
+          ]
+        },
+        "google._domainkey.shopify.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCYb9CEvB9Fl44NTJtFQAlzmnP5ZJ7T8kdJ4QV58E/GBkwDQPCvajrwxkcq414yDaGJZEIK0NYKFQubkTE7MfRF2Rk5t0b0vy0j+nj/LiftFFdqi1UUCQ9Rie79JaLtYRRfhd4FeEmt6IoEf9bjioOqVz4Eao5MgXKX1asdUhc9fQIDAQAB"
+          ]
+        },
+        "mail._domainkey.shopify.com": {
+          "TXT": [
+            "v=DKIM1; g=*; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6FVv1tmxOilnHUpvqpf4jlVcidUZL9A9NmMvzBifAtmn8QxlfvyrI8aQ+5T7eQVJGWeL/9stWhKhKZbXLkH6GIudAbe2u8e3cSpfHZN5kvDqiDL7w6Kj+aWOEQX6w0Prt6lWdgz9W8vdD7TCfXH3BrROh05qX0YP3yVwYXRqpIQIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "3.211.161.173",
+            "52.21.142.91",
+            "34.227.209.168"
+          ]
+        },
+        "sendgrid.net": {
+          "TXT": [
+            "5m3r13nvilmq8tgf5foh6ki1uv",
+            "6ifgg010qg6mquqt5lodun8qds",
+            "cemmvnbghpsb500d7c19e35fgm",
+            "google-site-verification=1UEf8ey-RibUjY6gnpqIZFjWNqMknmeyeHz1zTmj0DE",
+            "i52uk89q4nfe1mpgqv5qsmsj3j.",
+            "l8bqrl0r33q4joeb79q8uuj009",
+            "mailru-verification: 2e3995fa8a7d00e0",
+            "p8bnb2lp424dkl3c4io1aemiei",
+            "tdjhrpaflcikf52iqtn9rnggr9",
+            "utjqqjvmeadmlva41ectre9gd3",
+            "v=spf1 ip4:167.89.0.0/17 ip4:208.117.48.0/20 ip4:50.31.32.0/19 ip4:198.37.144.0/20 ip4:198.21.0.0/21 ip4:192.254.112.0/20 ip4:168.245.0.0/17 ip4:149.72.0.0/16 ip4:159.183.0.0/16 ip4:134.128.64.0/18 ip4:159.26.176.0/20 include:ab.sendgrid.net ~all",
+            "yahoo-verification-key=TrufSXS+dfythA5AIMbLUnkX38rjr1HR93gbqHUSY74="
+          ],
+          "MX": [
+            "mx.sendgrid.net",
+            "mx2.sendgrid.net"
+          ],
+          "A": [
+            "54.254.79.46",
+            "18.136.28.99",
+            "52.195.24.26",
+            "54.92.41.242",
+            "18.136.163.76",
+            "52.77.13.11",
+            "54.255.41.144",
+            "52.220.178.109"
+          ]
+        },
+        "ab.sendgrid.net": {
+          "TXT": [
+            "v=spf1 ip4:223.165.113.0/24 ip4:223.165.115.0/24 ip4:223.165.118.0/23 ip4:223.165.120.0/23 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "state.gov",
+      "records": {
+        "state.gov": {
+          "TXT": [
+            "296google-site-verification=qppF5HANsa4Le2yz36etSS0JzYXgrmlVCT0B3WvvJs0",
+            "3s7a9eg7p962inkbc8m2trfqm1",
+            "7jlo1bedb9nhjlqfkicji0otp3",
+            "fd8jjikpt2lfo2afsth4c970l0",
+            "sb85m8m5b6mnl9chhhhac7qg01",
+            "00Dcn0000087jtR=1TBcn0000000GKv",
+            "apple-domain-verification=B9cNW7DYEe4D1XLt",
+            "docusign=1b1e93a2-2269-4fb6-bc74-d18191e068c8",
+            "docusign=1f1a0eb6-3b40-421f-a277-a8ccb58c3f76",
+            "docusign=2417507a-10ef-4376-aa1f-297ed6024477",
+            "docusign=8e75125d-b668-4668-8577-7ebc98204220",
+            "bluebeam-verification=c9n30urwkz0tbug2x1ex350pwyhorz",
+            "amazonses:4O2xpkJi4Svaztkj0jpYpU82Oqsq7zkswuN2gAf5iEY=",
+            "facebook-domain-verification=e2plk83i6q38ym069k2y3fizpzk3rm",
+            "ms-domain-verification=60eeb958-7b4d-428c-8355-8c2aa8e41563",
+            "smartsheet-gov-site-validation=Balwzo_O9A2uB3EXVmu6-H1ZimvN79gt",
+            "smartsheet-gov-site-validation=C_4pt-6bNmPpjrmKmO5c9p1qupAMBcnO",
+            "google-site-verification=9bWszKscPW3HZH2zqvYiL_MT4hyJzpPTfHMEO5WGMIw",
+            "google-site-verification=k8qmb6x58WZ4T-clIWhXYNSTZaLGvvKoRhxL4MwzM3s",
+            "google-site-verification=qppF5HANsa4Le2yz36etSS0JzYXgrmlVCT0B3WvvJs0",
+            "h1-domain-verification=PywJ6ZKiZtwB5E4RqLrr2QrokcfSUJ4yMBPboLQhNd8TAbes",
+            "adobe-sign-verification=7ef4a560cf4caa63d9e706ddafc56fa704f01da63632a29363fcd9762038bdb7",
+            "b+VwNE1mX7ltBSA4ZbrFmDCu7muDaRyJIPWDKJeQz1NDNusR1j3sYpBKBXQ1W86IJ1uI1bUA4m0dIet1p3CMjA==",
+            "wiz-domain-verification=a02ea9025bbc0aa14606367133a8cef093b7c991110c85f7fe80c44581365008",
+            "adobe-idp-site-verification=85b7dc1b57ae06180cf14f199ddb60b6a689670d131931659bae91bee3003b0c",
+            "atlassian-domain-verification=6MQrPZcNa/8rXtiDDL08pAXJ9dUrKSSpNXZ/1IqfDyl2XYF/7e3EnjfBV92cg2fE",
+            "v=spf1 mx a:_msiplista.state.gov include:_iplist.state.gov include:_iplist2.state.gov include:spf.protection.outlook.com -all"
+          ],
+          "MX": [
+            "usdos.mail.protection.outlook.com"
+          ],
+          "A": [
+            "34.233.146.45",
+            "100.28.244.61",
+            "107.22.78.153"
+          ]
+        },
+        "_dmarc.state.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:dmarcreport01@state.gov, mailto:reports@dmarc.cyber.dhs.gov"
+          ]
+        },
+        "selector1._domainkey.state.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCiHrw0i5VKwwXLSC0S8tXKkAqbL4KmHf4n2eD0H3udVV5Z4C7PHXVFiF20KZFG6Xkfz870m9+KwBdO/fKqMv/ggwWYyxni/nXwLBQ6P1pAT2wpOECWnzPe0eObq6t6+5fHCx5RMpu4XAFbVnrWS2VEcpt91JfrilhZiLMm70iU5QIDAQAB; n=1024,1467923108,1483820708"
+          ]
+        },
+        "selector2._domainkey.state.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCr8uB3essg/hB7rsznZYIv0oEAR1ERNPHdU4YBI76faCNGYzIsby7+InBbhG5JQFKiQKnujFksDJ7Y3hN6AaxTbFZufq1C2K2Ls7oz19Ra7luRt6dlkl5gvlikDQ0PYAdNrz7pgT4qDO5wypiolXDHf9LAleSgcqmp2GLn2zWUeQIDAQAB; n=1024,1467923108,1483820708"
+          ]
+        },
+        "s1._domainkey.state.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmVNvPq7r3vnCRui53ymkP76MK7VT2CJA0QFGxoBLJhRCs4l+6dtN0Bb1n8m7+s+zDa58/ScfOOpmJvOvyPd60/7Ec0XL1q1kHZRwr06qb5CES7vyo1pjyquUWSslfb1VJlbGOlkp05xMeIswNU2hAXt+V5T7jUrVtuGPgpNnfIDydNVm0GKsy/SwkJd0W66gPUU/9TxsGjwSt6wElh2Qsy+TO5TqAvcsav0UrdcVIepRsbfE22Gz3bZVnTz/RD/d7lEPyqljWGZbDkxGHxXG4+vr6yCxypIvsX//uMd8/09gHyviEB3TWDzkNwDw6GW37lgJnKmXss+sDOSLsXLjYQIDAQAB"
+          ]
+        },
+        "s2._domainkey.state.gov": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6U9972p8vg9o1uQfWFKWKzv+KwK/60BaFIe5nPo2vpHIXGUMWl575lTXFe4ox93hG2d+T40ubHEBm9Rt8QfzhN+voNJooJD6urne6bJnVpvORE+HD0sLgEZgvM6SjVFvDa7PepSaAaMsbcecdnP2TvOWU4f0qML94OjpPp5QC4QIDAQAB"
+          ]
+        },
+        "mail._domainkey.state.gov": {
+          "TXT": [
+            "v=DKIM1; h=sha256; k=rsa; t=y; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7sQSJbwiRnNf88v+nH0GZjSqECO19JCzytO83GPnRVixaBeYU/BeFDlcUUCGShuvfqsREm9AEYjPsUGlSClnNa/nN9GdG2uOsGRVY1is9e7hAUNoK4MxVkLWD1ySvnJCwB+1M1PAQo3m1Bc5NLu5ps0MEcuE5u7QXDvjVdEZSQpUuMzVM/dc+0Q/Vql6px/pHspj4hLsuq/v1I3MlhL5y2yg7jIuhxCNjtMF4KrzJGfi3JwlWxTAQVCW6rEw8RmLqkHoUuoawaGjbkNmoP+cWRbkKw5EsaLEU6QvirzJolmUHu1LQgg1TPAbBnvbrJXDgQPjFZEBT67VZxQwDSTiRQIDAQAB"
+          ]
+        },
+        "_iplist.state.gov": {
+          "TXT": [
+            "v=spf1 ip4:12.183.71.3 ip4:12.96.41.191 ip4:52.180.39.63 ip4:169.253.194.10 ip4:169.252.4.131 ip4:169.252.4.132 ip4:169.252.4.133 ip4:169.253.162.11 ip4:169.253.162.12 ip4:169.253.162.13 -all"
+          ]
+        },
+        "_iplist2.state.gov": {
+          "TXT": [
+            "v=spf1 ip4:169.252.36.97  ip4:169.252.36.98 ip4:169.253.184.92 ip4:169.253.184.93  -all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "stripe.com",
+      "records": {
+        "stripe.com": {
+          "TXT": [
+            "00D50000000JV6w=1TBTQ0000000CIv;00DDn000000HWol=1TBVY00000002Hx;00D4x000003vxGL=1TBPQ00000008Tp;00Dfn00000BUlWD=1TBan0000000LPR",
+            "MS=ms80697640",
+            "VISA=38A3D7A1AA5D71E43525144DD886F6B8",
+            "_2m7hdcar6jar33f5vyr8h0xaru6rvrn",
+            "_c2ygqoyhcuwjjnqk7h1mcm0x144rm1z",
+            "anthropic-domain-verification-zk7x9c=QfN52ECybLPUWh51R9pKF0QO3",
+            "apple-domain-verification=8kIS0gmJTvILWQuI",
+            "asv=8de0c1a866b958297e22a36216e594a6",
+            "atlassian-domain-verification=upLp21qQgja1aHG2gnAb1AmXRqb/zG0UK1a0n3zTSXZg5DgOSttR3i5uzA3T9Cdk",
+            "canva-site-verification=xLypn0D9XANRy-lbwcMfHA",
+            "cursor-domain-verification-vncvvm=D0NzeIDbQa8PPgIf1ukp9UPiu",
+            "docker-verification=ccde1a0d-8d2c-44b5-9d20-6c4e19113fc9",
+            "docusign=4a93db58-af07-4632-a881-b569d41a6c57",
+            "docusign=4c9f5602-1c19-4e4c-bde7-77dc4b9ea8a0",
+            "edcbf4c7-b604-457b-870e-1b05f655e769",
+            "elevenlabs=NpcIkVJW_8Vyd2gLKzPviuaU1g5rz83KiWQQ3sWKGtI",
+            "facebook-domain-verification=m7id9rt8ehlgcg9tt2yggbsi6gro7i",
+            "fastly-domain-delegation-3c9tdnjzdwy7wfffvyyy-786084-2024-07-08",
+            "google-site-verification=NLkFgZLHeVMVYlR3t1UZC9_1LzmqCAefJyNDs6ZQqBA",
+            "google-site-verification=PrlpJHdk11CIkPsiXoHEAJevWHAk39JRFAqVSe9l7n0",
+            "google-site-verification=ZgGi2-xDdfnaWxdfjn5AqtUS11jKWqSXAV_EHODFzdE",
+            "google-site-verification=hPfjsDwiisKJ4RP1ExOst9gAOD_0P8Q7-kxdcKUvEcc",
+            "google-site-verification=pmz8ueKvWMPxNlwUDcVroF91-tq6I9VM6wSO_0i7-wc",
+            "google-site-verification=qjP3OAiraClha_40cX9Z9FrG5q3O_0InXSamXOswY-s",
+            "h1-domain-verification=KhpNX9YNAc7bX95agGvFsPPKbYTVe1KC6xj7P1zKZrRzxcuS",
+            "linear-domain-verification=prudk75mtrrj",
+            "liveramp-site-verification=7gyFkTwGYsvgd7IUQwyAOfImETwR06wgKjKiXq90KEY",
+            "neat-pulse-domain-verification-8GMn8nv=36eba03d-345e-421a-a823-d6d1f28938a4",
+            "openai-domain-verification=dv-9tiBE20GDN0Td9lCfVtA3DwG",
+            "postman-domain-verification=c3b168067b16085c452b04b643ae1000079b095e383b53d1074e409b0e600b6265e1c7963beca1ca87cc63c381dcea332544c92c919651e4cda69f9a6303079c",
+            "stripe-verification=82ce82470fb8324e19fa65abdb6fd370da5a8f90bba09712f259760f625d0790",
+            "v=MCPv1; k=ed25519; p=WMeka0C1fIH9HQLMtsSM9DD9cM6Bz6Wz34mHnK86UcM=",
+            "v=spf1 ip4:198.2.180.60/32 ip4:13.111.2.227/32 include:spf1.stripe.com include:greenhouse-outbound-mail.stripe.com include:_spf.qualtrics.com ~all",
+            "vercel-domain-verification-0x8270=XezzJjJYrYZwY6CahDneh2ruB",
+            "vercel-domain-verification-9rcztj=vE2uCkG0lJyU17dOW1DamoD7v",
+            "vercel-domain-verification-d2ks5d=rkbS4OdBoLxPogGq2IhBN1OZV",
+            "vercel-domain-verification-n462w8=JRePwTQbccpon6VAqYhidisHw",
+            "whimsical=253112f9add9790f3a27b9d9893626451fc4cda1",
+            "z4mthhzk10l6qc0rg4211mnnppkh2y5b"
+          ],
+          "MX": [
+            "aspmx.l.google.com",
+            "alt1.aspmx.l.google.com",
+            "alt2.aspmx.l.google.com",
+            "aspmx2.googlemail.com",
+            "aspmx3.googlemail.com"
+          ],
+          "A": [
+            "198.137.150.111",
+            "198.202.176.111"
+          ]
+        },
+        "_dmarc.stripe.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; fo=1; rua=mailto:dmarc-reports@stripe.com; ruf=mailto:dmarc-forensics@stripe.com;"
+          ]
+        },
+        "google._domainkey.stripe.com": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC4T1PE2vh5xqRGzOrDnkoi03N/BFQ+GLa/xF69d8K0QOZBxTJbttc2DxcPdpvxqQRQOheompWvzCvWw/SH/NMgq72ulPKz2nHQbU6wIucXMf/sizgnsy+Ihiw9S5c/5sBMHUVZStqhHMuY8BGx0wGLavSmMFzBNdchT4g+46OuhQIDAQAB"
+          ]
+        },
+        "s1._domainkey.stripe.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDRJjDdiZeTAd6hRY1BMQH098lqTGwdTCGuY4VKbDxV29kTyKZ9e2J/5+AfMHRlraj+i7QCl663jZz619AdTE7u88HI+CwlEwTVkjuK8+uIhUR3V/PhtLhzSP7GBm4JDUbi1I3tiUJjYTxQAhSIyso6QoDrv6kS6uoud+UT6kCq/wIDAQAB"
+          ]
+        },
+        "s2._domainkey.stripe.com": {
+          "TXT": [
+            "k=rsa; t=s; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDR/9Km49dOTJZfnn/mL4N3Pv6RDxVq7VmN+/fYUcy3LUv2Vczz7TQFe071srBQWAOCpEQLAXJbRJYp+ltcW8IGECRGYLabp6un7lWDO4TVTXNwe+YKgCwSnNv8fREDXa44KU2zYp3rkaAmm2EaXrZLCupKQ8hR3ZcIJqzmdl1iUwIDAQAB"
+          ]
+        },
+        "spf1.stripe.com": {
+          "TXT": [
+            "v=spf1 include:_spf.google.com include:amazonses.com include:mail.zendesk.com ~all"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        },
+        "amazonses.com": {
+          "TXT": [
+            "google-site-verification=aOJq8aXEtCO23r176f6iOTGt-RVuPv81XPtBuIzRTx0",
+            "mailru-verification: 71ab435de908d6ed",
+            "v=spf1 ip4:199.255.192.0/22 ip4:199.127.232.0/22 ip4:54.240.0.0/18 ip4:69.169.224.0/20 ip4:23.249.208.0/20 ip4:23.251.224.0/19 ip4:76.223.176.0/20 ip4:54.240.64.0/18 ip4:76.223.128.0/19 ip4:216.221.160.0/19 ip4:206.55.144.0/20 ip4:24.110.64.0/18 ip4:98.77.0.0/16 -all",
+            "yahoo-verification-key=OL6T0cZm2ykeymVyCj7mnvnTL3zAtLwrRXGAgBFtvFw="
+          ],
+          "MX": [
+            "feedback-smtp.us-east-1.amazonses.com"
+          ],
+          "A": [
+            "13.225.103.6",
+            "13.225.103.112",
+            "13.225.103.99",
+            "13.225.103.87"
+          ]
+        },
+        "mail.zendesk.com": {
+          "TXT": [
+            "v=spf1 ip4:103.151.192.0/23 ip4:185.12.80.0/22 ip4:188.172.128.0/20 ip4:192.161.144.0/20 ip4:216.198.0.0/18 ~all"
+          ],
+          "A": [
+            "52.21.142.91",
+            "3.211.161.173",
+            "34.227.209.168"
+          ]
+        },
+        "greenhouse-outbound-mail.stripe.com": {
+          "TXT": [
+            "v=spf1 ip4:69.72.40.93 ip4:69.72.40.94 ip4:69.72.40.95 ip4:69.72.40.96 ip4:69.72.40.97 ip4:69.72.40.98 ip4:69.72.40.99 ip4:69.72.47.205 include:greenhouse-outbound-mail-old.stripe.com"
+          ]
+        },
+        "greenhouse-outbound-mail-old.stripe.com": {
+          "TXT": [
+            "v=spf1 ip4:146.20.191.233 ip4:23.253.182.234 ip4:192.237.158.85 ip4:23.253.183.250 ip4:209.61.151.40 ip4:104.130.122.229 ip4:50.23.218.215 ip4:209.61.151.128"
+          ]
+        },
+        "_spf.qualtrics.com": {
+          "TXT": [
+            "v=spf1 ip4:162.247.216.0/22 ip4:139.60.152.0/22 ip4:98.97.248.0/21 ip4:64.69.212.0/24 ip4:54.186.193.102/32 ip4:52.222.73.120/32 ip4:52.222.73.83 ip4:52.222.62.51 ip4:52.222.75.85 ip4:52.222.89.228 ip4:160.1.62.192 ip4:52.61.91.9 ip4:15.200.21.50 ip4:15.200.201.185 ip4:15.200.44.248 -all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "w3.org",
+      "records": {
+        "w3.org": {
+          "TXT": [
+            "853C844562",
+            "anthropic-domain-verification-xwqnyg=KpEpoEkHUmXnsWC0mhnfKFBrr",
+            "ca3-d6556337888945edac9c159a068c46a2",
+            "google-site-verification=5TpwKtmzdpa5fntQgKHY96mTJ3FiSn9fGp07XKxFsMk",
+            "google-site-verification=CZkSL9bXgKDxRmeDnAQorwhaQy3Ji1vTn36bBn5rL-E",
+            "google-site-verification=cu9dn6ytlndLOV87MLxedTHxoKTRKk0dUf_jXK8OsTc",
+            "google-site-verification=dS4IjfXgopxupUFDAqg3wk94IIZ2GuQ-jW4wiLm69Rg",
+            "v=spf1 mx ip4:34.238.48.92 ip4:34.199.101.240 ip6:2600:1f18:7d7a:2700::/56 include:_spf.google.com ~all"
+          ],
+          "MX": [
+            "pan.w3.org",
+            "puck.w3.org"
+          ],
+          "A": [
+            "104.18.23.19",
+            "104.18.22.19"
+          ]
+        },
+        "_dmarc.w3.org": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:ade5335604f1484dba5c0b11b27d7fce@dmarc-reports.cloudflare.net,mailto:dmarc-rua@w3.org; ruf=mailto:dmarc-ruf@w3.org; fo=1;"
+          ]
+        },
+        "s1._domainkey.w3.org": {
+          "TXT": [
+            "v=DKIM1; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq/RSaWX8Oux/DNrUexR+ZA2kOdbgzUS3WwVLBC34kDUCIA5/v+FHiUEIYeSBv1f5E/kVmVI8UboOTEIlFhDCfXsJr1SpyNytIJ9Zqpa01CA5+cYIGHrWUoO9NLS7ghJ6m4IbxmgixbV/BZe31OnusOH8lk1Bi90ul+M/t4p94sGJ+Rluo5mhCohSGQ4sM/7K1sfdu1pJ07tkIgQoFfz/ve/uAwFEMJQYgC0zmiesnA5piUTtooYHD9KKeAqVQqfyi8WEm/9g4d0KxlOcEjvrKgQrIY3a6cWzNFskv+DhwNR5G5Nb1dEf3tEFPd7pS2mJJWlh5dbt8REV3xEVzKGqWwIDAQAB"
+          ]
+        },
+        "_spf.google.com": {
+          "TXT": [
+            "v=spf1 ip4:74.125.0.0/16 ip4:209.85.128.0/17 ip6:2001:4860:4864::/56 ip6:2404:6800:4864::/56 ip6:2607:f8b0:4864::/56 ip6:2800:3f0:4864::/56 ip6:2a00:1450:4864::/56 ip6:2c0f:fb50:4864::/56 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "whitehouse.gov",
+      "records": {
+        "whitehouse.gov": {
+          "TXT": [
+            "MS=ms61205702",
+            "_ag15rep8dkdk6c65mcqgkcmtszqxbqt",
+            "_annzjem33a9incgz74j6bqwu65dmzac",
+            "google-site-verification=TfE8QdIcAwpNcoG9l9AxMIzz69S5PPd8peS-Pj1qtXk",
+            "v=spf1 include:spf.mail.dmz.pitc.gov include:spf.protection.outlook.com include:spf.mandrillapp.com ip4:214.3.115.10/32 ip4:214.3.115.12/32 ip4:214.3.115.14/32 ip4:214.3.115.225/32 ip4:214.3.140.16/32 ip4:214.3.140.22/32 ip4:214.3.140.255/32 ~all"
+          ],
+          "A": [
+            "192.0.66.51"
+          ]
+        },
+        "_dmarc.whitehouse.gov": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:b1fabe8b7f3f41a181ecd1253a794edf@dmarc-reports.cloudflare.net,mailto:reports@dmarc.cyber.dhs.gov"
+          ]
+        },
+        "selector1._domainkey.whitehouse.gov": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp1ziKBtcYab3KdfsvO0BqkVLdLeezt+YxATDxubNLHd1moBUT0x3aNVIot3Dq/wbyxz+4uhQrHEsunkzDxtMgSUDmR62hHkJyjo58f5BSAk2WWD5TcrB0SRqVrtWwRklZT3URO+Dl1q/+pSfGLVylZ7sm71RSBAd4b8MmrB3+Izd/GLiozokw30S66a/Oc34cdNLTE4Kqwk66HkWNXRERBg4naZ/KWyLVC74Ut+f+h9vR8h/BmvMOjGCBf1dcNQ/jZwnE3Ye0o41ZqF8xIuipyYCRtHFT0GOJH7CtcCRo+NZux/rCzddpu6DaPkX5xe171F5rfx7vHmIFyaBw08JdQIDAQAB;"
+          ]
+        },
+        "spf.mail.dmz.pitc.gov": {
+          "TXT": [
+            "v=spf1 include:spf-v1.mail.dmz.pitc.gov include:spf-v2.mail.dmz.pitc.gov -all"
+          ]
+        },
+        "spf-v1.mail.dmz.pitc.gov": {
+          "TXT": [
+            "v=spf1 ip4:214.3.57.81/32 ip4:214.3.57.82/32 ip4:214.3.60.81/32 ip4:214.3.60.82/32 ~all"
+          ]
+        },
+        "spf-v2.mail.dmz.pitc.gov": {
+          "TXT": [
+            "v=spf1 ip4:214.3.57.98/32 ip4:214.3.57.99/32 ip4:214.3.57.100/32 ip4:214.3.60.98/32 ip4:214.3.60.99/32 ip4:214.3.60.100/32 ~all"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "spf.mandrillapp.com": {
+          "TXT": [
+            "v=spf1 ip4:198.2.128.0/24 ip4:198.2.132.0/22 ip4:198.2.136.0/23 ip4:198.2.145.0/24 ip4:198.2.186.0/23 ip4:205.201.131.0/24 ip4:205.201.134.128/25 ip4:205.201.136.0/23 ip4:205.201.139.0/24 ip4:198.2.177.0/24 ip4:198.2.178.0/23 ip4:198.2.180.0/24 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "who.int",
+      "records": {
+        "who.int": {
+          "TXT": [
+            "v=spf1 ip4:158.232.12.0/24 include:spf.protection.outlook.com include:_spfincludes.who.int -all",
+            "atlassian-domain-verification=UxKawy8Zm9aw6Yg8NrPBUbu9anpgfXtL2NS3L7DNt0MGYKfhw/WOXGuRCTcQMKqi",
+            "docusign=9f72d1bd-efd7-4a97-b385-83d687978e8d",
+            "plausible-sso-verification=4a284955-853c-4175-8f58-11542690cae7",
+            "google-gws-recovery-domain-verification=44731192",
+            "ca3-5fc9c6c655cf481e9d53b30866a6e690",
+            "atlassian-sending-domain-verification=31e3711a-2a4c-4ec1-bc7a-83c2d4137226",
+            "MS=ms38766037",
+            "apple-domain-verification=cYOp0B6FuXeoDFAX",
+            "docusign=c346709c-41f2-43fd-8a5a-cf7992d6e560",
+            "anthropic-domain-verification-fs497w=uqNroqkp5oyiG1qBvWyvfZSLw",
+            "ciscocidomainverification=17f32bae2ea200dbca5879cd0dc89294b7e78220da17554d099fed05e3f7e8f4",
+            "kfjFGux2GvIgH+XwWJgA8YLNiX6Jc9lZEtHz+2cfDoLo4cB03zeofnNz9eioELQriSHy0S6EuDQyrFY6DuoFqA==",
+            "zoho-verification=zb18164630.zmverify.zoho.eu",
+            "ZOOM_verify_bTI318yfSumXtVIVnfEdzQ"
+          ],
+          "MX": [
+            "who-int.mail.protection.outlook.com"
+          ],
+          "A": [
+            "192.133.11.1"
+          ]
+        },
+        "_dmarc.who.int": {
+          "TXT": [
+            "v=DMARC1; p=reject; pct=100; fo=1; ri=3600; rua=mailto:422b6d07@inbox.ondmarc.com,mailto:dmarc-rua@who.int;"
+          ]
+        },
+        "selector1._domainkey.who.int": {
+          "TXT": [
+            "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCRwBa715KydSa2CDovKP5fohCcyb+yNwALH4Z8pSlO5Gm2GJ+m4IWu1GZs04t9+Z1sD6Woik8fPX4idC6Uvn3BFvqbTGGbrMqScgI/cqt6xAeWnIcybSxErqfQqi07/M0PphE1SjiFE7kzX84+FiXRgJQYDrYUA1MWPBQfBvI1cQIDAQAB; n=1024,1462810595,1478708195"
+          ]
+        },
+        "spf.protection.outlook.com": {
+          "TXT": [
+            "v=spf1 ip4:40.92.0.0/15 ip4:40.107.0.0/16 ip4:52.100.0.0/15 ip4:52.102.0.0/16 ip4:52.103.0.0/17 ip4:104.47.0.0/17 ip6:2a01:111:f400::/48 ip6:2a01:111:f403::/49 ip6:2a01:111:f403:8000::/51 ip6:2a01:111:f403:c000::/51 ip6:2a01:111:f403:f000::/52 -all"
+          ]
+        },
+        "_spfincludes.who.int": {
+          "TXT": [
+            "v=spf1 a:c.spf.service-now.com ip4:160.34.64.28 ip4:168.245.118.121 include:spf1.unicc.unicc.org include:_spf.salesforce.com include:spf_oci.taleo.net include:one.zoho.eu -all"
+          ]
+        },
+        "c.spf.service-now.com": {
+          "A": [
+            "199.91.137.26",
+            "199.91.139.22",
+            "199.91.139.23",
+            "199.91.139.24",
+            "199.91.139.145",
+            "199.91.140.26",
+            "199.91.140.28",
+            "199.91.141.22",
+            "199.91.141.23",
+            "199.91.141.24",
+            "199.91.141.145",
+            "37.98.232.2",
+            "37.98.232.12",
+            "37.98.232.26",
+            "37.98.234.2",
+            "37.98.235.2",
+            "148.139.0.2",
+            "148.139.0.31",
+            "148.139.1.2",
+            "148.139.1.31",
+            "148.139.2.2",
+            "148.139.3.2",
+            "149.96.13.2",
+            "149.96.14.2",
+            "199.91.136.26",
+            "199.91.136.28",
+            "199.91.137.2"
+          ]
+        },
+        "spf1.unicc.unicc.org": {
+          "TXT": [
+            "v=spf1 ip4:64.14.177.128/26 ip4:193.194.138.0/24 ip4:192.91.247.68 ip4:192.91.247.70 ip4:146.247.11.101 ip4:146.247.11.102 ip4:195.55.64.65 ip4:195.55.64.66 include:spf-unicc.swisscom.com -all"
+          ]
+        },
+        "spf-unicc.swisscom.com": {
+          "TXT": [
+            "v=spf1 include:spf.swisscom.com ip4:188.92.48.138 ip4:188.92.48.139 ip4:188.92.48.140 ip4:188.92.48.141 ip4:188.92.48.155 ip4:188.92.48.167 -all"
+          ]
+        },
+        "spf.swisscom.com": {
+          "TXT": [
+            "v=spf1 ip4:138.188.176.0/26 ip4:138.188.176.128/26 ip4:138.188.166.96/27 ~all"
+          ]
+        },
+        "_spf.salesforce.com": {
+          "TXT": [
+            "v=spf1 exists:%{i}._spf.mta.salesforce.com -all"
+          ]
+        },
+        "spf_oci.taleo.net": {
+          "TXT": [
+            "v=spf1 ip4:147.154.130.198 ip4:192.29.202.183 ip4:147.154.235.36 ip4:147.154.8.204 ip4:138.1.127.67 ip4:192.29.14.88 ip4:147.154.178.139 ip4:192.29.95.58 ip4:192.29.221.25 ip4:192.29.154.249 ip4:155.248.8.180 ip4:155.248.24.243 include:rp.oracleemaildelivery.com include:ap.rp.oracleemaildelivery.com include:eu.rp.oracleemaildelivery.com ~all"
+          ]
+        },
+        "rp.oracleemaildelivery.com": {
+          "TXT": [
+            "v=spf1 ip4:129.148.164.0/25 ip4:129.148.215.0/25 ip4:129.149.6.0/25 ip4:129.149.38.0/25 ip4:138.1.170.0/24 ip4:147.154.32.0/25 ip4:147.154.63.0/24 ip4:147.154.126.0/24 ip4:147.154.191.0/24 ip4:162.88.24.0/23 ip4:192.29.72.0/25 ip4:192.29.88.0/25 ip4:192.29.103.128/25 ip4:192.29.134.0/25 ip4:155.248.148.0/25 ip4:131.186.12.0/25 ip4:139.177.108.0/25 ip4:162.88.4.0/23 include:1amer.rp.oracleemaildelivery.com ~all"
+          ],
+          "MX": [
+            "bmta.email.us-ashburn-1.oci.oraclecloud.com",
+            "bmta.email.us-phoenix-1.oci.oraclecloud.com"
+          ]
+        },
+        "1amer.rp.oracleemaildelivery.com": {
+          "TXT": [
+            "v=spf1 ip4:162.88.8.0/24 ip4:162.88.36.0/24 ip4:208.76.62.0/23 ip4:216.146.32.0/23 ip4:207.211.132.0/25 ip4:165.1.100.0/25 ip4:158.247.100.0/25 ip4:136.248.224.128/25 ip4:168.129.248.128/25 ip4:192.22.96.128/25 ip4:168.129.184.128/25 ip4:192.22.160.128/25 ip4:192.22.32.128/25 ip4:157.137.96.128/25 ip4:192.22.224.128/25 ip4:157.137.32.128/25 ip4:148.116.32.128/25 ~all"
+          ]
+        },
+        "ap.rp.oracleemaildelivery.com": {
+          "TXT": [
+            "v=spf1 ip4:192.29.172.0/25 ip4:192.29.24.0/25 ip4:192.29.232.0/25 ip4:192.29.248.0/25 ip4:192.29.216.0/25 ip4:192.29.44.0/25 ip4:192.29.151.128/25 ip4:129.148.135.0/25 ip4:129.148.148.0/25 ip4:129.148.215.0/25 ip4:129.149.126.0/25 ip4:129.148.180.0/25 ip4:129.149.52.0/25 ip4:159.13.4.0/25 ip4:84.8.68.0/25 ip4:168.110.248.128/25  ip4:136.248.232.128/25 ip4:168.107.248.128/25 ip4:168.110.160.128/25 ip4:149.118.160.128/25 ~all"
+          ]
+        },
+        "eu.rp.oracleemaildelivery.com": {
+          "TXT": [
+            "v=spf1 ip4:192.29.200.0/25 ip4:138.1.108.0/25 ip4:130.35.116.0/25 ip4:192.29.178.0/25 ip4:129.149.22.0/25 ip4:129.149.118.0/25 ip4:129.149.100.0/25 ip4:129.149.84.0/25 ip4:129.149.68.0/25 ip4:155.248.135.128/25 ip4:155.248.140.0/25 ip4:134.98.248.128/25 ip4:80.225.160.128/25 ip4:84.8.224.128/25 ip4:84.8.192.128/25 ~all"
+          ]
+        },
+        "one.zoho.eu": {
+          "TXT": [
+            "v=spf1 include:spf.zoho.eu include:eu.zeptomail.net include:eu.zcsend.net -all"
+          ],
+          "A": [
+            "185.230.212.34"
+          ]
+        },
+        "spf.zoho.eu": {
+          "TXT": [
+            "v=spf1 ip4:185.20.209.0/24 ip4:31.186.226.0/24 ip4:31.186.243.0/24 ip4:89.36.170.0/24 ip4:185.20.211.0/24 ip4:185.172.199.0/24 ip4:91.135.68.104/29 ip4:185.230.214.0/23 ip4:136.143.168.0/22 ip4:34.241.242.183/32 ip4:185.230.212.0/24 ~all"
+          ]
+        },
+        "eu.zeptomail.net": {
+          "TXT": [
+            "v=spf1 ip4:136.143.168.0/24 ip4:136.143.170.0/24 ip4:185.172.198.0/24 ip4:199.67.72.0/22 ~all"
+          ],
+          "MX": [
+            "mx.zoho.eu",
+            "mx2.zoho.eu"
+          ]
+        },
+        "eu.zcsend.net": {
+          "TXT": [
+            "google-site-verification=SHnSg8QHnuUJHTU9pnHmXUciIdSycMMpPrfPFiJHn7M",
+            "v=spf1 ip4:31.186.226.160/27 ip4:185.20.211.0/25 ip4:185.172.199.0/25 ip4:91.103.152.0/24 ~all"
+          ],
+          "MX": [
+            "mail360-mx.zoho.eu",
+            "mail360-mx2.zoho.eu",
+            "mail360-mx3.zoho.eu",
+            "mx.zoho.eu",
+            "mx2.zoho.eu"
+          ],
+          "A": [
+            "185.20.209.82"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "wikipedia.org",
+      "records": {
+        "wikipedia.org": {
+          "TXT": [
+            "yandex-verification: 35c08d23099dc863",
+            "v=spf1 include:_cidrs.wikimedia.org ~all",
+            "google-site-verification=AMHkgs-4ViEvIJf5znZle-BSE2EPNFqM1nDJGRyn2qk"
+          ],
+          "MX": [
+            "mx-in1001.wikimedia.org",
+            "mx-in2001.wikimedia.org"
+          ],
+          "A": [
+            "103.102.166.224"
+          ]
+        },
+        "_dmarc.wikipedia.org": {
+          "TXT": [
+            "v=DMARC1; p=reject; rua=mailto:dmarc-rua@wikimedia.org;"
+          ]
+        },
+        "_cidrs.wikimedia.org": {
+          "TXT": [
+            "v=spf1 ip4:208.80.152.0/22 ip6:2620:0:860::/56 ip6:2620:0:861::/56 ~all"
+          ]
+        }
+      }
+    },
+    {
+      "domain": "zoho.com",
+      "records": {
+        "zoho.com": {
+          "TXT": [
+            "OSSRH-65508",
+            "5d7tzsjx9vpr6dwqfd9910mkffcr1893",
+            "_7w86ubhx27sgdoo84npral89s33t2u3",
+            "_9xdko5m9wh9tx7q8vz3vs0eo2y6l239",
+            "_cxpexq0rrrkb0kkkz3mc1v37kl4dsrp",
+            "_op091a6o68i6m2yma8y9axhq463xldm",
+            "_vb1jbmh83zb1vs3mq08a359g1dsf31h",
+            "qm36k1hcyk8f6rcncfpj7ngl5708cvhl",
+            "vgsr5l5dhfv2qr8g5ntl0w9jn9tnqr94",
+            " 2nb6vfc9zm9t9f941qhzh8c66z5x6lxp",
+            " _wcrm20bvcnsi6903akx0tvwk6knbzi8",
+            "openai-domain-verification=dv-cZm3nfyBwGQo4BZTvFnA8KfA",
+            "zoho-nimbus-mrePMidEyuuAwUlwP+s2IbAqvJIO0MkIbdfSbpojeiU=",
+            "zoom-domain-verification=e4699571-2e14-4588-bfe0-471a645d4059",
+            "google-site-verification=1kia0zqFMMPaGxbNNJMN-zIfxFA8Djd6lYII_fbUjyM",
+            "google-site-verification=HJDhZb7eVwcBS1ZHYfa3zJKD7Ta5OlTtjGODvld90vs",
+            "google-site-verification=SEMszgPBLwGVsVcKzkWqXFsgw8B2IbSPm3X5lVMnoLY",
+            "google-site-verification=mQpZgdgWartH2aVfQgUPDRJ5AR2qqfCdGHtQqqNWBWw",
+            "google-site-verification=npo_5EGYt0elo-8NI3LdXc77FK2_lnKC5z4y_dHcxL0",
+            "tiktok-developers-site-verification=8r8evNiFT1R72lVTisYkXtd7MUXuDoy1",
+            "site24x7-signals-domain-verification=ccec90b648534446606c200af00e9295",
+            "site24x7-signals-domain-verification=df57290b9f0e5eb1fbcaca5849cc43b5",
+            "hubspot-developer-verification=ODRmYWExODEtMjBjMS00NTczLThhODgtZGFhZmFjZThkMjcz",
+            "v=spf1 include:spf.zoho.com include:zcsend.net include:spf.zohomail.com include:popspf.zohomail.com -all",
+            "postman-domain-verification=034222fcdc924fe91765763089a17ed482c4ae518ded4bb86a19ec03e744d91fce586e8c4da2b9a464a632414abde6331277fb126c22d70426869b6207a8bd1c",
+            "postman-domain-verification=9783fef3f967a95d9ae1b2e487850866e686c1b446fb385b037d7f8031b09aee0524196e7274f8ed956df0139866ff36f9d04db18d9d3baf897dcffd1ed34711",
+            "postman-domain-verification=f8a047d0c2ef40404a9fec778d40abf2f073d9e9172ac1eae49771a4f47d87b57bfbb335955921e13dd933941b96de48dbdbb118fa594ea90fc42299f39746d3"
+          ],
+          "MX": [
+            "smtpin.zoho.com",
+            "smtpin2.zoho.com",
+            "smtpin3.zoho.com"
+          ],
+          "A": [
+            "136.143.190.155"
+          ]
+        },
+        "_dmarc.zoho.com": {
+          "TXT": [
+            "v=DMARC1; p=reject; sp=reject; fo=0; rua=mailto:dmarcaggregation@zoho.com; ruf=mailto:dmarcaggregation@zoho.com"
+          ]
+        },
+        "spf.zoho.com": {
+          "TXT": [
+            "v=spf1 ip4:136.143.188.0/24 ip4:136.143.184.0/24 ip4:135.84.80.0/24 ip4:135.84.82.0/24 ip4:8.39.54.0/23 ip4:204.141.32.0/23 ip4:136.143.182.0/23 ip4:204.141.42.0/23 ip4:8.40.222.0/23 ip4:65.154.166.0/24 ip4:199.67.84.0/24 ip4:199.67.86.0/24 ip4:169.148.129.0/24 ip4:169.148.131.0/24 ip4:121.244.91.48/32 ip4:199.67.88.0/24 ip4:122.15.156.182/32 ip4:169.148.144.0/25 ip4:199.34.22.36/32 ip4:199.67.80.2/32 ip4:169.148.142.10/32 ip4:136.143.190.0/23 ip4:199.67.82.2/32 ip4:136.143.178.49/32 ip4:169.148.144.10/32 ip4:199.67.82.20/32 ip4:199.67.80.20/32 ip4:121.244.91.52/32 ip4:139.167.79.86/32 ip4:165.173.180.250/31 ip4:165.173.182.250/31 ip4:8.40.222.250/31 ip4:8.39.54.250/31 ip4:136.143.177.0/24 ip4:169.148.146.0/23 ip4:136.143.176.0/24 ip4:56.124.6.228/32 ip4:199.67.90.0/24 ip4:169.148.188.182/32 ip4:103.84.217.238/32 ip4:52.6.74.205/32 ip4:34.241.242.183/32 ip4:169.148.175.3/32 ip4:169.148.179.3/32 ip4:43.239.212.33/32 ip4:169.148.138.0/24 ip4:169.148.188.0/24 ip4:103.89.75.238/32 ip4:169.148.142.33/32 ip4:13.247.164.219/32 ip4:103.84.217.15/32 ip4:165.173.189.205/32 ip4:169.148.174.10/32 ip4:121.244.91.31/32 ip4:165.173.182.0/24 ip4:165.173.180.0/24 ip4:50.152.146.25/32 -all"
+          ],
+          "A": [
+            "136.143.176.186"
+          ]
+        },
+        "zcsend.net": {
+          "TXT": [
+            "validity-domain-monitoring=My0dyONevnqLthVZHFDlMRgug",
+            "yahoo-verification-key=+XGI002y1ad8vFRt/k8WEnLOHziqJGqV0rfm2qzU/1Y=",
+            "yahoo-verification-key=OzVksmJkWi0k1rFAid1HBnRDxzsX57JdxRw54XnpCa4=",
+            "google-site-verification=GhAkvr3k88IxODJDwxx0z4TKh10rGqjpIss6Tes5tTA",
+            "v=spf1 ip4:135.84.81.0/24 ip4:135.84.83.0/24 ip4:136.143.160.0/24 ip4:165.173.128.0/24 ip4:135.84.82.0/24 ip4:136.143.161.0/24 ip4:136.143.162.0/24 ip6:2607:13c0:0001:0000:0000:0000:0000:7000/116 ip6:2607:13c0:0002:0000:0000:0000:0000:1000/116 ip6:2607:13c0:0004:0000:0000:0000:0000:0000/116 ~all"
+          ],
+          "MX": [
+            "mail360-mx.zoho.com",
+            "mail360-mx2.zoho.com",
+            "mail360-mx3.zoho.com",
+            "zm-apps.zoho.com",
+            "zm-apps2.zoho.com",
+            "zm-apps3.zoho.com"
+          ],
+          "A": [
+            "136.143.190.241"
+          ]
+        },
+        "spf.zohomail.com": {
+          "TXT": [
+            "v=spf1 ip4:136.143.188.0/24 ip4:136.143.184.0/24 ip4:8.40.222.250/31 ip4:8.39.54.250/31 ip4:165.173.182.0/24 ip4:165.173.180.0/24 ip4:8.39.54.240/29 ip4:8.40.222.240/29 -all"
+          ]
+        },
+        "popspf.zohomail.com": {
+          "TXT": [
+            "v=spf1 ip4:8.47.10.9/32 -all"
+          ]
+        }
+      }
+    }
+  ]
+}

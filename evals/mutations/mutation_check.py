@@ -57,6 +57,12 @@ MUTANTS = [
     ("pre_launch_gate ignores critical Findings", "src/setup_doctor/integrations/instantly/launch.py",
      "if blocking:\n        return \"blocked\"",
      "if False:  # mutant\n        return \"blocked\""),
+    ("null MX treated as a mail server", "src/setup_doctor/checks/engine.py",
+     "if any(h.strip().rstrip(\".\") for h in resolver.mx(domain)):",
+     "if resolver.mx(domain):"),
+    ("revoked DKIM key treated as present", "src/setup_doctor/checks/engine.py",
+     'if tags["p"].strip() == "":',
+     'if tags["p"].strip() == "never-empty":'),
 ]
 
 

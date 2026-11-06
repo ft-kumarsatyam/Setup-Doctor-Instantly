@@ -64,8 +64,10 @@ tests/core|dns|checks|explain|pipeline|integrations|surfaces/
 ## Evals
 
 ```
-evals/detection|guardrails|mutations|shadow|contracts/
+evals/detection|guardrails|mutations|shadow|contracts|corpus/
 ```
+
+`evals/corpus/` is a frozen public-DNS snapshot (SPF closure included) with separate labels and grounded rewrite pairs. Its score is reported on its own and is never added to the synthetic detection precision/recall.
 
 ## Adding a check (scale path)
 
